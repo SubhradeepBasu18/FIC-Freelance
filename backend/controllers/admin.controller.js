@@ -2,10 +2,11 @@ import Admin from "../models/admin.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// Register Admin (only once)
-export const registerAdmin = async (req, res) => {
+const registerAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    if (!username || !password) return res.status(400).json({ message: "All fields are required" });
 
     const exists = await Admin.findOne({ username });
     if (exists) return res.status(400).json({ message: "Admin already exists" });
@@ -14,16 +15,20 @@ export const registerAdmin = async (req, res) => {
     const admin = new Admin({ username, password: hashedPassword });
     await admin.save();
 
-    res.json({ message: "Admin registered successfully" });
+    return res.status(201).json({
+      message: "Admin registered successfully",
+      admin: { id: admin._id, username: admin.username },
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
-// Login Admin
-export const loginAdmin = async (req, res) => {
+const loginAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    if (!username || !password) return res.status(400).json({ message: "All fields are required" });
 
     const admin = await Admin.findOne({ username });
     if (!admin) return res.status(400).json({ message: "Invalid credentials" });
@@ -32,8 +37,10 @@ export const loginAdmin = async (req, res) => {
     if (!match) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    res.json({ token });
+    return res.status(200).json({ message: "Admin logged in successfully", token });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
+
+export { registerAdmin, loginAdmin };
