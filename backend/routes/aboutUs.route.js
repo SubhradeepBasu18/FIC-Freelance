@@ -1,7 +1,7 @@
 import { addTeamMember, updateTeamMember, deleteTeamMember, getTeamMemberById, getAllTeamMembers } from "../controllers/team.controller.js";
 import express from "express";
 import { upload } from "../middlewares/multer.middleware.js";
-import { protectAdmin } from "../middleware/auth.middleware.js";
+import { protectAdmin } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
