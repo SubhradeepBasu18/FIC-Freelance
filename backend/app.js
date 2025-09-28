@@ -6,6 +6,7 @@ import cors from 'cors';
 import cookieParser from "cookie-parser";
 import aboutUsRouter from "./routes/aboutUs.route.js";
 import eventRouter from "./routes/event.route.js";
+import adminRouter from "./routes/admin.route.js";
 
 const app = express();
 
@@ -29,5 +30,6 @@ app.use(express.static('public'));
 
 app.use("/api/admin/aboutUs", aboutUsRouter);
 app.use("/api/admin/event", eventRouter);
+app.use("/api/admin", adminRouter);
 
 export default app;
