@@ -1,7 +1,7 @@
+// App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Footer from "./components/Footer";
-import Header from "./components/Header/Header";
+import Layout from "@/components/ui/Layout";
 import MainPage from "./pages/MainPage";
 import About from "@/pages/About";
 import Events from "@/pages/Events";
@@ -12,27 +12,19 @@ import AdminDashboard from "./pages/Admin-Dashboard";
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
-        {/* Header on top */}
-        <Header />
-        
-        {/* Main content with routes */}
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            
-            {/* 404 page */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        
-        <Footer />
-      </div>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          
+          {/* 404 page */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Layout>
     </Router>
   );
 };

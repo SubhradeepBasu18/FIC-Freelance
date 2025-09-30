@@ -1,5 +1,4 @@
-// Team.js
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Plus, Edit2, Trash2, Linkedin, X, Check } from 'lucide-react';
 
 export default function Team() {
@@ -84,7 +83,7 @@ export default function Team() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h2 className="text-2xl font-bold text-white mb-2">Team Management</h2>
-          <p className="text-gray-400">Manage your team members, roles, and contact information</p>
+          <p className="text-zinc-400">Manage your team members, roles, and contact information</p>
         </div>
         <button
           onClick={() => setIsAddingMember(true)}
@@ -97,7 +96,7 @@ export default function Team() {
 
       {/* Add Member Form */}
       {isAddingMember && (
-        <div className="bg-gray-900 rounded-xl p-6 mb-6 border border-gray-800">
+        <div className="bg-zinc-900 rounded-xl p-6 mb-6 border border-zinc-800">
           <h3 className="text-xl font-semibold mb-4 text-white">Add New Team Member</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <input
@@ -106,7 +105,7 @@ export default function Team() {
               placeholder="Full Name"
               value={formData.name}
               onChange={handleInputChange}
-              className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
             <input
               type="text"
@@ -114,7 +113,7 @@ export default function Team() {
               placeholder="Role/Position"
               value={formData.role}
               onChange={handleInputChange}
-              className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
             <input
               type="text"
@@ -122,7 +121,7 @@ export default function Team() {
               placeholder="Avatar URL (optional)"
               value={formData.avatar}
               onChange={handleInputChange}
-              className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
             <input
               type="text"
@@ -130,7 +129,7 @@ export default function Team() {
               placeholder="LinkedIn URL"
               value={formData.linkedIn}
               onChange={handleInputChange}
-              className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
           </div>
           <div className="flex gap-3">
@@ -143,7 +142,7 @@ export default function Team() {
             </button>
             <button
               onClick={handleCancel}
-              className="flex items-center gap-2 px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-all"
+              className="flex items-center gap-2 px-6 py-2.5 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-medium transition-all"
             >
               <X size={18} />
               Cancel
@@ -155,7 +154,7 @@ export default function Team() {
       {/* Team Members Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {teamMembers.map(member => (
-          <div key={member.id} className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition-all">
+          <div key={member.id} className="bg-zinc-900 rounded-xl p-6 border border-zinc-800 hover:border-zinc-700 transition-all">
             {editingId === member.id ? (
               // Edit Mode
               <div className="space-y-3">
@@ -164,14 +163,14 @@ export default function Team() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
                 />
                 <input
                   type="text"
                   name="role"
                   value={formData.role}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
                 />
                 <input
                   type="text"
@@ -179,7 +178,7 @@ export default function Team() {
                   value={formData.avatar}
                   onChange={handleInputChange}
                   placeholder="Avatar URL"
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
                 />
                 <input
                   type="text"
@@ -187,7 +186,7 @@ export default function Team() {
                   value={formData.linkedIn}
                   onChange={handleInputChange}
                   placeholder="LinkedIn URL"
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
                 />
                 <div className="flex gap-2 pt-2">
                   <button
@@ -199,7 +198,7 @@ export default function Team() {
                   </button>
                   <button
                     onClick={handleCancel}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg text-sm font-medium transition-all"
                   >
                     <X size={16} />
                     Cancel
@@ -213,19 +212,19 @@ export default function Team() {
                   <img
                     src={member.avatar}
                     alt={member.name}
-                    className="w-16 h-16 rounded-full bg-gray-800"
+                    className="w-16 h-16 rounded-full bg-zinc-800"
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(member)}
-                      className="p-2 bg-gray-800 hover:bg-gray-700 text-blue-400 rounded-lg transition-all"
+                      className="p-2 bg-zinc-800 hover:bg-zinc-700 text-blue-400 rounded-lg transition-all"
                       title="Edit"
                     >
                       <Edit2 size={16} />
                     </button>
                     <button
                       onClick={() => handleDelete(member.id)}
-                      className="p-2 bg-gray-800 hover:bg-gray-700 text-red-400 rounded-lg transition-all"
+                      className="p-2 bg-zinc-800 hover:bg-zinc-700 text-red-400 rounded-lg transition-all"
                       title="Delete"
                     >
                       <Trash2 size={16} />
@@ -234,7 +233,7 @@ export default function Team() {
                 </div>
 
                 <h3 className="text-lg font-semibold text-white mb-1">{member.name}</h3>
-                <p className="text-gray-400 text-sm mb-4">{member.role}</p>
+                <p className="text-zinc-400 text-sm mb-4">{member.role}</p>
 
                 {member.linkedIn && (
                   <a
@@ -254,8 +253,8 @@ export default function Team() {
       </div>
 
       {teamMembers.length === 0 && (
-        <div className="text-center py-16 bg-gray-900 rounded-xl border border-gray-800">
-          <p className="text-gray-400 text-lg">No team members yet. Click "Add Member" to get started.</p>
+        <div className="text-center py-16 bg-zinc-900 rounded-xl border border-zinc-800">
+          <p className="text-zinc-400 text-lg">No team members yet. Click "Add Member" to get started.</p>
         </div>
       )}
     </div>
