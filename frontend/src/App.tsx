@@ -7,6 +7,7 @@ import About from "@/pages/About";
 import Events from "@/pages/Events";
 import Gallery from "@/pages/Gallery";
 import Schedule from "@/pages/Schedule";
+import AdminDashboard from "./pages/Admin-Dashboard";
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
             <Route path="/events" element={<Events />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/schedule" element={<Schedule />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             
             {/* 404 page */}
             <Route path="*" element={<NotFound />} />

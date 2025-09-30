@@ -4,7 +4,7 @@ import { NAV_ITEMS } from '@/constants/constants';
 
 const Header = () => {
     return (
-        <header className="bg-zinc-950 text-white">
+        <header className="bg-zinc-950 text-white pb-10">
             <CardNav
                 logo={logo}
                 logoAlt="Tech-fest Logo"
