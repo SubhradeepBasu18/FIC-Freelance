@@ -1,6 +1,6 @@
 import DecryptedText from "./DecryptedText";
 import RotatingText from "./RotatingText";
-import LiquidEther from "./LiquidEther";
+import LiquidEther from "../ui/LiquidEther";
 
 const HeroSection = () => {
   return (

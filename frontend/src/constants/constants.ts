@@ -1,3 +1,5 @@
+import { FaInstagram, FaTwitter, FaLinkedin, FaGithub, FaDiscord } from 'react-icons/fa';
+import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md';
 
 export const NAV_ITEMS = [
   {
@@ -45,4 +47,27 @@ export const NAV_ITEMS = [
       { label: "Daily Agenda", href: "/schedule/daily", ariaLabel: "Daily agenda" },
     ],
   },
+];
+
+export const quickLinks = [
+  { name: 'Home', href: '#home' },
+  { name: 'About', href: '#about' },
+  { name: 'Events', href: '#events' },
+  { name: 'Schedule', href: '#schedule' },
+  { name: 'Sponsors', href: '#sponsors' },
+  { name: 'Contact', href: '#contact' }
+];
+
+export const socialLinks = [
+  { name: 'Instagram', href: '#', icon: FaInstagram },
+  { name: 'Twitter', href: '#', icon: FaTwitter },
+  { name: 'LinkedIn', href: '#', icon: FaLinkedin },
+  { name: 'GitHub', href: '#', icon: FaGithub },
+  { name: 'Discord', href: '#', icon: FaDiscord }
+];
+
+export const contactInfo = [
+  { type: 'Email', value: 'techfest@bppimt.ac.in', icon: MdEmail },
+  { type: 'Phone', value: '+91 XXXXXXXXXX', icon: MdPhone },
+  { type: 'Address', value: 'B.P. Poddar Institute, Kolkata', icon: MdLocationOn }
 ];

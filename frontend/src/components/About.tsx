@@ -1,4 +1,4 @@
-import LiquidEther from "./LiquidEther"; 
+import LiquidEther from "./ui/LiquidEther"; 
 import astronautImg from "../assets/cute-astronaut.png"; 
 
 const AboutSection = () => {

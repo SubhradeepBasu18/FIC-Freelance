@@ -1,5 +1,5 @@
 import CardNav from './CardNav'
-import logo from '../assets/react.svg';
+import logo from "@/assets/react.svg"
 import { NAV_ITEMS } from '@/constants/constants';
 
 const Header = () => {
