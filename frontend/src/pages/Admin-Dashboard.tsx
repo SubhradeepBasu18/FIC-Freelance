@@ -43,7 +43,7 @@ export default function AdminDashboard() {
       <div className="px-8 py-8">
         {activeTab === 'team' && <Team />}  {/* Conditionally render Team component */}
         {activeTab === 'events' && <Events />}  {/* Conditionally render Events component */}
-        {activeTab !== 'team' || activeTab !== 'events' && (
+        {activeTab !== 'team' && activeTab !== 'events' && (
           <div className="text-center py-16 bg-gray-900 rounded-xl border border-gray-800">
             <h3 className="text-xl font-semibold text-white mb-2">
               {tabs.find(t => t.id === activeTab)?.label} Section
