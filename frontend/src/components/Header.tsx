@@ -11,7 +11,7 @@ const Header = () => {
                 items={NAV_ITEMS}
                 baseColor="#18181b" // zinc-900
                 menuColor="#ffffff"
-                buttonBgColor="blue" // zinc-700
+                buttonBgColor="blue" // blue-600
                 buttonTextColor="#ffffff"
                 ease="power3.out"
                 className="bg-zinc-950"

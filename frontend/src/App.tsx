@@ -1,6 +1,7 @@
 import React from "react";
 import HeroSection from "./components/HeroSection";
 import Header from "./components/Header";
+import AboutSection from "./components/About";
 
 
 const App: React.FC = () => {
@@ -12,6 +13,7 @@ const App: React.FC = () => {
       {/* Main content with responsive padding */}
       <main className="flex-1 relative z-10 px-4 sm:px-6 lg:px-12">
         <HeroSection />
+        <AboutSection />
         {/* Add more sections here */}
       </main>
 
