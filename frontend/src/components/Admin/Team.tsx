@@ -165,7 +165,7 @@ export default function Team() {
       {/* Team Members Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {teamMembers.map((member) => (
-          <div key={member.id} className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition-all">
+          <div key={member.id} className="bg-zinc-900 rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition-all">
             {editingId === member.id ? (
               // Edit Mode
               <div className="space-y-3">
