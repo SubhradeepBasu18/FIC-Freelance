@@ -70,6 +70,27 @@ const deleteJournal = async(req, res) => {
     }
 }
 
+const getAllJournals = async(req, res) => {
+    try {
+        const journals = await journal.find()
+
+        if(!journals) {
+            return res.status(404).json({
+                message: "Journals not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Journals fetched successfully",
+            journals
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
 //Article Controller
 const addArticle = async(req, res) => {
     try {
@@ -123,6 +144,27 @@ const deleteArticle = async(req, res) => {
             article: deletedArticle
         })
 
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+const getAllArticles = async(req, res) => {
+    try {
+        const articles = await article.find()
+
+        if(!articles) {
+            return res.status(404).json({
+                message: "Articles not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Articles fetched successfully",
+            articles
+        })
     } catch (error) {
         return res.status(500).json({
             message: error.message
@@ -189,6 +231,125 @@ const deletePodcast = async(req, res) => {
     }
 }
 
+const getAllPodcasts = async(req, res) => {
+    try {
+        const podcasts = await podcast.find()
+
+        if(!podcasts) {
+            return res.status(404).json({
+                message: "Podcasts not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Podcasts fetched successfully",
+            podcasts
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+//newletter
+const addNewsletter = async(req, res) => {
+    try {
+        
+        const { title, description } = req.body
+
+        if(!title || !description) {
+            return res.status(400).json({
+                message: "All fields are required"
+            })
+        }
+
+        const fileLocalPath = req?.file?.path
+        const fileUrl = await uploadOnCloudinary(fileLocalPath)
+
+        if(!fileUrl) {
+            return res.status(400).json({
+                message: "File upload failed"
+            })
+        }
+
+        const newNewsletter = await newsletter.create({
+            title,
+            description,
+            fileUrl
+        })
+
+        if(!newNewsletter) {
+            return res.status(400).json({
+                message: "Newsletter creation failed"
+            })
+        }
+
+        return res.status(201).json({
+            message: "Newsletter added successfully",
+            newsletter: newNewsletter
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}   
+
+const deleteNewsletter = async(req, res) => {
+    try {
+            const {id} = req.params
+            const deletedNewsletter = await newsletter.findByIdAndDelete(id)
+
+            if(!deletedNewsletter) {
+                return res.status(404).json({
+                    message: "Newsletter not found"
+                })
+            }
+
+            return res.status(200).json({
+                message: "Newsletter deleted successfully",
+                newsletter: deletedNewsletter
+            })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+const getAllNewsletters = async(req, res) => {
+    try {
+        const newsletters = await newsletter.find()
+
+        if(!newsletters) {
+            return res.status(404).json({
+                message: "Newsletters not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Newsletters fetched successfully",
+            newsletters
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
 
 
-export {addJournal, deleteJournal, addArticle, deleteArticle, addPodcast, deletePodcast}
+export {
+    addJournal, 
+    deleteJournal, 
+    addArticle, 
+    deleteArticle, 
+    addPodcast, 
+    deletePodcast, addNewsletter, 
+    deleteNewsletter, 
+    getAllJournals, 
+    getAllArticles, 
+    getAllPodcasts, 
+    getAllNewsletters
+}

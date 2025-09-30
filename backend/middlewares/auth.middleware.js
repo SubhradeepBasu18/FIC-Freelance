@@ -1,26 +1,24 @@
 import jwt from "jsonwebtoken";
-import Admin from "../models/admin.model.js";
+import { Admin } from "../models/admin.model.js";
 
-// Protect routes for logged-in admin
-const protectAdmin = async (req, res, next) => {
+export const protectAdmin = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    let token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Not authorized" });
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Not authorized, token missing" });
-    }
-
-    const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.admin = await Admin.findById(decoded.id).select("-password");
+    if (!req.admin) return res.status(401).json({ message: "Invalid token" });
 
-    const admin = await Admin.findById(decoded.id);
-    if (!admin) return res.status(401).json({ message: "Not authorized, admin not found" });
-
-    req.admin = admin._id; // attach admin id to request
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Not authorized, invalid token" });
+    return res.status(401).json({ message: "Auth failed" });
   }
 };
 
-export { protectAdmin };
+export const superAdminOnly = (req, res, next) => {
+  if (req.admin.role !== "superadmin") {
+    return res.status(403).json({ message: "Superadmin access required" });
+  }
+  next();
+};
