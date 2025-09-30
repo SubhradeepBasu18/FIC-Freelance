@@ -1,6 +1,7 @@
 // AdminDashboard.js
 import React, { useState } from 'react';
 import Team from "./Team"
+import Events from "./Events"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('team');
@@ -41,8 +42,8 @@ export default function AdminDashboard() {
       {/* Content Area */}
       <div className="px-8 py-8">
         {activeTab === 'team' && <Team />}  {/* Conditionally render Team component */}
-
-        {activeTab !== 'team' && (
+        {activeTab === 'events' && <Events />}  {/* Conditionally render Events component */}
+        {activeTab !== 'team' || activeTab !== 'events' && (
           <div className="text-center py-16 bg-gray-900 rounded-xl border border-gray-800">
             <h3 className="text-xl font-semibold text-white mb-2">
               {tabs.find(t => t.id === activeTab)?.label} Section
