@@ -1,4 +1,4 @@
-import React, { useState, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { Plus, Edit2, Trash2, Linkedin, X, Check } from 'lucide-react';
 
 interface TeamMember {

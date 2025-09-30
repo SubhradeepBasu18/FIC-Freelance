@@ -1,5 +1,5 @@
 // AdminDashboard.js
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Team from "./Team"
 import Events from "./Events"
 
