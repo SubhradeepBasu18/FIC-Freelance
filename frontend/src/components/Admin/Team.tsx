@@ -1,50 +1,59 @@
-import { useState } from 'react';
+import React, { useState, type ChangeEvent } from 'react';
 import { Plus, Edit2, Trash2, Linkedin, X, Check } from 'lucide-react';
 
+interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  avatar: string;
+  linkedIn: string;
+}
+
 export default function Team() {
-  const [teamMembers, setTeamMembers] = useState([
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     {
       id: 1,
       name: 'Sarah Johnson',
       role: 'Chief Executive Officer',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
-      linkedIn: 'https://linkedin.com/in/sarahjohnson'
+      linkedIn: 'https://linkedin.com/in/sarahjohnson',
     },
     {
       id: 2,
       name: 'Michael Chen',
       role: 'Chief Technology Officer',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael',
-      linkedIn: 'https://linkedin.com/in/michaelchen'
+      linkedIn: 'https://linkedin.com/in/michaelchen',
     },
     {
       id: 3,
       name: 'Emily Rodriguez',
       role: 'Head of Design',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emily',
-      linkedIn: 'https://linkedin.com/in/emilyrodriguez'
-    }
+      linkedIn: 'https://linkedin.com/in/emilyrodriguez',
+    },
   ]);
 
-  const [isAddingMember, setIsAddingMember] = useState(false);
-  const [editingId, setEditingId] = useState(null);
+  const [isAddingMember, setIsAddingMember] = useState<boolean>(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     role: '',
     avatar: '',
-    linkedIn: ''
+    linkedIn: '',
   });
 
-  const handleInputChange = (e: any) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleAdd = () => {
     if (formData.name && formData.role) {
-      const newMember = {
+      const newMember: TeamMember = {
         id: Date.now(),
         ...formData,
-        avatar: formData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name}`
+        avatar: formData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name}`,
       };
       setTeamMembers([...teamMembers, newMember]);
       setFormData({ name: '', role: '', avatar: '', linkedIn: '' });
@@ -52,22 +61,24 @@ export default function Team() {
     }
   };
 
-  const handleEdit = (member: any) => {
+  const handleEdit = (member: TeamMember) => {
     setEditingId(member.id);
     setFormData(member);
   };
 
   const handleUpdate = () => {
-    setTeamMembers(teamMembers.map(member =>
-      member.id === editingId ? { ...member, ...formData } : member
-    ));
+    setTeamMembers((prevMembers) =>
+      prevMembers.map((member) =>
+        member.id === editingId ? { ...member, ...formData } : member
+      )
+    );
     setEditingId(null);
     setFormData({ name: '', role: '', avatar: '', linkedIn: '' });
   };
 
-  const handleDelete = (id: any) => {
+  const handleDelete = (id: number) => {
     if (confirm('Are you sure you want to delete this team member?')) {
-      setTeamMembers(teamMembers.filter(member => member.id !== id));
+      setTeamMembers((prevMembers) => prevMembers.filter((member) => member.id !== id));
     }
   };
 
@@ -153,8 +164,8 @@ export default function Team() {
 
       {/* Team Members Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teamMembers.map(member => (
-          <div key={member.id} className="bg-zinc-900 rounded-xl p-6 border border-zinc-800 hover:border-zinc-700 transition-all">
+        {teamMembers.map((member) => (
+          <div key={member.id} className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition-all">
             {editingId === member.id ? (
               // Edit Mode
               <div className="space-y-3">

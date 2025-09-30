@@ -1,9 +1,7 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Team from "../components/Admin/Team";
-import Events from "../components/Admin/Events";
-import Publications from "../components/Admin/Publications"; 
-import Gallery from '@/components/Admin/Gallery';
+// AdminDashboard.js
+import React, { useState } from 'react';
+import Team from "./Team"
+import Events from "./Events"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('team');
@@ -59,12 +57,10 @@ export default function AdminDashboard() {
 
       {/* Content Area */}
       <div className="px-8 py-8">
-        {activeTab === 'team' && <Team />}
-        {activeTab === 'events' && <Events />}
-        {activeTab === 'publications' && <Publications />}
-        {activeTab === 'gallery' && <Gallery />}
-        {activeTab !== 'team' && activeTab !== 'events' && activeTab !== 'publications' && (
-          <div className="text-center py-16 bg-zinc-900 rounded-xl border border-gray-800">
+        {activeTab === 'team' && <Team />}  {/* Conditionally render Team component */}
+        {activeTab === 'events' && <Events />}  {/* Conditionally render Events component */}
+        {activeTab !== 'team' && activeTab !== 'events' && (
+          <div className="text-center py-16 bg-gray-900 rounded-xl border border-gray-800">
             <h3 className="text-xl font-semibold text-white mb-2">
               {tabs.find(t => t.id === activeTab)?.label} Section
             </h3>
