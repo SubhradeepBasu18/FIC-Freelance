@@ -4,9 +4,12 @@ import { protectAdmin } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
+//protected routes
 router.post("/addEvent", protectAdmin, addEvent);
 router.put("/updateEvent/:id", protectAdmin, updateEvent);
 router.delete("/deleteEvent/:id", protectAdmin, deleteEvent);
+
+//public routes
 router.get("/getEvent/:id", getEvent);
 router.get("/getAllEvents", getAllEvents);
 
