@@ -1,6 +1,25 @@
 import { useState, useEffect } from 'react';
 
-function EventForm({ event, onSave, onCancel, isEditing }) {
+interface Event {
+  id: number;
+  title: string;
+  description: string;
+  location: string;
+  time: string;
+  date: string;
+  image: string;
+  category: string;
+  isFeatured: boolean;
+}
+
+interface EventFormProps {
+  event: Event | null;
+  onSave: (event: Event) => void;
+  onCancel: () => void;
+  isEditing: boolean;
+}
+
+function EventForm({ event, onSave, onCancel, isEditing }: EventFormProps) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -18,12 +37,12 @@ function EventForm({ event, onSave, onCancel, isEditing }) {
     }
   }, [event, isEditing]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    onSave(formData as Event);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -86,7 +105,7 @@ function EventForm({ event, onSave, onCancel, isEditing }) {
               value={formData.description}
               onChange={handleChange}
               required
-              rows="4"
+              rows={4}
               className="w-full px-3 py-2 bg-zinc-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
               placeholder="Enter event description"
             />
@@ -187,9 +206,9 @@ function EventForm({ event, onSave, onCancel, isEditing }) {
 
 // Main Events component
 export default function Events() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   // Load events from localStorage on component mount
@@ -211,19 +230,19 @@ export default function Events() {
     setShowForm(true);
   };
 
-  const handleEditEvent = (event) => {
+  const handleEditEvent = (event: Event) => {
     setEditingEvent(event);
     setIsEditing(true);
     setShowForm(true);
   };
 
-  const handleDeleteEvent = (eventId) => {
+  const handleDeleteEvent = (eventId: number) => {
     if (window.confirm('Are you sure you want to delete this event?')) {
       setEvents(events.filter(event => event.id !== eventId));
     }
   };
 
-  const handleSaveEvent = (eventData) => {
+  const handleSaveEvent = (eventData: Event) => {
     if (isEditing && editingEvent) {
       // Update existing event
       setEvents(events.map(event => 
@@ -235,7 +254,7 @@ export default function Events() {
       // Add new event
       const newEvent = {
         ...eventData,
-        id: Date.now().toString(),
+        id: Date.now(),
         createdAt: new Date().toISOString()
       };
       setEvents([...events, newEvent]);
@@ -252,7 +271,7 @@ export default function Events() {
     setIsEditing(false);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
