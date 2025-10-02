@@ -1,4 +1,4 @@
-import LiquidEther from "@/components/ui/LiquidEther"; 
+// import LiquidEther from "@/components/ui/LiquidEther"; 
 import astronautImg from "@/assets/cute-astronaut.png"; 
 
 const AboutSection = () => {
@@ -9,7 +9,7 @@ const AboutSection = () => {
       className="relative min-h-screen flex items-center justify-center px-6 py-16 overflow-hidden"
     >
       {/* Background effect */}
-      <div className="fixed inset-0 -z-10">
+      {/* <div className="fixed inset-0 -z-10">
         <LiquidEther
           colors={["#FFD93D", "#FF7F11", "#FF3C38"]} 
           mouseForce={20}
@@ -27,7 +27,7 @@ const AboutSection = () => {
           autoResumeDelay={3000}
           autoRampDuration={0.6}
         />
-      </div>
+      </div> */}
 
       {/* Foreground content */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center">
