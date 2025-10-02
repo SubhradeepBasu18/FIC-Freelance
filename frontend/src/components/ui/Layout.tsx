@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from "@/components/ui/Header";
-import Footer from "@/components/ui/Footer";
+import Footer from "@/components/Footer";
 
 interface LayoutProps {
     children: React.ReactNode;

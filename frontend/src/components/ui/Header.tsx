@@ -1,4 +1,4 @@
-import CardNav from './CardNav'
+import CardNav from '../Header/CardNav'
 import logo from "@/assets/react.svg"
 import { NAV_ITEMS } from '@/constants/constants';
 

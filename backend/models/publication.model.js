@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 // Journal Schema (for PDFs)
 const journalSchema = new mongoose.Schema({
     title: String,
-    description: String,
+    authors: String,
     fileUrl: String,  // Only PDFs for journals
+    isPublic: Boolean
   }, {timestamps: true});
   
   const journal = mongoose.model('Journal', journalSchema);
@@ -12,8 +13,9 @@ const journalSchema = new mongoose.Schema({
   // Article Schema (for text content)
   const articleSchema = new mongoose.Schema({
     title: String,
-    description: String,
+    authors: String,
     textContent: String,  // Only text for articles
+    isPublic: Boolean
   }, {timestamps: true});
   
   const article = mongoose.model('Article', articleSchema);
@@ -21,8 +23,9 @@ const journalSchema = new mongoose.Schema({
   // Podcast Schema (for Spotify links)
   const podcastSchema = new mongoose.Schema({
     title: String,
-    description: String,
+    authors: String,
     spotifyLink: String,  // Only Spotify links for podcasts
+    isPublic: Boolean
   }, {timestamps: true});
   
   const podcast = mongoose.model('Podcast', podcastSchema);
@@ -30,8 +33,9 @@ const journalSchema = new mongoose.Schema({
   // Newsletter Schema (for PDFs)
   const newsletterSchema = new mongoose.Schema({
     title: String,
-    description: String,
+    authors: String,
     fileUrl: String,  // Only PDFs for newsletters
+    isPublic: Boolean
   }, {timestamps: true});
   
   const newsletter = mongoose.model('Newsletter', newsletterSchema);

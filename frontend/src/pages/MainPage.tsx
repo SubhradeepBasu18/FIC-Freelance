@@ -1,4 +1,4 @@
-import AboutSection from '@/components/About'
+import AboutSection from '@/components/MainPage/About'
 import HeroSection from '@/components/MainPage/HeroSection'
 
 const MainPage = () => {

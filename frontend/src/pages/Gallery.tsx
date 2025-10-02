@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CircularGallery from '@/components/ui/CircularGallery'; 
+import CircularGallery from '@/components/CircularGallery'; 
 import img1 from "@/assets/gallery/img1.jpg";
 import img2 from "@/assets/gallery/img2.jpg";
 import img3 from "@/assets/gallery/img3.jpg";

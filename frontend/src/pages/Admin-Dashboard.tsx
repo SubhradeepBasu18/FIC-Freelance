@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import Team from "@/components/Admin/Team";
 import { useNavigate } from 'react-router-dom';
-import Events from "@/components/Admin/Events";
-import Publications from '@/components/Admin/Publications';
+import Team from "../components/Admin/Team"
+import Events from "../components/Admin/Events"
+import Publications from "../components/Admin/Publications"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('team');
