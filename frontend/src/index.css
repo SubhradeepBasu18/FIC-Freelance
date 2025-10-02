@@ -12,3 +12,25 @@ body {
   padding: 0;
   overflow-x: hidden;
 }
+
+:root {
+  --color-primary: #632125;
+  --color-secondary: #704D39;
+  --color-accent: #D6B896;
+  --color-light: #EEE6C2;
+}
+
+.primary-bg { background-color: var(--color-primary); }
+.secondary-bg { background-color: var(--color-secondary); }
+.accent-bg { background-color: var(--color-accent); }
+.light-bg { background-color: var(--color-light); }
+
+.primary-text { color: var(--color-primary); }
+.secondary-text { color: var(--color-secondary); }
+.accent-text { color: var(--color-accent); }
+.light-text { color: var(--color-light); }
+
+.primary-border { border-color: var(--color-primary); }
+.secondary-border { border-color: var(--color-secondary); }
+.accent-border { border-color: var(--color-accent); }
+.light-border { border-color: var(--color-light); }

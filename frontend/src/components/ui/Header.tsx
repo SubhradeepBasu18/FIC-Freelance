@@ -89,8 +89,8 @@ const Header = () => {
                     to="/"
                     className={`text-2xl font-bold transition-colors duration-200 ${
                         location.pathname === "/" 
-                        ? "text-blue-400" 
-                        : "text-white hover:text-blue-400"
+                        ? "accent-text" 
+                        : "text-white hover:accent-text"
                     }`}
                     onClick={handleLinkClick}
                     >
@@ -111,8 +111,8 @@ const Header = () => {
                         >
                         <button className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium transition-colors duration-200 rounded-lg ${
                             isActive
-                            ? "text-blue-400 bg-white/10"
-                            : "text-white hover:text-blue-400 hover:bg-white/5"
+                            ? "accent-text bg-white/10"
+                            : "text-white hover:accent-text hover:bg-white/5"
                         }`}>
                             <span>{item.label}</span>
                             <svg
@@ -135,7 +135,7 @@ const Header = () => {
                         {/* Dropdown Menu */}
                         {activeDropdown === item.label && (
                             <div
-                            className="absolute top-full left-0 mt-2 w-48 bg-zinc-900/95 backdrop-blur-sm rounded-lg shadow-lg border border-zinc-700 py-2 z-50"
+                            className="absolute top-full left-0 mt-2 w-48 bg-transparent backdrop-blur-sm rounded-lg shadow-lg border border-white/20 py-2 z-50"
                             onMouseLeave={handleDropdownMouseLeave}
                             >
                             {item.links.map((link) => (
@@ -144,8 +144,8 @@ const Header = () => {
                                 to={link.href}
                                 className={`block px-4 py-2 text-sm transition-colors duration-200 ${
                                     isLinkActive(link.href)
-                                    ? "text-blue-400"
-                                    : "text-white hover:text-blue-400 hover:bg-zinc-800"
+                                    ? "accent-text font-semibold bg-white/10"
+                                    : "text-white hover:accent-text hover:bg-white/5"
                                 }`}
                                 onClick={handleLinkClick}
                                 >
@@ -162,7 +162,7 @@ const Header = () => {
                 {/* Mobile Hamburger Menu */}
                 <div className="md:hidden">
                     <button
-                    className="p-2 rounded-md text-white hover:bg-white/10 transition-colors duration-200"
+                    className="p-2 rounded-md text-white hover:bg-white/5 hover:accent-text transition-colors duration-200"
                     onClick={handleMobileMenuToggle}
                     >
                     <svg
@@ -182,17 +182,17 @@ const Header = () => {
 
                     {/* Mobile Dropdown Menu */}
                     {activeDropdown === "mobile" && (
-                    <div className="absolute top-full left-0 right-0 bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-700 py-4 z-50">
+                    <div className="absolute top-full left-0 right-0 bg-black/30 backdrop-blur-md border-b border-white/20 py-4 z-50">
                         <div className="container mx-auto px-4 space-y-2">
                         {NAV_ITEMS.map((item) => {
                             const isActive = isNavItemActive(item);
                             return (
                             <div
                                 key={item.label}
-                                className="border-b border-zinc-700 last:border-b-0"
+                                className="border-b border-white/20 last:border-b-0"
                             >
                                 <div className={`py-2 font-medium ${
-                                isActive ? "text-blue-400" : "text-white"
+                                isActive ? "accent-text" : "text-white"
                                 }`}>
                                 {item.label}
                                 </div>
@@ -203,8 +203,8 @@ const Header = () => {
                                     to={link.href}
                                     className={`block py-1 px-4 text-sm rounded transition-colors duration-200 ${
                                         isLinkActive(link.href)
-                                        ? "text-blue-400 bg-white/10"
-                                        : "text-zinc-300 hover:text-white hover:bg-zinc-800"
+                                        ? "accent-text bg-white/10"
+                                        : "text-white hover:accent-text hover:bg-white/5"
                                     }`}
                                     onClick={handleLinkClick}
                                     >

@@ -67,9 +67,9 @@ export const socialLinks = [
 ];
 
 export const contactInfo = [
-  { type: 'Email', value: 'techfest@bppimt.ac.in', icon: MdEmail },
+  { type: 'Email', value: 'techfest@fichm.ac.in', icon: MdEmail },
   { type: 'Phone', value: '+91 XXXXXXXXXX', icon: MdPhone },
-  { type: 'Address', value: 'B.P. Poddar Institute, Kolkata', icon: MdLocationOn }
+  { type: 'Address', value: 'Finance and Investment Club of Miranda House', icon: MdLocationOn }
 ];
 
 

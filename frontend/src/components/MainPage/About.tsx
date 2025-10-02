@@ -1,62 +1,67 @@
-// import LiquidEther from "@/components/ui/LiquidEther"; 
-import astronautImg from "@/assets/cute-astronaut.png"; 
-
 const AboutSection = () => {
-
   return (
     <section
       id="about"
       className="relative min-h-screen flex items-center justify-center px-6 py-16 overflow-hidden"
     >
-      {/* Background effect */}
-      {/* <div className="fixed inset-0 -z-10">
-        <LiquidEther
-          colors={["#FFD93D", "#FF7F11", "#FF3C38"]} 
-          mouseForce={20}
-          cursorSize={100}
-          isViscous={false}
-          viscous={30}
-          iterationsViscous={32}
-          iterationsPoisson={32}
-          resolution={0.5}
-          isBounce={false}
-          autoDemo={true}
-          autoSpeed={0.5}
-          autoIntensity={2.2}
-          takeoverDuration={0.25}
-          autoResumeDelay={3000}
-          autoRampDuration={0.6}
-        />
-      </div> */}
-
       {/* Foreground content */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         {/* Left side (text) */}
-        <div id="about-text" className="space-y-6 text-left">
-          <h2 className="text-4xl sm:text-4xl font-bold text-cyan-400">
-            What is TechFest 2.25?
+        <div id="about-text" className="space-y-8 text-left">
+          <h2 className="text-4xl sm:text-5xl font-bold italic text-white">
+            About FICMH
           </h2>
-          <p className="text-lg sm:text-xl text-gray-200 leading-relaxed">
-            Discover the essence of innovation at{" "}
-            <span className="text-white font-semibold">TECHFEST 2.25</span>, the
-            pinnacle of technological brilliance. As the flagship technical fest of{" "}
-            <span className="font-semibold">
-              B. P. Poddar Institute of Management and Technology
-            </span>
-            , TECHFEST has been a beacon of inspiration for the technical community
-            for over a decade. In 2025, brace yourself for the grand celebration of
-            its 11th edition, promising an experience that transcends boundaries and
-            ignites the spirit of innovation on an unprecedented scale.
-          </p>
+          
+          <div className="space-y-6">
+            <div>
+              <p className="text-lg sm:text-xl text-light leading-relaxed">
+                Established in 2021, the Finance and Investment Club of Miranda House is a student-led initiative 
+                that seeks to cultivate financial literacy and awareness among young minds. By hosting interactive 
+                workshops, thought-provoking speaker sessions, and engaging events, the club strives to bridge the 
+                gap between theory and practice while making finance more accessible and relevant.
+              </p>
+            </div>
+
+            <div className="bg-zinc-800/50 p-6 rounded-lg border-l-4 accent-text">
+              <h3 className="text-2xl font-bold text-white mb-3">Our Mission</h3>
+              <p className="text-light leading-relaxed">
+                Our mission is to foster financial literacy, critical thinking, and real-world awareness among students 
+                by creating opportunities to learn, engage, and apply knowledge. Guided by our motto <span className="accent-text font-semibold">"Insight. Action. Impact."</span>, 
+                we strive to bridge the gap between classroom concepts and practical applications through workshops, 
+                speaker sessions, and collaborative initiatives.
+              </p>
+            </div>
+
+            <div className="bg-zinc-800/50 p-6 rounded-lg border-l-4 accent-text">
+              <h3 className="text-2xl font-bold text-white mb-3">Our Vision</h3>
+              <p className="text-light leading-relaxed">
+                We envision FIC Miranda House as a dynamic platform that empowers students to become informed, 
+                responsible, and future-ready individuals. With the belief that we are <span className="accent-text font-semibold">"Fueling Futures Through Finance,"</span> 
+                the club aspires to nurture curiosity, inspire innovation, and build a community where financial 
+                knowledge translates into meaningful change.
+              </p>
+            </div>
+
+            <div>
+              <p className="text-lg text-light leading-relaxed font-medium">
+                With each endeavor, FICMH continues to inspire students to think critically, explore new perspectives, 
+                and engage meaningfully with the evolving world of finance and economics.
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Right side (image) */}
-        <div id="about-img" className="flex justify-center md:justify-end">
-          <img
-            src={astronautImg}
-            alt="Astronaut"
-            className="w-72 md:w-96 object-contain drop-shadow-lg"
-          />
+        {/* Right side (placeholder for image/visual) */}
+        <div id="about-visual" className="flex justify-center md:justify-end">
+          <div className="w-full max-w-md h-96 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 rounded-2xl flex items-center justify-center border border-cyan-400/30">
+            <div className="text-center p-8">
+              <div className="text-6xl mb-4">📈</div>
+              <h3 className="text-2xl font-bold text-white mb-2">FICMH</h3>
+              <p className="accent-text font-semibold">Finance & Investment Club</p>
+              <p className="text-light mt-2">Miranda House</p>
+              <p className="text-gray-400 text-sm mt-4">Est. 2021</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
