@@ -1,5 +1,5 @@
-import AboutSection from '@/components/About'
-import HeroSection from '@/components/HeroSection/HeroSection'
+import AboutSection from '@/components/MainPage/About'
+import HeroSection from '@/components/MainPage/HeroSection'
 
 const MainPage = () => {
     return (
