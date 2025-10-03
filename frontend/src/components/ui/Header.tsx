@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { NAV_ITEMS } from "@/constants/constants";
+import logo from "@/assets/logo0.png";
 
 const Header = () => {
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -84,17 +85,26 @@ const Header = () => {
             <nav className="container mx-auto px-4 py-4">
                 <div className="flex items-center justify-between">
                 {/* Logo */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 flex items-center">
                     <Link
                     to="/"
-                    className={`text-2xl font-bold transition-colors duration-200 ${
-                        location.pathname === "/" 
-                        ? "accent-text" 
-                        : "text-white hover:accent-text"
-                    }`}
+                    className="flex items-center space-x-3 transition-opacity duration-200 hover:opacity-80"
                     onClick={handleLinkClick}
                     >
-                    FICMH
+                    {/* Logo Image */}
+                    <img 
+                        src={logo} 
+                        alt="FICMH Logo" 
+                        className="h-8 w-auto md:h-10" // Adjust height as needed
+                    />
+                    {/* Logo Text */}
+                    <span className={`text-2xl font-bold transition-colors duration-200 ${
+                        location.pathname === "/" 
+                        ? "accent-text" 
+                        : "text-white"
+                    }`}>
+                        FICMH
+                    </span>
                     </Link>
                 </div>
 

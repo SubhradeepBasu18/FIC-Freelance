@@ -1,0 +1,27 @@
+.hero {
+  width: 100vw;
+  background: linear-gradient(rgba(0, 0, 0, 0.421), rgb(0, 0, 0)),
+    url("./Hero.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+.text_img {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .text_img {
+    max-width: 400px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .text_img {
+    max-width: 300px;
+  }
+}
