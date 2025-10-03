@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     // Apply layout to all other routes
     return (
-        <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
+        <div className="min-h-screen bg-black text-white flex flex-col">
             <Header />
             <main className="flex-1 pt-6">
                 {children}

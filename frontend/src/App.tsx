@@ -3,9 +3,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from "@/components/ui/Layout";
 import MainPage from "./pages/MainPage";
-import About from "@/pages/About";
+import About from "@/pages/AboutPage";
 import Events from "@/pages/Events";
-import Gallery from "@/pages/Gallery";
+import Gallery from "@/pages/GalleryPage";
 import Schedule from "@/pages/Schedule";
 import AdminDashboard from "./pages/Admin-Dashboard";
 
