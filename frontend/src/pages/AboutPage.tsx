@@ -114,7 +114,7 @@ const AboutPage = () => {
             </div>
 
             {/* Public Relations and Marketing */}
-            <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
+            <div className="group bg-zinc-950 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
               <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">🌐</div>
               <h3 className="text-xl font-bold text-white mb-3">PR & Marketing</h3>
               <p className="text-gray-300 text-sm leading-relaxed">

@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from "@/components/ui/Layout";
 import MainPage from "./pages/MainPage";
 import About from "@/pages/AboutPage";
-import Events from "@/pages/Events";
+import Events from "@/pages/EventPage";
 import Gallery from "@/pages/GalleryPage";
 import Schedule from "@/pages/Schedule";
 import AdminDashboard from "./pages/Admin-Dashboard";

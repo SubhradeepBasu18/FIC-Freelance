@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import CircularGallery from '@/components/CircularGallery'; 
+import CircularGallery from '@/components/ui/CircularGallery'; 
 import { getGalleryImages } from '@/lib/galleryImages';
 
 interface GalleryImage {
