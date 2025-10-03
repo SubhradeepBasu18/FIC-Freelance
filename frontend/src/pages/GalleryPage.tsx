@@ -28,11 +28,6 @@ const Gallery = () => {
     loadImages();
   }, []);
 
-  const handleImageSelect = (index: number) => {
-    const actualIndex = index % galleryImages.length;
-    setSelectedImage(actualIndex);
-  };
-
   const nextImage = () => {
     if (selectedImage === null) return;
     setSelectedImage((selectedImage + 1) % galleryImages.length);
