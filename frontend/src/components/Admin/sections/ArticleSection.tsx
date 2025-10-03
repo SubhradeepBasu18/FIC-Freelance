@@ -93,7 +93,7 @@ const ArticleManagement: React.FC<{ articlesList: Article[] }> = ({ articlesList
       authors: '',
       journal: '',
       createdAt: new Date().toISOString(),
-      isFeatured: false,
+      isPublic: true,
     });
   };
 

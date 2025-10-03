@@ -1,53 +1,46 @@
 import React from 'react';
 
-interface Publication {
+interface Journal {
     id: string;
     title: string;
-    authors: string;
-    journal: string;
-    year: number;
-    doi?: string;
-    abstract: string;
-    pdfUrl?: string;
-    spotifyLink?: string;
-    tags: string[];
-    isFeatured: boolean;
+    authors?: string;
+    journal?: string;
     createdAt: string;
-    type: 'article' | 'podcast' | 'newsletter' | 'journal';
+    isPublic: boolean;
+    fileUrl?: string;
   }
   
 
 interface JournalSectionProps {
-  publications: Publication[];
-  onEdit: (publication: Publication) => void;
-  onDelete: (publicationId: string) => void;
+  journals: Journal[];
+  onEdit: (journal: Journal) => void;
+  onDelete: (journalId: string) => void;
 }
 
-const JournalSection: React.FC<JournalSectionProps> = ({ publications, onEdit, onDelete }) => {
-  const journals = publications.filter(pub => pub.type === 'journal');
+const JournalSection: React.FC<JournalSectionProps> = ({ journals, onEdit, onDelete }) => {
   
   return (
     <div className="space-y-4">
-      {journals.map((publication) => (
-        <div key={publication.id} className="bg-zinc-900 rounded-xl border border-gray-800 p-6">
+      {journals.map((journal) => (
+        <div key={journal.id} className="bg-zinc-900 rounded-xl border border-gray-800 p-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-white">{publication.title}</h3>
+            <h3 className="text-lg font-semibold text-white">{journal.title}</h3>
             <div className="flex gap-2">
               <button
-                onClick={() => onEdit(publication)}
+                onClick={() => onEdit(journal)}
                 className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
               >
                 Edit
               </button>
               <button
-                onClick={() => onDelete(publication.id)}
+                onClick={() => onDelete(journal.id)}
                 className="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700"
               >
                 Delete
               </button>
             </div>
           </div>
-          <a href={publication.pdfUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+          <a href={journal.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500">
             Download PDF
           </a>
         </div>

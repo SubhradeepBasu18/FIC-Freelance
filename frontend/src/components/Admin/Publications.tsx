@@ -30,6 +30,16 @@ interface Article {
     isPublic: boolean;
   }
 
+interface Journal {
+    id: string;
+    title: string;
+    authors?: string;
+    journal?: string;
+    createdAt: string;
+    isPublic: boolean;
+    fileUrl?: string;
+  }
+
 const articles = [
         {
           "id": "1",
@@ -64,6 +74,35 @@ const articles = [
           "isPublic": true
         }
 ]
+
+const journals = [
+    {
+      "title": "Artificial Intelligence in Healthcare",
+      "authors": "John Doe, Jane Smith",
+      "fileUrl": "https://example.com/journals/ai-healthcare.pdf",
+      "isPublic": true,
+      "createdAt": "2025-10-01T14:00:00Z",
+      "updatedAt": "2025-10-01T14:00:00Z"
+    },
+    {
+      "title": "Blockchain Technology: A Revolution",
+      "authors": "Alice Brown, Bob White",
+      "fileUrl": "https://example.com/journals/blockchain-tech.pdf",
+      "isPublic": false,
+      "createdAt": "2025-09-15T09:30:00Z",
+      "updatedAt": "2025-09-15T09:30:00Z"
+    },
+    {
+      "title": "Machine Learning Algorithms for Data Science",
+      "authors": "Sara Green, Mark Black",
+      "fileUrl": "https://example.com/journals/ml-algorithms.pdf",
+      "isPublic": true,
+      "createdAt": "2025-08-20T11:45:00Z",
+      "updatedAt": "2025-08-20T11:45:00Z"
+    }
+  ]
+  
+
 
 const App = () => {
   const [publications, setPublications] = useState<Publication[]>([]);
@@ -142,7 +181,7 @@ const App = () => {
       )}
       {activeSection === 'journal' && (
         <JournalSection
-          publications={publications}
+          journals={journals}
           onEdit={handleEditPublication}
           onDelete={handleDeletePublication}
         />
