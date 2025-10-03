@@ -2,10 +2,10 @@ const AboutSection = () => {
   return (
     <section
       id="about"
-      className="relative min-h-screen flex items-center justify-center px-6 py-16 overflow-hidden"
+      className="relative min-h-screen mt-2 bg-black flex items-center justify-center px-6 py-16 overflow-hidden"
     >
       {/* Foreground content */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         {/* Left side (text) */}
         <div id="about-text" className="space-y-8 text-left">
           <h2 className="text-4xl sm:text-5xl font-bold italic text-white">
@@ -41,25 +41,28 @@ const AboutSection = () => {
                 knowledge translates into meaningful change.
               </p>
             </div>
-
-            <div>
-              <p className="text-lg text-light leading-relaxed font-medium">
-                With each endeavor, FICMH continues to inspire students to think critically, explore new perspectives, 
-                and engage meaningfully with the evolving world of finance and economics.
-              </p>
-            </div>
           </div>
         </div>
 
-        {/* Right side (placeholder for image/visual) */}
-        <div id="about-visual" className="flex justify-center md:justify-end">
-          <div className="w-full max-w-md h-96 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 rounded-2xl flex items-center justify-center border border-cyan-400/30">
-            <div className="text-center p-8">
-              <div className="text-6xl mb-4">📈</div>
-              <h3 className="text-2xl font-bold text-white mb-2">FICMH</h3>
-              <p className="accent-text font-semibold">Finance & Investment Club</p>
-              <p className="text-light mt-2">Miranda House</p>
-              <p className="text-gray-400 text-sm mt-4">Est. 2021</p>
+        {/* Right side (image with text below) */}
+        <div id="about-visual" className="flex flex-col justify-start items-center md:items-end space-y-8">
+          {/* Image positioned higher */}
+          <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl -mt-8">
+            <img 
+              src="/src/assets/HomePageGroupPhoto/home_page_photo.jpg"
+              alt="FICMH Team Photo"
+              className="w-full h-auto object-cover"
+              loading="lazy"
+            />
+          </div>
+          
+          {/* Text below the image */}
+          <div className="w-full max-w-md">
+            <div className="bg-zinc-800/50 p-6 rounded-lg border border-cyan-400/20">
+              <p className="text-lg text-light leading-relaxed font-medium text-center">
+                With each endeavor, FICMH continues to inspire students to think critically, explore new perspectives, 
+                and engage meaningfully with the evolving world of finance and economics.
+              </p>
             </div>
           </div>
         </div>
