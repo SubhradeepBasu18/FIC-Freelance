@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Team from "../components/Admin/Team"
 import Events from "../components/Admin/Events"
 import Publications from "../components/Admin/Publications"
+import JournalSection from "../components/Admin/sections/JournalSection";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('team');
@@ -62,7 +63,7 @@ export default function AdminDashboard() {
         {activeTab === 'team' && <Team />}  
         {activeTab === 'events' && <Events />} 
         {activeTab === 'publications' && <Publications />} 
-        {activeTab !== 'team' && activeTab !== 'events' && activeTab !== 'publications' && (
+                {activeTab !== 'team' && activeTab !== 'events' && activeTab !== 'publications' && (
           <div className="text-center py-16 bg-zinc-900 rounded-xl border border-gray-800">
             <h3 className="text-xl font-semibold text-white mb-2">
               {tabs.find(t => t.id === activeTab)?.label} Section

@@ -1,13 +1,13 @@
 import DecryptedText from "./DecryptedText";
 import RotatingText from "./RotatingText";
-import LiquidEther from "../ui/LiquidEther";
+// import LiquidEther from "../ui/LiquidEther";
 
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex flex-col justify-center items-center text-center overflow-hidden">
       {/* Background effect */}
       <div className="fixed inset-0 -z-10">
-        <LiquidEther
+        {/* <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
           mouseForce={20}
           cursorSize={100}
@@ -23,12 +23,12 @@ const HeroSection = () => {
           takeoverDuration={0.25}
           autoResumeDelay={3000}
           autoRampDuration={0.6}
-        />
+        /> */}
       </div>
 
       {/* Foreground content */}
       <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 italic leading-tight text-white px-4">
-        Welcome to{" "}
+        Welcome to {" "}
         <span className="inline-block text-cyan-400">
           <RotatingText
             texts={["TechFest", "Innovation", "Creativity", "Future"]}

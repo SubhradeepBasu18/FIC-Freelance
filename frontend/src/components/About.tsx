@@ -10,8 +10,8 @@ const AboutSection = () => {
     >
       {/* Background effect */}
       <div className="fixed inset-0 -z-10">
-        <LiquidEther
-          colors={["#FFD93D", "#FF7F11", "#FF3C38"]} 
+        {/* <LiquidEther
+          colors={["#D6B896", "#632125", "#704D39", "#EEE6C2", "#632125"]} 
           mouseForce={20}
           cursorSize={100}
           isViscous={false}
@@ -26,7 +26,7 @@ const AboutSection = () => {
           takeoverDuration={0.25}
           autoResumeDelay={3000}
           autoRampDuration={0.6}
-        />
+        /> */}
       </div>
 
       {/* Foreground content */}
