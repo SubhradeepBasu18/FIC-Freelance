@@ -77,30 +77,35 @@ const articles = [
 
 const journals = [
     {
-      "title": "Artificial Intelligence in Healthcare",
-      "authors": "John Doe, Jane Smith",
-      "fileUrl": "https://example.com/journals/ai-healthcare.pdf",
-      "isPublic": true,
-      "createdAt": "2025-10-01T14:00:00Z",
-      "updatedAt": "2025-10-01T14:00:00Z"
-    },
-    {
-      "title": "Blockchain Technology: A Revolution",
-      "authors": "Alice Brown, Bob White",
-      "fileUrl": "https://example.com/journals/blockchain-tech.pdf",
-      "isPublic": false,
-      "createdAt": "2025-09-15T09:30:00Z",
-      "updatedAt": "2025-09-15T09:30:00Z"
-    },
-    {
-      "title": "Machine Learning Algorithms for Data Science",
-      "authors": "Sara Green, Mark Black",
-      "fileUrl": "https://example.com/journals/ml-algorithms.pdf",
-      "isPublic": true,
-      "createdAt": "2025-08-20T11:45:00Z",
-      "updatedAt": "2025-08-20T11:45:00Z"
-    }
-  ]
+        "id": "1",
+        "title": "Artificial Intelligence in Healthcare",
+        "authors": "John Doe, Jane Smith",
+        "fileUrl": "https://res.cloudinary.com/dxafl3nuk/image/upload/v1759500152/Department_of_Information_Technology_cy_nw2d32.pdf",
+        "isPublic": true,
+        "createdAt": "2025-10-01T14:00:00Z",
+        "updatedAt": "2025-10-01T14:00:00Z"
+      },
+      {
+        "id": "2",
+        "title": "Blockchain Technology: A Revolution",
+        "authors": "Alice Brown, Bob White",
+        "fileUrl": "https://example.com/journals/blockchain-tech.pdf",
+        "isPublic": false,
+        "createdAt": "2025-09-15T09:30:00Z",
+        "updatedAt": "2025-09-15T09:30:00Z"
+      },
+      {
+        "id": "3",
+        "title": "Machine Learning Algorithms for Data Science",
+        "authors": "Sara Green, Mark Black",
+        "fileUrl": "https://example.com/journals/ml-algorithms.pdf",
+        "isPublic": true,
+        "createdAt": "2025-08-20T11:45:00Z",
+        "updatedAt": "2025-08-20T11:45:00Z"
+      }
+]
+    
+  
   
 
 
@@ -115,15 +120,15 @@ const App = () => {
     }
   }, []);
 
-  const handleEditPublication = (publication: Publication) => {
-    // Implement edit functionality
-  };
+//   const handleEditPublication = (publication: Publication) => {
+//     // Implement edit functionality
+//   };
 
-  const handleDeletePublication = (publicationId: string) => {
-    if (window.confirm('Are you sure you want to delete this publication?')) {
-      setPublications(publications.filter(pub => pub.id !== publicationId));
-    }
-  };
+//   const handleDeletePublication = (publicationId: string) => {
+//     if (window.confirm('Are you sure you want to delete this publication?')) {
+//       setPublications(publications.filter(pub => pub.id !== publicationId));
+//     }
+//   };
 
   const handleSectionChange = (section: 'article' | 'podcast' | 'newsletter' | 'journal') => {
     setActiveSection(section);
@@ -163,8 +168,6 @@ const App = () => {
       {activeSection === 'article' && (
         <ArticleSection
           articlesList={articles}
-          onEdit={handleEditPublication}
-          onDelete={handleDeletePublication}
         />
       )}
       {activeSection === 'podcast' && (
@@ -175,15 +178,11 @@ const App = () => {
       {activeSection === 'newsletter' && (
         <NewsletterSection
           publications={publications}
-          onEdit={handleEditPublication}
-          onDelete={handleDeletePublication}
         />
       )}
       {activeSection === 'journal' && (
         <JournalSection
-          journals={journals}
-          onEdit={handleEditPublication}
-          onDelete={handleDeletePublication}
+          journalsList={journals}
         />
       )}
     </div>
