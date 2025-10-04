@@ -16,7 +16,7 @@ const teamMemberSchema = new mongoose.Schema({
     required: true,
   },
   avatar: {
-    type: String, // cloudinary url
+    type: String, 
   }
 });
 

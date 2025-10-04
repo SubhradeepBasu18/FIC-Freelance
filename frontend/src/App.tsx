@@ -6,8 +6,9 @@ import MainPage from "./pages/MainPage";
 import About from "@/pages/AboutPage";
 import Events from "@/pages/EventPage";
 import Gallery from "@/pages/GalleryPage";
-import Schedule from "@/pages/Schedule";
-import AdminDashboard from "./pages/Admin-Dashboard";
+import Sponsors from "@/pages/Sponsors";
+import AdminDashboard from "@/pages/Admin-Dashboard";
+import SignInPage from '@/pages/SignInPage';
 
 const App: React.FC = () => {
   return (
@@ -18,9 +19,9 @@ const App: React.FC = () => {
           <Route path="/about" element={<About />} />
           <Route path="/events" element={<Events />} />
           <Route path="/gallery" element={<Gallery />} />
-          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/sponsors" element={<Sponsors />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          
+          <Route path="/signin" element={<SignInPage />} />
           {/* 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>
