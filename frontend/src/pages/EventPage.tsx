@@ -1,6 +1,76 @@
-import ChromaGrid from '../components/ui/ChromaGrid';
+import { useState } from 'react';
+import ChromaGrid from '@/components/ui/ChromaGrid';
+import EventCard from '@/components/EventPage/EventCard';
+import EventDetailModal from '@/components/EventPage/EventDetailModal';
+import { upcomingEvents, eventCategories } from '@/constants/constants';
+
+// Define interfaces for both data structures
+interface EventCardData {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  registrationUrl: string;
+  type: string;
+  icon: string;
+}
+
+interface ModalEvent {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  venue: string;
+  category: string;
+  image: string;
+  isFeatured: boolean;
+}
 
 const EventPage = () => {
+  const [selectedEvent, setSelectedEvent] = useState<ModalEvent | null>(null);
+
+  // Function to convert EventCardData to ModalEvent
+  const convertToModalEvent = (event: EventCardData): ModalEvent => {
+    return {
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      date: event.date,
+      time: event.time,
+      venue: event.location, // Map location to venue
+      category: event.type,   // Map type to category
+      image: event.icon,      // Map icon to image, or use a default
+      isFeatured: false       // You can set this based on your logic
+    };
+  };
+
+  // Function to handle event card click
+  const handleEventClick = (event: EventCardData) => {
+    const modalEvent = convertToModalEvent(event);
+    setSelectedEvent(modalEvent);
+  };
+
+  // Function to close modal
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
+
+  // Category color mapping function
+  const getCategoryColor = (category: string) => {
+    const colorMap: { [key: string]: string } = {
+      workshop: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
+      conference: 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
+      seminar: 'bg-green-500/20 text-green-300 border border-green-500/30',
+      competition: 'bg-red-500/20 text-red-300 border border-red-500/30',
+      default: 'bg-zinc-500/20 text-zinc-300 border border-zinc-500/30'
+    };
+    
+    return colorMap[category.toLowerCase()] || colorMap.default;
+  };
+
   const speakerItems = [
     {
       image: "/src/assets/EventSpeakers/Ajitesh Gupta.JPG",
@@ -73,6 +143,37 @@ const EventPage = () => {
           </p>
         </div>
 
+        {/* Upcoming Events Section */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-white mb-4">Upcoming Events</h2>
+            <div className="w-20 h-1 accent-bg mx-auto"></div>
+            <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+              Don't miss these exciting opportunities to learn, network, and grow
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingEvents.map((event: EventCardData) => (
+              <div 
+                key={event.id} 
+                className="cursor-pointer transform transition-transform hover:scale-105"
+                onClick={() => handleEventClick(event)}
+              >
+                <EventCard event={event} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Event Detail Modal */}
+        <EventDetailModal 
+          event={selectedEvent}
+          onClose={handleCloseModal}
+          getCategoryColor={getCategoryColor}
+        />
+
+        {/* Rest of your component remains the same */}
         {/* Inviesta Section */}
         <div className="mb-20">
           <div className="text-center mb-12">
@@ -131,60 +232,6 @@ const EventPage = () => {
           </div>
         </div>
 
-        {/* Featured Events Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-20">
-          {/* Workshop Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-cyan-400/20 h-full transform hover:scale-[1.02] transition-all duration-300">
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-2xl">💼</span>
-                </div>
-                <h2 className="text-3xl font-bold text-white">Workshops</h2>
-              </div>
-              <p className="text-gray-300 leading-relaxed text-lg">
-                Hands-on sessions designed to build practical financial skills. From stock market basics to 
-                advanced investment strategies, our workshops provide the tools and knowledge needed to navigate 
-                the financial world with confidence.
-              </p>
-            </div>
-          </div>
-
-          {/* Speaker Sessions Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-blue-400/20 h-full transform hover:scale-[1.02] transition-all duration-300">
-              <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-2xl">🎤</span>
-                </div>
-                <h2 className="text-3xl font-bold text-white">Speaker Sessions</h2>
-              </div>
-              <p className="text-gray-300 leading-relaxed text-lg">
-                Learn from industry experts and seasoned professionals who share their insights and experiences. 
-                These sessions offer unique perspectives on finance, investment, and career opportunities in the 
-                financial sector.
-              </p>
-            </div>
-          </div>
-
-          {/* Event Image Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl overflow-hidden border border-gray-700 h-full">
-              <img 
-                src="/src/assets/Gallery-Pictures/img7.jpg"
-                alt="FICMH Event"
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-white mb-3">Upcoming Events</h3>
-                <p className="text-gray-300">
-                  Stay tuned for our next exciting event. Follow us on social media for updates and announcements.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Event Categories Section */}
         <div className="mb-16">
           <div className="text-center mb-12">
@@ -196,50 +243,25 @@ const EventPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Technical Workshops */}
-            <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">📈</div>
-              <h3 className="text-xl font-bold text-white mb-3">Technical Workshops</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                Deep-dive sessions on technical analysis, trading strategies, and financial modeling for 
-                hands-on learning experience.
-              </p>
-            </div>
-
-            {/* Industry Insights */}
-            <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">🏢</div>
-              <h3 className="text-xl font-bold text-white mb-3">Industry Insights</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                Panel discussions and talks from finance professionals sharing real-world experiences and 
-                career guidance.
-              </p>
-            </div>
-
-            {/* Case Competitions */}
-            <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">🏆</div>
-              <h3 className="text-xl font-bold text-white mb-3">Case Competitions</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                Competitive events challenging participants to solve real financial problems and present 
-                innovative solutions.
-              </p>
-            </div>
-
-            {/* Networking Events */}
-            <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">🤝</div>
-              <h3 className="text-xl font-bold text-white mb-3">Networking Events</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                Opportunities to connect with peers, alumni, and industry professionals in informal 
-                settings for meaningful conversations.
-              </p>
-            </div>
+            {eventCategories.map((category, index) => (
+              <div 
+                key={index}
+                className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300"
+              >
+                <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                  {category.icon}
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">{category.name}</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  {category.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Event Stats Section */}
-        <div className="bg-black rounded-2xl p-8 border border-accent/20">
+        <div className="bg-black rounded-2xl p-8 border border-accent/20 mb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold text-white mb-2">50+</div>

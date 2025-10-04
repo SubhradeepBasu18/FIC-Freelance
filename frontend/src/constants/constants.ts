@@ -1,5 +1,13 @@
-import { FaInstagram, FaTwitter, FaLinkedin, FaGithub, FaDiscord } from 'react-icons/fa';
-import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md';
+import { 
+  FaInstagram, 
+  FaTwitter, 
+  FaLinkedin, 
+  FaGithub, 
+  FaDiscord, 
+  FaEnvelope, 
+  FaPhone, 
+  FaMapMarkerAlt 
+} from "react-icons/fa";
 
 export const NAV_ITEMS = [
   {
@@ -50,26 +58,26 @@ export const NAV_ITEMS = [
 ];
 
 export const quickLinks = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about' },
-  { name: 'Events', href: '#events' },
-  { name: 'Schedule', href: '#schedule' },
-  { name: 'Sponsors', href: '#sponsors' },
-  { name: 'Contact', href: '#contact' }
+  { name: "Home", href: "#home" },
+  { name: "About", href: "#about" },
+  { name: "Events", href: "#events" },
+  { name: "Schedule", href: "#schedule" },
+  { name: "Sponsors", href: "#sponsors" },
+  { name: "Contact", href: "#contact" },
 ];
 
 export const socialLinks = [
-  { name: 'Instagram', href: '#', icon: FaInstagram },
-  { name: 'Twitter', href: '#', icon: FaTwitter },
-  { name: 'LinkedIn', href: '#', icon: FaLinkedin },
-  { name: 'GitHub', href: '#', icon: FaGithub },
-  { name: 'Discord', href: '#', icon: FaDiscord }
+  { name: "Instagram", href: "#", icon: FaInstagram },
+  { name: "Twitter", href: "#", icon: FaTwitter },
+  { name: "LinkedIn", href: "#", icon: FaLinkedin },
+  { name: "GitHub", href: "#", icon: FaGithub },
+  { name: "Discord", href: "#", icon: FaDiscord },
 ];
 
 export const contactInfo = [
-  { type: 'Email', value: 'techfest@fichm.ac.in', icon: MdEmail },
-  { type: 'Phone', value: '+91 XXXXXXXXXX', icon: MdPhone },
-  { type: 'Address', value: 'Finance and Investment Club of Miranda House', icon: MdLocationOn }
+  { type: "Email", value: "techfest@fichm.ac.in", icon: FaEnvelope },
+  { type: "Phone", value: "+91 XXXXXXXXXX", icon: FaPhone },
+  { type: "Address", value: "Finance and Investment Club of Miranda House", icon: FaMapMarkerAlt },
 ];
 
 
@@ -170,3 +178,96 @@ export const getCategoryColor = (category: string): string => {
       return "bg-gray-500 text-white"; 
   }
 }
+
+export const upcomingEvents = [
+  {
+    id: 1,
+    title: "Stock Market Fundamentals Workshop",
+    description: "Learn the basics of stock market investing, technical analysis, and portfolio management from industry experts.",
+    date: "2024-03-15",
+    time: "2:00 PM - 5:00 PM",
+    location: "Miranda House Campus",
+    registrationUrl: "https://unstop.com/ficmh-stock-workshop",
+    type: "workshop",
+    icon: "📈"
+  },
+  {
+    id: 2,
+    title: "Investment Banking Insights",
+    description: "Interactive session with seasoned investment bankers sharing career paths and industry insights.",
+    date: "2024-03-22",
+    time: "3:00 PM - 6:00 PM",
+    location: "Virtual Event",
+    registrationUrl: "https://unstop.com/ficmh-investment-banking",
+    type: "speaker-session",
+    icon: "💼"
+  },
+  {
+    id: 3,
+    title: "FinTech Innovation Challenge",
+    description: "Competition to develop innovative solutions for real-world financial technology problems.",
+    date: "2024-04-05",
+    time: "10:00 AM - 4:00 PM",
+    location: "Miranda House Innovation Lab",
+    registrationUrl: "https://unstop.com/ficmh-fintech-challenge",
+    type: "competition",
+    icon: "🚀"
+  }
+];
+
+export const pastEvents = [
+  {
+    id: 1,
+    title: "Personal Finance Masterclass",
+    description: "Comprehensive session on budgeting, saving, and investment strategies for students.",
+    date: "2024-02-10",
+    speakers: ["Harsh Goela", "Dhruv Soni"],
+    participants: 150,
+    type: "workshop"
+  },
+  {
+    id: 2,
+    title: "Women in Finance Summit",
+    description: "Celebrating women leaders in finance with panel discussions and networking.",
+    date: "2024-01-25",
+    speakers: ["Vandana Tolani", "Ranjika Mitra"],
+    participants: 200,
+    type: "summit"
+  },
+  {
+    id: 3,
+    title: "Trading Strategies Workshop",
+    description: "Advanced workshop on algorithmic trading and risk management strategies.",
+    date: "2023-12-15",
+    speakers: ["Pranjal Kamra", "Ajitesh Gupta"],
+    participants: 120,
+    type: "workshop"
+  }
+];
+
+export const eventCategories = [
+  {
+    name: "Technical Workshops",
+    icon: "📈",
+    description: "Deep-dive sessions on technical analysis, trading strategies, and financial modeling for hands-on learning experience.",
+    color: "from-cyan-400/20 to-blue-400/20"
+  },
+  {
+    name: "Industry Insights",
+    icon: "🏢",
+    description: "Panel discussions and talks from finance professionals sharing real-world experiences and career guidance.",
+    color: "from-purple-400/20 to-pink-400/20"
+  },
+  {
+    name: "Case Competitions",
+    icon: "🏆",
+    description: "Competitive events challenging participants to solve real financial problems and present innovative solutions.",
+    color: "from-yellow-400/20 to-orange-400/20"
+  },
+  {
+    name: "Networking Events",
+    icon: "🤝",
+    description: "Opportunities to connect with peers, alumni, and industry professionals in informal settings.",
+    color: "from-green-400/20 to-emerald-400/20"
+  }
+];
