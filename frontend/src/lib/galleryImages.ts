@@ -46,7 +46,7 @@ export const getVirtualAlbums = () => {
         {
             _id: 'event-highlights',
             title: 'Event Highlights',
-            coverImage: eventHighlightsImages[0]?.image || totalImages[0]?.image,
+            coverImage: eventHighlightsImages[3]?.image || totalImages[0]?.image,
             createdBy: 'System',
             mediaItems: eventHighlightsImages.map(img => img.image),
             isPublic: true,
@@ -57,7 +57,7 @@ export const getVirtualAlbums = () => {
         {
             _id: 'recent-additions',
             title: 'Recent Additions',
-            coverImage: recentAdditionsImages[0]?.image || totalImages[4]?.image,
+            coverImage: recentAdditionsImages[2]?.image || totalImages[4]?.image,
             createdBy: 'System',
             mediaItems: recentAdditionsImages.map(img => img.image),
             isPublic: true,

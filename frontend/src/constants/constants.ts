@@ -61,9 +61,8 @@ export const quickLinks = [
   { name: "Home", href: "#home" },
   { name: "About", href: "#about" },
   { name: "Events", href: "#events" },
-  { name: "Schedule", href: "#schedule" },
+  { name: "Gallery", href: "#gallery" },
   { name: "Sponsors", href: "#sponsors" },
-  { name: "Contact", href: "#contact" },
 ];
 
 export const socialLinks = [
