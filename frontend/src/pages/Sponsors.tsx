@@ -209,7 +209,7 @@ const SponsorsPage = () => {
               <button className="accent-bg primary-text px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300">
                 Download Sponsorship Deck
               </button>
-              <button className="border border-accent text-accent px-8 py-3 rounded-lg font-semibold hover:bg-accent hover:text-black transition-all duration-300">
+              <button className="border border-accent text-accent px-8 py-3 rounded-lg font-semibold hover:bg-accent hover:scale-105 transition-all duration-300">
                 Contact Partnership Team
               </button>
             </div>

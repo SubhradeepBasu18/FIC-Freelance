@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import CircularGallery from '@/components/ui/CircularGallery'; 
-import { getGalleryImages } from '@/lib/galleryImages';
+import { getGalleryImages, getVirtualAlbums} from '@/lib/galleryImages';
 
 interface GalleryImage {
   image: string;
@@ -8,25 +8,80 @@ interface GalleryImage {
   fileName: string;
 }
 
+interface Album {
+  _id: string;
+  title: string;
+  coverImage: string;
+  createdBy: string;
+  mediaItems: string[];
+  isPublic: boolean;
+  createdAt: string;
+  updatedAt: string;
+  description?: string;
+}
+
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [albums, setAlbums] = useState<Album[]>([]);
+  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
   const [loading, setLoading] = useState(true);
+  const [albumLoading, setAlbumLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<'albums' | 'all-images'>('albums');
 
+  // Load albums and initial images
   useEffect(() => {
-    const loadImages = async () => {
+    const loadInitialData = async () => {
       try {
-        const images = getGalleryImages();
-        setGalleryImages(images);
+        setLoading(true);
+        
+        // Get virtual albums from local images
+        const virtualAlbums = getVirtualAlbums();
+        setAlbums(virtualAlbums);
+        
+        // Load all images for the "all images" view
+        const allImages = getGalleryImages();
+        setGalleryImages(allImages);
+        
       } catch (error) {
-        console.error('Error loading gallery images:', error);
+        console.error('Error loading gallery data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadImages();
+    loadInitialData();
   }, []);
+
+  // Handle album selection
+  const handleAlbumSelect = (album: Album) => {
+    setAlbumLoading(true);
+    setSelectedAlbum(album);
+    
+    // Use virtual album data directly
+    const albumImages: GalleryImage[] = album.mediaItems.map((mediaUrl: string, index: number) => ({
+      image: mediaUrl,
+      text: ``,
+      fileName: `image-${index + 1}`
+    }));
+    
+    setGalleryImages(albumImages);
+    setAlbumLoading(false);
+  };
+
+  // Show all images view
+  const showAllImages = () => {
+    const allImages = getGalleryImages();
+    setGalleryImages(allImages);
+    setSelectedAlbum(null);
+    setViewMode('all-images');
+  };
+
+  // Back to albums view
+  const backToAlbums = () => {
+    setSelectedAlbum(null);
+    setViewMode('albums');
+  };
 
   const nextImage = () => {
     if (selectedImage === null) return;
@@ -60,7 +115,7 @@ const Gallery = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Gallery
             </h2>
-            <p className="text-xl text-gray-300">Loading images...</p>
+            <p className="text-xl text-gray-300">Loading gallery...</p>
           </div>
         </div>
       </main>
@@ -83,31 +138,176 @@ const Gallery = () => {
               <p className="text-xl text-gray-300 max-w-2xl mx-auto">
                 Capturing the spirit of innovation, creativity, and collaboration from our events
               </p>
-            </div>
-
-            {/* Circular Gallery */}
-            {galleryImages.length > 0 ? (
-              <div className="text-center">
-                <div style={{ height: '600px', position: 'relative' }}>
-                  <CircularGallery 
-                    items={galleryImages}
-                    bend={3} 
-                    textColor="#ffffff" 
-                    borderRadius={0.05} 
-                    scrollEase={0.02}
-                  />
-                </div>
-                {/* Updated button */}
-                <button 
-                  onClick={() => setSelectedImage(0)}
-                  className="mt-8 bg-zinc-950 text-white px-8 py-3 rounded-lg  border-2 font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+              
+              {/* View Mode Toggle */}
+              <div className="flex justify-center gap-4 mt-6">
+                <button
+                  onClick={backToAlbums}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
+                    viewMode === 'albums' 
+                      ? 'accent-bg primary-text' 
+                      : 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                  }`}
+                >
+                  Browse Albums
+                </button>
+                <button
+                  onClick={showAllImages}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
+                    viewMode === 'all-images' 
+                      ? 'accent-bg primary-text' 
+                      : 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                  }`}
                 >
                   View All Images
                 </button>
               </div>
-            ) : (
-              <div className="text-center text-gray-400 py-12">
-                <p className="text-lg">No images found in the gallery.</p>
+            </div>
+
+            {/* Albums Grid View */}
+            {viewMode === 'albums' && !selectedAlbum && (
+              <div className="mb-12">
+                <h3 className="text-3xl font-bold text-white mb-8 text-center">Our Albums</h3>
+                
+                {albums.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {albums.map((album) => (
+                      <div 
+                        key={album._id}
+                        className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl overflow-hidden border border-accent/20 hover:border-accent/40 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer group"
+                        onClick={() => handleAlbumSelect(album)}
+                      >
+                        {/* Album Cover */}
+                        <div className="h-48 overflow-hidden">
+                          <img 
+                            src={album.coverImage} 
+                            alt={album.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            onError={(e) => {
+                              e.currentTarget.src = '/default-album-cover.jpg';
+                            }}
+                          />
+                        </div>
+                        
+                        {/* Album Info */}
+                        <div className="p-6">
+                          <h4 className="text-xl font-bold text-white mb-2 group-hover:text-accent transition-colors">
+                            {album.title}
+                          </h4>
+                          <p className="text-gray-400 text-sm mb-3">
+                            {album.mediaItems.length} images
+                          </p>
+                          {album.description && (
+                            <p className="text-gray-500 text-xs mb-3">
+                              {album.description}
+                            </p>
+                          )}
+                          <div className="flex justify-between items-center text-xs text-gray-500">
+                            <span>Created by: {album.createdBy}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-400 py-12">
+                    <p className="text-lg">No albums found.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Album Images View */}
+            {viewMode === 'albums' && selectedAlbum && (
+              <div className="mb-8">
+                {/* Album Header */}
+                <div className="text-center mb-8">
+                  <button
+                    onClick={backToAlbums}
+                    className="mb-4 text-accent hover:text-cyan-300 transition-colors flex items-center justify-center gap-2 mx-auto"
+                  >
+                    <span>‹</span> Back to Albums
+                  </button>
+                  <h3 className="text-3xl font-bold text-white mb-2">{selectedAlbum.title}</h3>
+                  <p className="text-gray-400">
+                    {selectedAlbum.mediaItems.length} images • Created by {selectedAlbum.createdBy}
+                  </p>
+                </div>
+
+                {/* Circular Gallery for Album Images */}
+                {albumLoading ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-400 text-lg">Loading images...</p>
+                  </div>
+                ) : galleryImages.length > 0 ? (
+                  <div className="text-center">
+                    <div style={{ height: '600px', position: 'relative' }}>
+                      <CircularGallery 
+                        items={galleryImages}
+                        bend={3} 
+                        textColor="#ffffff" 
+                        borderRadius={0.05} 
+                        scrollEase={0.02}
+                      />
+                    </div>
+                    {/* View All Images in Album Button */}
+                    <button 
+                      onClick={() => setSelectedImage(0)}
+                      className="mt-8 bg-zinc-950 text-white px-8 py-3 rounded-lg border-2 font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                    >
+                      View All Images in this Album
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-400 py-12">
+                    <p className="text-lg">No images found in this album.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* All Images View */}
+            {viewMode === 'all-images' && (
+              <div className="mb-8">
+                {/* All Images Header */}
+                <div className="text-center mb-8">
+                  <button
+                    onClick={backToAlbums}
+                    className="mb-4 text-accent hover:text-cyan-300 transition-colors flex items-center justify-center gap-2 mx-auto"
+                  >
+                    <span>‹</span> Back to Albums
+                  </button>
+                  <h3 className="text-3xl font-bold text-white mb-2">All Gallery Images</h3>
+                  <p className="text-gray-400">
+                    {galleryImages.length} images in total
+                  </p>
+                </div>
+
+                {/* Circular Gallery for All Images */}
+                {galleryImages.length > 0 ? (
+                  <div className="text-center">
+                    <div style={{ height: '600px', position: 'relative' }}>
+                      <CircularGallery 
+                        items={galleryImages}
+                        bend={3} 
+                        textColor="#ffffff" 
+                        borderRadius={0.05} 
+                        scrollEase={0.02}
+                      />
+                    </div>
+                    {/* View All Images Button */}
+                    <button 
+                      onClick={() => setSelectedImage(0)}
+                      className="mt-8 bg-zinc-950 text-white px-8 py-3 rounded-lg border-2 font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                    >
+                      View All Images
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-400 py-12">
+                    <p className="text-lg">No images found.</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -167,6 +367,7 @@ const Gallery = () => {
                 {galleryImages[selectedImage].text}
               </p>
               <p className="text-gray-300 text-sm">
+                {selectedAlbum?.title ? `${selectedAlbum.title} • ` : ''}
                 {selectedImage + 1} of {galleryImages.length}
               </p>
             </div>
