@@ -4,7 +4,8 @@ import heroText from "@/assets/HeroText3.png";
 
 const HeroSection = () => {
   return (
-    <section id="home" className={classes.hero}>
+    // <section id="home" className={classes.hero}>
+    <section id="home">
       <div className="flex flex-col items-center justify-center h-full w-full max-w-7xl mx-auto px-4 py-8">
         
         {/* Hero Text Image */}
