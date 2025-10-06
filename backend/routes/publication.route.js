@@ -3,21 +3,22 @@ import { addJournal, deleteJournal, addArticle, deleteArticle, addPodcast, delet
 import { upload } from "../middlewares/multer.middleware.js";
 import { protectAdmin } from "../middlewares/auth.middleware.js";
 
-const router = express.Router();
+const protectedPublicationRouter = express.Router();
+const publicPublicationRouter = express.Router();
 
 // protected routes
-router.post("/add-journal", protectAdmin, upload.single("file"), addJournal);
-router.delete("/delete-journal/:id", protectAdmin, deleteJournal);
-router.post("/add-article", protectAdmin, addArticle);
-router.delete("/delete-article/:id", protectAdmin, deleteArticle);
-router.post("/add-podcast", protectAdmin, addPodcast);
-router.delete("/delete-podcast/:id", protectAdmin, deletePodcast);
+protectedPublicationRouter.post("/add-journal", protectAdmin, upload.single("file"), addJournal);
+protectedPublicationRouter.delete("/delete-journal/:id", protectAdmin, deleteJournal);
+protectedPublicationRouter.post("/add-article", protectAdmin, addArticle);
+protectedPublicationRouter.delete("/delete-article/:id", protectAdmin, deleteArticle);
+protectedPublicationRouter.post("/add-podcast", protectAdmin, addPodcast);
+protectedPublicationRouter.delete("/delete-podcast/:id", protectAdmin, deletePodcast);
 
 // public routes
-router.get("/get-all-journals", getAllJournals);
-router.get("/get-all-articles", getAllArticles);
-router.get("/get-all-podcasts", getAllPodcasts);
-router.get("/get-all-newsletters", getAllNewsletters);
+publicPublicationRouter.get("/get-all-journals", getAllJournals);
+publicPublicationRouter.get("/get-all-articles", getAllArticles);
+publicPublicationRouter.get("/get-all-podcasts", getAllPodcasts);
+publicPublicationRouter.get("/get-all-newsletters", getAllNewsletters);
 
 
-export default router;
+export {protectedPublicationRouter, publicPublicationRouter};

@@ -1,24 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ChromaGrid from '@/components/ui/ChromaGrid';
 import EventCard from '@/components/EventPage/EventCard';
 import EventDetailModal from '@/components/EventPage/EventDetailModal';
 import { upcomingEvents, eventCategories } from '@/constants/constants';
+import { getAllEvents } from '@/configApi/events';
 
 // Define interfaces for both data structures
 interface EventCardData {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  registrationUrl: string;
-  type: string;
-  icon: string;
+    id: string;
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    location: string;
+    registrationUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    type: string;
+    icon: string;
 }
 
 interface ModalEvent {
-  id: number;
+  id: string;
   title: string;
   description: string;
   date: string;
@@ -26,16 +29,33 @@ interface ModalEvent {
   venue: string;
   category: string;
   image: string;
-  isFeatured: boolean;
+  registrationUrl: string;
 }
 
 const EventPage = () => {
+  const [events, setEvents] = useState<EventCardData[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<ModalEvent | null>(null);
 
+  useEffect(() => {
+        function fetchAllEvents(){
+            const responseData = getAllEvents()
+        responseData.then((response) => {
+            if (response.status === 200) {
+                setEvents(response.data.events);
+            }
+        })
+        .catch((error) => {
+            setError(error.message);
+        })
+        }
+        fetchAllEvents()
+  }, [])
+  
   // Function to convert EventCardData to ModalEvent
   const convertToModalEvent = (event: EventCardData): ModalEvent => {
     return {
-      id: event.id,
+      id: event._id,
       title: event.title,
       description: event.description,
       date: event.date,
@@ -43,7 +63,7 @@ const EventPage = () => {
       venue: event.location, // Map location to venue
       category: event.type,   // Map type to category
       image: event.icon,      // Map icon to image, or use a default
-      isFeatured: false       // You can set this based on your logic
+      registrationUrl: event.registrationUrl,
     };
   };
 
@@ -59,7 +79,9 @@ const EventPage = () => {
   };
 
   // Category color mapping function
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category: string = "default") => {
+    console.log("Category: ", category);
+    
     const colorMap: { [key: string]: string } = {
       workshop: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
       conference: 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
@@ -154,9 +176,9 @@ const EventPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingEvents.map((event: EventCardData) => (
+            {events.map((event: EventCardData) => (
               <div 
-                key={event.id} 
+                key={event._id} 
                 className="cursor-pointer transform transition-transform hover:scale-105"
                 onClick={() => handleEventClick(event)}
               >

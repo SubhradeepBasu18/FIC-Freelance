@@ -2,15 +2,16 @@ import { addEvent, updateEvent, deleteEvent, getEvent, getAllEvents } from "../c
 import express from "express";
 import { protectAdmin } from "../middlewares/auth.middleware.js";
 
-const router = express.Router();
+const protectedRouter = express.Router();
+const publicRouter = express.Router();
 
 //protected routes
-router.post("/addEvent", protectAdmin, addEvent);
-router.put("/updateEvent/:id", protectAdmin, updateEvent);
-router.delete("/deleteEvent/:id", protectAdmin, deleteEvent);
+protectedRouter.post("/addEvent", protectAdmin, addEvent);
+protectedRouter.put("/updateEvent/:id", protectAdmin, updateEvent);
+protectedRouter.delete("/deleteEvent/:id", protectAdmin, deleteEvent);
 
 //public routes
-router.get("/getEvent/:id", getEvent);
-router.get("/getAllEvents", getAllEvents);
+publicRouter.get("/getEvent/:id", getEvent);
+publicRouter.get("/getAllEvents", getAllEvents);
 
-export default router;
+export {protectedRouter, publicRouter};

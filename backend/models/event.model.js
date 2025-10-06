@@ -26,6 +26,11 @@ const evenSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    type: {
+        type: String,
+        enum: ["workshop", "conference", "seminar", "competition"],
+        required: true
+    }
 }, {timestamps: true})
 
 export const Event = mongoose.model('Event', evenSchema);
