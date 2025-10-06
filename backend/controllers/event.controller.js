@@ -8,9 +8,9 @@ import { Event } from "../models/event.model.js";
 
 const addEvent = async (req, res) => {
     try {
-        const { title, description, date, time, location, registrationUrl } = req.body;
+        const { title, description, date, time, location, registrationUrl, type } = req.body;
 
-        if (!title || !description || !date || !time || !location || !registrationUrl) {
+        if (!title || !description || !date || !time || !location || !registrationUrl || !type) {
             return res.status(400).json({
                 message: "All fields are required",
             });
@@ -22,6 +22,7 @@ const addEvent = async (req, res) => {
             time,
             location,
             registrationUrl,
+            type,
         });
         await event.save();
         return res.status(201).json({
@@ -37,7 +38,7 @@ const addEvent = async (req, res) => {
 
 const updateEvent = async (req, res) => {
     try {
-        const { title, description, date, time, location, registrationUrl } = req.body;
+        const { title, description, date, time, location, registrationUrl, type } = req.body;
         const event = await Event.findByIdAndUpdate(req.params.id, {
             title,
             description,
@@ -45,6 +46,7 @@ const updateEvent = async (req, res) => {
             time,
             location,
             registrationUrl,
+            type,
         });
         return res.status(200).json({
             message: "Event updated successfully",

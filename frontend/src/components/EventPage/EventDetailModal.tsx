@@ -1,7 +1,7 @@
 import { Calendar, Clock, MapPin, Tag, X } from "lucide-react";
 
 interface Event {
-    id: number;
+    id: string;
     title: string;
     description: string;
     date: string;
@@ -9,7 +9,7 @@ interface Event {
     venue: string;
     category: string;
     image: string;
-    isFeatured: boolean;
+    registrationUrl: string;
 }
 
 interface EventDetailModalProps {
@@ -20,6 +20,8 @@ interface EventDetailModalProps {
 
 const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModalProps) => {
     if (!event) return null;
+    console.log('event: ', event);
+    
 
     return (
         <div 
@@ -139,7 +141,9 @@ const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModal
 
             {/* Sophisticated Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 bg-white text-zinc-900 hover:bg-zinc-100 py-3.5 px-6 rounded-xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg">
+                <button className="flex-1 bg-white text-zinc-900 hover:bg-zinc-100 py-3.5 px-6 rounded-xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
+                onClick={() => window.open(event.registrationUrl, '_blank')}
+                >
                 <div className="w-6 h-6 bg-zinc-900 rounded-full flex items-center justify-center">
                     <span className="text-white text-xs">✓</span>
                 </div>

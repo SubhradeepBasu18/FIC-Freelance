@@ -3,15 +3,16 @@ import express from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import { protectAdmin } from "../middlewares/auth.middleware.js";
 
-const router = express.Router();
+const protectedTeamRouter = express.Router();
+const publicTeamRouter = express.Router();
 
 //protected routes
-router.post("/addTeamMember", upload.single("avatar"), protectAdmin, addTeamMember);
-router.put("/updateTeamMember/:id", protectAdmin, updateTeamMember);
-router.delete("/deleteTeamMember/:id", protectAdmin, deleteTeamMember);
+protectedTeamRouter.post("/addTeamMember", upload.single("avatar"), protectAdmin, addTeamMember);
+protectedTeamRouter.put("/updateTeamMember/:id", protectAdmin, updateTeamMember);
+protectedTeamRouter.delete("/deleteTeamMember/:id", protectAdmin, deleteTeamMember);
 
 //public routes
-router.get("/getTeamMember/:id", getTeamMemberById);
-router.get("/getAllTeamMembers", getAllTeamMembers);
+publicTeamRouter.get("/getTeamMember/:id", getTeamMemberById);
+publicTeamRouter.get("/getAllTeamMembers", getAllTeamMembers);
 
-export default router;
+export {protectedTeamRouter, publicTeamRouter};
