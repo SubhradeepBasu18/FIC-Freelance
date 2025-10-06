@@ -4,6 +4,7 @@ import Team from "../components/Admin/Team"
 import Events from "../components/Admin/Events"
 import Publications from "../components/Admin/Publications"
 import Access from "../components/Admin/Access";
+import GallerySection from '@/components/Admin/sections/GallerySection';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('team');
@@ -62,8 +63,9 @@ export default function AdminDashboard() {
         {activeTab === 'team' && <Team />}  
         {activeTab === 'events' && <Events />} 
         {activeTab === 'publications' && <Publications />} 
-        {activeTab === 'access' && <Access />} 
-        {activeTab !== 'team' && activeTab !== 'events' && activeTab !== 'publications' && activeTab !== 'access' && (
+        {activeTab === 'access' && <Access />}
+        {activeTab === 'gallery' && <GallerySection />}
+        {activeTab !== 'team' && activeTab !== 'events' && activeTab !== 'publications' && activeTab !== 'access' && activeTab !== 'gallery' && (
           <div className="text-center py-16 bg-zinc-900 rounded-xl border border-gray-800">
             <h3 className="text-xl font-semibold text-white mb-2">
               {tabs.find(t => t.id === activeTab)?.label} Section

@@ -67,7 +67,7 @@ const EventPage = () => {
       competition: 'bg-red-500/20 text-red-300 border border-red-500/30',
       default: 'bg-zinc-500/20 text-zinc-300 border border-zinc-500/30'
     };
-    
+
     return colorMap[category.toLowerCase()] || colorMap.default;
   };
 
@@ -138,56 +138,25 @@ const EventPage = () => {
           </h1>
           <div className="w-24 h-1 accent-bg mx-auto mb-8"></div>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Engaging workshops, insightful speaker sessions, and collaborative initiatives that bridge the gap 
+            Engaging workshops, insightful speaker sessions, and collaborative initiatives that bridge the gap
             between financial theory and real-world practice.
           </p>
         </div>
 
-        {/* Upcoming Events Section */}
-        <div className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">Upcoming Events</h2>
-            <div className="w-20 h-1 accent-bg mx-auto"></div>
-            <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-              Don't miss these exciting opportunities to learn, network, and grow
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingEvents.map((event: EventCardData) => (
-              <div 
-                key={event.id} 
-                className="cursor-pointer transform transition-transform hover:scale-105"
-                onClick={() => handleEventClick(event)}
-              >
-                <EventCard event={event} />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Event Detail Modal */}
-        <EventDetailModal 
-          event={selectedEvent}
-          onClose={handleCloseModal}
-          getCategoryColor={getCategoryColor}
-        />
-
-        {/* Rest of your component remains the same */}
         {/* Inviesta Section */}
         <div className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4">Inviesta</h2>
             <div className="w-20 h-1 accent-bg mx-auto"></div>
           </div>
-          
+
           <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-accent/20 mb-12">
             <p className="text-lg text-gray-300 leading-relaxed text-center max-w-4xl mx-auto">
-              <span className="text-accent font-semibold">Inviesta</span> isn't just an annual fest but where ideas come alive and connect with the real world.  
-              From thought-provoking speaker sessions that deliver industry insights and career inspiration, to intellectually 
-              stimulating competitions that challenge skills in finance, economics and strategy,  
-              Inviesta brings together ambition, creativity, and learning under one roof. Blending Miranda  
-              House's prestige with interactive formats, it transforms knowledge into capital and growth into  
+              <span className="text-accent font-semibold">Inviesta</span> isn't just an annual fest but where ideas come alive and connect with the real world.
+              From thought-provoking speaker sessions that deliver industry insights and career inspiration, to intellectually
+              stimulating competitions that challenge skills in finance, economics and strategy,
+              Inviesta brings together ambition, creativity, and learning under one roof. Blending Miranda
+              House's prestige with interactive formats, it transforms knowledge into capital and growth into
               return, making it a true celebration of insight, action, and impact.
             </p>
           </div>
@@ -206,10 +175,10 @@ const EventPage = () => {
             <div className="lg:hidden grid grid-cols-2 md:grid-cols-3 gap-4">
               {speakerItems.map((speaker, index) => (
                 <div key={index} className="bg-zinc-900/50 rounded-xl p-4 border border-accent/20 text-center">
-                  <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden border-2" 
-                      style={{ borderColor: speaker.borderColor }}>
-                    <img 
-                      src={speaker.image} 
+                  <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden border-2"
+                    style={{ borderColor: speaker.borderColor }}>
+                    <img
+                      src={speaker.image}
                       alt={speaker.title}
                       className="w-full h-full object-cover"
                     />
@@ -221,7 +190,7 @@ const EventPage = () => {
 
             {/* Desktop ChromaGrid */}
             <div className="hidden lg:block h-[800px]">
-              <ChromaGrid 
+              <ChromaGrid
                 items={speakerItems}
                 radius={250}
                 damping={0.5}
@@ -231,6 +200,106 @@ const EventPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Upcoming Events Section */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-white mb-4">Upcoming Events</h2>
+            <div className="w-20 h-1 accent-bg mx-auto"></div>
+            <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+              Don't miss these exciting opportunities to learn, network, and grow
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingEvents.map((event: EventCardData) => (
+              <div
+                key={event.id}
+                className="cursor-pointer transform transition-transform hover:scale-105"
+                onClick={() => handleEventClick(event)}
+              >
+                <EventCard event={event} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Live Events Section */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-white mb-4">Live Events</h2>
+            <div className="w-20 h-1 accent-bg mx-auto"></div>
+            <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+              Events happening right now! Join these ongoing sessions and be part of the action
+            </p>
+          </div>
+
+          {/* Live Events Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingEvents.filter(event => {
+              return event.id <= 2;
+            }).map((event: EventCardData) => (
+              <div
+                key={event.id}
+                className="cursor-pointer transform transition-transform hover:scale-105 relative"
+                onClick={() => handleEventClick(event)}
+              >
+                {/* Live Badge */}
+                <div className="absolute -top-2 -right-2 z-10">
+                  <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 animate-pulse">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                    LIVE NOW
+                  </div>
+                </div>
+
+                {/* Enhanced Event Card with Live Styling */}
+                <div className="relative overflow-hidden rounded-xl border-2 border-red-500/30 bg-gradient-to-br from-red-500/10 to-transparent">
+                  <EventCard event={event} />
+
+                  {/* Live Overlay Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-red-500/5 to-transparent pointer-events-none"></div>
+
+                  {/* Join Now Button Overlay */}
+                  <div className="absolute mt-2 bottom-4 left-4 right-4">
+                    <button
+                      className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Add join event logic here
+                        window.open(event.registrationUrl, '_blank');
+                      }}
+                    >
+                      Join Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* No Live Events Fallback */}
+          {upcomingEvents.filter(event => event.id <= 2).length === 0 && (
+            <div className="text-center py-12">
+              <div className="bg-zinc-900/50 rounded-2xl p-8 border border-zinc-700 max-w-md mx-auto">
+                <div className="text-4xl mb-4">📡</div>
+                <h3 className="text-xl font-bold text-white mb-2">No Live Events Currently</h3>
+                <p className="text-gray-400 mb-4">
+                  There are no events happening live at the moment.
+                </p>
+                <p className="text-gray-300 text-sm">
+                  Check back later or browse our upcoming events above!
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Event Detail Modal */}
+        <EventDetailModal
+          event={selectedEvent}
+          onClose={handleCloseModal}
+          getCategoryColor={getCategoryColor}
+        />
 
         {/* Event Categories Section */}
         <div className="mb-16">
@@ -244,7 +313,7 @@ const EventPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {eventCategories.map((category, index) => (
-              <div 
+              <div
                 key={index}
                 className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300"
               >
@@ -287,7 +356,7 @@ const EventPage = () => {
           <div className="bg-gradient-to-r from-zinc-500/10 to-blue-500/10 rounded-2xl p-8 border border-accent/20">
             <h3 className="text-2xl font-bold text-white mb-4">Want to stay updated?</h3>
             <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-              Follow us on social media and join our mailing list to get notified about upcoming events, 
+              Follow us on social media and join our mailing list to get notified about upcoming events,
               workshops, and opportunities.
             </p>
             <button className="accent-bg primary-text px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300">
