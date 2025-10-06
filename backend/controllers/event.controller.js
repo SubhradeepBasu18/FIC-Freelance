@@ -1,16 +1,10 @@
-// add event
-// update event
-// delete event
-// get event
-// get all events
-
 import { Event } from "../models/event.model.js";
 
 const addEvent = async (req, res) => {
     try {
-        const { title, description, date, time, location, registrationUrl, type } = req.body;
+        const { title, description, startDate, endDate, time, location, registrationUrl, type } = req.body;
 
-        if (!title || !description || !date || !time || !location || !registrationUrl || !type) {
+        if (!title || !description || !startDate || !endDate || !time || !location || !registrationUrl || !type) {
             return res.status(400).json({
                 message: "All fields are required",
             });
@@ -18,7 +12,8 @@ const addEvent = async (req, res) => {
         const event = new Event({
             title,
             description,
-            date,
+            startDate,
+            endDate,
             time,
             location,
             registrationUrl,
@@ -38,11 +33,12 @@ const addEvent = async (req, res) => {
 
 const updateEvent = async (req, res) => {
     try {
-        const { title, description, date, time, location, registrationUrl, type } = req.body;
+        const { title, description, startDate, endDate, time, location, registrationUrl, type } = req.body;
         const event = await Event.findByIdAndUpdate(req.params.id, {
             title,
             description,
-            date,
+            startDate,
+            endDate,
             time,
             location,
             registrationUrl,

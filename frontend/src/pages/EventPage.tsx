@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ChromaGrid from '@/components/ui/ChromaGrid';
 import EventCard from '@/components/EventPage/EventCard';
 import EventDetailModal from '@/components/EventPage/EventDetailModal';
 import { upcomingEvents, eventCategories } from '@/constants/constants';
-
+import { getAllEvents } from '@/configApi/events';
 // Define interfaces for both data structures
 interface EventCardData {
   id: number;
   title: string;
   description: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   time: string;
   location: string;
   registrationUrl: string;
@@ -26,11 +27,71 @@ interface ModalEvent {
   venue: string;
   category: string;
   image: string;
-  isFeatured: boolean;
+  registrationUrl: string;
 }
 
 const EventPage = () => {
+  const [events, setEvents] = useState<EventCardData[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<ModalEvent | null>(null);
+  const [liveEvents, setLiveEvents] = useState<EventCardData[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<EventCardData[]>([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await getAllEvents();
+        if (response.status === 200) {
+          console.log("Events set");
+          setEvents(response.data.events);
+        }
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, []); // Run only once when the component mounts
+
+  useEffect(() => {
+    if (events.length > 0) {
+      const currentTime = new Date();
+  
+      // Set current time to midnight for date comparison
+      currentTime.setHours(0, 0, 0, 0);
+  
+  
+      // Filter live events (compare only dates)
+      const liveEventsList = events.filter((event) => {
+        const eventStart = new Date(event.startDate);
+        const eventEnd = new Date(event.endDate);
+  
+        // Set event times to midnight for date comparison
+        eventStart.setHours(0, 0, 0, 0);
+        eventEnd.setHours(0, 0, 0, 0);
+  
+        return currentTime >= eventStart && currentTime <= eventEnd;
+      });
+  
+      setLiveEvents(liveEventsList);
+      console.log("liveEventsList: ", liveEventsList);
+      
+  
+      // Filter upcoming events (compare only dates)
+      const upcomingEventsList = events.filter((event) => {
+        const eventStart = new Date(event.startDate);
+  
+        // Set event start time to midnight for date comparison
+        eventStart.setHours(0, 0, 0, 0);
+  
+        return currentTime < eventStart;
+      });
+  
+      setUpcomingEvents(upcomingEventsList);
+      console.log("upcomingEventsList: ", upcomingEventsList);
+    }
+  }, [events]);
+  
+
 
   // Function to convert EventCardData to ModalEvent
   const convertToModalEvent = (event: EventCardData): ModalEvent => {
@@ -38,12 +99,12 @@ const EventPage = () => {
       id: event.id,
       title: event.title,
       description: event.description,
-      date: event.date,
+      date: event.startDate,
       time: event.time,
       venue: event.location, // Map location to venue
       category: event.type,   // Map type to category
       image: event.icon,      // Map icon to image, or use a default
-      isFeatured: false       // You can set this based on your logic
+      registrationUrl: event.registrationUrl       // You can set this based on your logic
     };
   };
 
@@ -214,7 +275,7 @@ const EventPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {upcomingEvents.map((event: EventCardData) => (
               <div
-                key={event.id}
+                key={event._id}
                 className="cursor-pointer transform transition-transform hover:scale-105"
                 onClick={() => handleEventClick(event)}
               >
@@ -226,73 +287,66 @@ const EventPage = () => {
 
         {/* Live Events Section */}
         <div className="mb-20">
-          <div className="text-center mb-12">
+        <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4">Live Events</h2>
             <div className="w-20 h-1 accent-bg mx-auto"></div>
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-              Events happening right now! Join these ongoing sessions and be part of the action
+            Events happening right now! Join these ongoing sessions and be part of the action
             </p>
-          </div>
+        </div>
 
-          {/* Live Events Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingEvents.filter(event => {
-              return event.id <= 2;
-            }).map((event: EventCardData) => (
-              <div
-                key={event.id}
+        {/* Live Events Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Check if there are live events */}
+            {liveEvents.length > 0 ? (
+            liveEvents.map((event: EventCardData) => (
+                <div
+                key={event._id}
                 className="cursor-pointer transform transition-transform hover:scale-105 relative"
                 onClick={() => handleEventClick(event)}
-              >
+                >
                 {/* Live Badge */}
                 <div className="absolute -top-2 -right-2 z-10">
-                  <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 animate-pulse">
+                    <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 animate-pulse">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                     LIVE NOW
-                  </div>
+                    </div>
                 </div>
 
                 {/* Enhanced Event Card with Live Styling */}
                 <div className="relative overflow-hidden rounded-xl border-2 border-red-500/30 bg-gradient-to-br from-red-500/10 to-transparent">
-                  <EventCard event={event} />
+                    <EventCard event={event} />
 
-                  {/* Live Overlay Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-red-500/5 to-transparent pointer-events-none"></div>
+                    {/* Live Overlay Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-red-500/5 to-transparent pointer-events-none"></div>
 
-                  {/* Join Now Button Overlay */}
-                  <div className="absolute mt-2 bottom-4 left-4 right-4">
+                    {/* Join Now Button Overlay */}
+                    <div className="absolute mt-2 bottom-4 left-4 right-4">
                     <button
-                      className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
-                      onClick={(e) => {
+                        className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                        onClick={(e) => {
                         e.stopPropagation();
-                        // Add join event logic here
                         window.open(event.registrationUrl, '_blank');
-                      }}
+                        }}
                     >
-                      Join Now
+                        Join Now
                     </button>
-                  </div>
+                    </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* No Live Events Fallback */}
-          {upcomingEvents.filter(event => event.id <= 2).length === 0 && (
-            <div className="text-center py-12">
-              <div className="bg-zinc-900/50 rounded-2xl p-8 border border-zinc-700 max-w-md mx-auto">
-                <div className="text-4xl mb-4">📡</div>
-                <h3 className="text-xl font-bold text-white mb-2">No Live Events Currently</h3>
-                <p className="text-gray-400 mb-4">
-                  There are no events happening live at the moment.
-                </p>
-                <p className="text-gray-300 text-sm">
-                  Check back later or browse our upcoming events above!
-                </p>
-              </div>
+                </div>
+            ))
+            ) : (
+            // Display message when no live events are available
+            <div className="col-span-full text-center py-8">
+                <div className="bg-zinc-800/50 p-6 rounded-lg border border-zinc-700/30">
+                <p className="text-xl font-semibold text-white">No Live Events Currently</p>
+                <p className="text-gray-400 mt-2">Check back later or browse upcoming events.</p>
+                </div>
             </div>
-          )}
+            )}
         </div>
+        </div>
+
 
         {/* Event Detail Modal */}
         <EventDetailModal

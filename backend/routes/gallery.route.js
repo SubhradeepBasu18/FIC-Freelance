@@ -1,5 +1,5 @@
 import express from "express";
-import { createAlbum, uploadMediaToAlbum, getAlbumById, getAllAlbums, deleteAlbum, deleteMediaFromAlbumByID } from "../controllers/gallery.controller.js";
+import { createAlbum, uploadMediaToAlbum, getAlbumById, getAllAlbums, deleteAlbum, deleteMediaFromAlbumByID, getAllImages } from "../controllers/gallery.controller.js";
 import { protectAdmin } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
@@ -15,4 +15,5 @@ protectedGalleryRouter.delete("/delete-media-from-album/:albumId/:mediaId",prote
 //public routes
 publicGalleryRouter.get("/get-album/:albumId", getAlbumById);
 publicGalleryRouter.get("/get-all-albums", getAllAlbums);
+publicGalleryRouter.get("/get-all-images", getAllImages);
 export {protectedGalleryRouter, publicGalleryRouter};

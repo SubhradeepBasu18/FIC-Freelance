@@ -6,7 +6,8 @@ interface EventCardProps {
         id: number;
         title: string;
         description: string;
-        date: string;
+        startDate: string;
+        endDate: string;
         time: string;
         location: string;
         registrationUrl: string;
@@ -17,6 +18,7 @@ interface EventCardProps {
 
 const EventCard = ({ event }: EventCardProps) => {
     const formatDate = (dateString: string) => {
+
         return new Date(dateString).toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
@@ -50,7 +52,7 @@ const EventCard = ({ event }: EventCardProps) => {
                 <div className="space-y-3 mb-6">
                     <div className="flex items-center text-sm text-gray-400">
                         <Calendar className="w-4 h-4 text-accent mr-2" />
-                        <span>{formatDate(event.date)}</span>
+                        <span>{formatDate(event.startDate)}</span>
                     </div>
                     <div className="flex items-center text-sm text-gray-400">
                         <Clock className="w-4 h-4 text-accent mr-2" />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CircularGallery from '@/components/ui/CircularGallery'; 
 import { getGalleryImages, getVirtualAlbums} from '@/lib/galleryImages';
+import { getAllAlbums, getAllImages } from "@/configApi/gallery";
 
 interface GalleryImage {
   image: string;
@@ -36,12 +37,20 @@ const Gallery = () => {
         setLoading(true);
         
         // Get virtual albums from local images
-        const virtualAlbums = getVirtualAlbums();
-        setAlbums(virtualAlbums);
+        // const virtualAlbums = getVirtualAlbums();
+        const {status, data} = await getAllAlbums();
+        if(status !== 200){
+            throw new Error(data);
+        }
+        console.log(data.albums);
+        
+        setAlbums(data.albums);
         
         // Load all images for the "all images" view
-        const allImages = getGalleryImages();
-        setGalleryImages(allImages);
+        const allImages = await getAllImages();
+        setGalleryImages(allImages.data.images);
+        console.log("Gallery Images: ", galleryImages);
+        
         
       } catch (error) {
         console.error('Error loading gallery data:', error);
@@ -70,9 +79,15 @@ const Gallery = () => {
   };
 
   // Show all images view
-  const showAllImages = () => {
-    const allImages = getGalleryImages();
-    setGalleryImages(allImages);
+  const showAllImages = async() => {
+    const allImages = await getAllImages();
+    const images = allImages.data.images.map((image) => ({
+        image: image.mediaItems,  // Just take the mediaItems URL (the image link)
+      }));
+
+    setGalleryImages(images);
+    console.log("Gallery Images: ", galleryImages);
+    
     setSelectedAlbum(null);
     setViewMode('all-images');
   };
@@ -202,9 +217,9 @@ const Gallery = () => {
                               {album.description}
                             </p>
                           )}
-                          <div className="flex justify-between items-center text-xs text-gray-500">
+                          {/* <div className="flex justify-between items-center text-xs text-gray-500">
                             <span>Created by: {album.createdBy}</span>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     ))}

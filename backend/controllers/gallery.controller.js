@@ -139,4 +139,23 @@ const deleteMediaFromAlbumByID = async(req, res) => {
     }
 }
 
-export { createAlbum, uploadMediaToAlbum, getAlbumById, getAllAlbums, deleteAlbum, deleteMediaFromAlbumByID }
+const getAllImages = async(req, res) => {
+    try {
+        const allImages = await Album.aggregate([
+            {$unwind: "$mediaItems"},
+            {$project: {mediaItems: 1}}
+        ])
+        if(!allImages) return res.status(400).json({message: "Images not found"})
+
+        return res.status(200).json({
+            message: "Images fetched successfully",
+            images: allImages
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Something went wrong while fetching images"
+        })
+    }
+}
+
+export { createAlbum, uploadMediaToAlbum, getAlbumById, getAllAlbums, deleteAlbum, deleteMediaFromAlbumByID, getAllImages }
