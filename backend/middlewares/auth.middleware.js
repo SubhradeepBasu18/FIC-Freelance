@@ -3,12 +3,14 @@ import { Admin } from "../models/admin.model.js";
 
 export const protectAdmin = async (req, res, next) => {
   try {
-    let token = req.headers.authorization?.split(" ")[1];
+    let token = req.headers.authorization?.split(" ")[1] || req.cookies?.accessToken;
     if (!token) return res.status(401).json({ message: "Not authorized" });
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.admin = await Admin.findById(decoded.id).select("-password");
-    if (!req.admin) return res.status(401).json({ message: "Invalid token" });
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const admin = await Admin.findById(decoded._id).select("-password");
+    // console.log("Admin: ", admin);
+    if (!admin) return res.status(401).json({ message: "Invalid token" });
+    req.admin = admin;
 
     next();
   } catch (error) {

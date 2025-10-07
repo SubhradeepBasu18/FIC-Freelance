@@ -2,7 +2,6 @@ import axios, { type AxiosResponse } from "axios";
 
 interface Admin {
   _id: string;
-  username: string;
   email: string;
   role: "admin" | "superadmin";
   createdAt: string;
@@ -32,7 +31,6 @@ interface HandoverResponse {
     message: string;
     newSuperAdmin: {
       id: string;
-      username: string;
       role: string;
     };
   } | string;
@@ -45,8 +43,9 @@ const loginAdmin = async (
 ): Promise<LoginResponse> => {
   try {
     const response: AxiosResponse<LoginResponse["data"]> = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/api/admin/login`,
-      { email, password }
+      `${import.meta.env.VITE_BASE_URL}/admin/login`,
+      { email, password },
+      {withCredentials: true}
     );
     return { status: 200, data: response.data };
   } catch (error: any) {
@@ -60,20 +59,18 @@ const loginAdmin = async (
 
 // Add New Admin (Superadmin only)
 const addAdmin = async (
-  token: string,
-  username: string,
-  email: string,
-  password: string
+  email: string
 ): Promise<AddAdminResponse> => {
   try {
     const response: AxiosResponse<AddAdminResponse["data"]> = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/api/admin/add-admin`,
-      { username, email, password },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      `${import.meta.env.VITE_BASE_URL}/admin/add-admin`,
+      { email },
+      {withCredentials: true}
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   },
     );
     return { status: 200, data: response.data };
   } catch (error: any) {
@@ -112,16 +109,11 @@ const handoverSuperAdmin = async (
 
 // (Optional) Get All Admins — for dashboard display
 const getAllAdmins = async (
-  token: string
 ): Promise<{ status: number; data: Admin[] | string }> => {
   try {
     const response: AxiosResponse<Admin[]> = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/api/admin/getAllAdmins`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      `${import.meta.env.VITE_BASE_URL}/admin/get-all-admins`,
+      {withCredentials: true}
     );
     return { status: 200, data: response.data };
   } catch (error: any) {

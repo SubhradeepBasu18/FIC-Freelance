@@ -1,10 +1,10 @@
 import mongoose, { Schema } from "mongoose";
+import jwt from "jsonwebtoken";
 
 const adminSchema = new mongoose.Schema ({
-    username: {
-        type: String,
-        required: true
-    },
+    // username: {
+    //     type: String,
+    // },
     email: {
         type: String,
         required: true,
@@ -18,8 +18,37 @@ const adminSchema = new mongoose.Schema ({
         type: String,
         enum: ["admin", "superadmin"],
         default: "admin"
+    },
+    refreshToken: {
+        type: String,
     }
 }, {timestamps: true})
+
+adminSchema.methods.generateAccessToken = async function(){
+    return jwt.sign(
+        {
+            _id: this._id,
+            email: this.email,
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        }
+    )
+
+}
+adminSchema.methods.generateRefreshToken = async function(){
+    return jwt.sign(
+        {
+            _id: this._id,
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+        }
+    )
+
+}
 
 // DB-level safety: prevent multiple superadmins
 adminSchema.pre("save", async function (next) {
@@ -31,5 +60,7 @@ adminSchema.pre("save", async function (next) {
   }
   next();
 });
+
+
 
 export const Admin = mongoose.model("Admin", adminSchema);

@@ -1,34 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trash2, UserPlus, Shield, Crown } from 'lucide-react';
+import { addAdmin, getAllAdmins } from '@/configApi/admin';
 
 interface AdminUser {
   id: string;
   email: string;
-  role: 'Admin' | 'SuperAdmin';
+  role: 'admin' | 'superadmin';
 }
 
 export default function AdminAccessPanel() {
   const [users, setUsers] = useState<AdminUser[]>([
-    { id: '1', email: 'superadmin@gmail.com', role: 'SuperAdmin' },
-    { id: '2', email: 'admin1@gmail.com', role: 'Admin' },
-    { id: '3', email: 'admin2@gmail.com', role: 'Admin' },
-    { id: '4', email: 'admin3@gmail.com', role: 'Admin' },
-    { id: '5', email: 'admin4@gmail.com', role: 'Admin' },
+    // { id: '1', email: 'superadmin@gmail.com', role: 'SuperAdmin' },
+    // { id: '2', email: 'admin1@gmail.com', role: 'Admin' },
+    // { id: '3', email: 'admin2@gmail.com', role: 'Admin' },
+    // { id: '4', email: 'admin3@gmail.com', role: 'Admin' },
+    // { id: '5', email: 'admin4@gmail.com', role: 'Admin' },
   ]);
   
   const [newEmail, setNewEmail] = useState('');
   const [showHandoverModal, setShowHandoverModal] = useState(false);
   const [currentSuperAdminId, setCurrentSuperAdminId] = useState<string | null>(null);
 
-  const handleAdd = () => {
+  useEffect(()=>{
+    const fetchAllAdmins = async () => {
+        const response = await getAllAdmins();
+        if (response.status === 200) {
+            console.log(response.data);
+            setUsers(response.data.admins);
+        }
+    }
+    fetchAllAdmins();
+  },[])
+  const handleAdd = async () => {
     if (newEmail.trim() && newEmail.includes('@')) {
       const newUser: AdminUser = {
         id: Date.now().toString(),
         email: newEmail.trim(),
-        role: 'Admin'
+        role: 'admin'
       };
+    //   setUsers([...users, newUser]);
+    //   setNewEmail('');
+    const response = await addAdmin(newEmail.trim());
+
+    if (response.status === 200) {
+        console.log("Admin added successfully");
+      // If the admin is successfully added, update the local state with the new user
       setUsers([...users, newUser]);
-      setNewEmail('');
+      setNewEmail(''); // Reset the email input field
+    } else {
+      // Handle error (e.g., show a message to the user)
+      console.error('Failed to add admin:', response.data);
+      // Optionally display an error message to the user
+    }
     }
   };
 
@@ -41,10 +64,10 @@ export default function AdminAccessPanel() {
     if (currentSuperAdminId) {
       setUsers(users.map(user => {
         if (user.id === currentSuperAdminId) {
-          return { ...user, role: 'Admin' };
+          return { ...user, role: 'admin' };
         }
         if (user.id === toId) {
-          return { ...user, role: 'SuperAdmin' };
+          return { ...user, role: 'superadmin' };
         }
         return user;
       }));
@@ -55,15 +78,15 @@ export default function AdminAccessPanel() {
 
   const handleRemove = (id: string) => {
     const user = users.find(u => u.id === id);
-    if (user?.role === 'SuperAdmin') {
+    if (user?.role === 'superadmin') {
       alert('Cannot remove SuperAdmin. Please handover the role first.');
       return;
     }
     setUsers(users.filter(user => user.id !== id));
   };
 
-  const superAdmin = users.find(u => u.role === 'SuperAdmin');
-  const eligibleAdmins = users.filter(u => u.role === 'Admin');
+  const superAdmin = users.find(u => u.role === 'superadmin');
+  const eligibleAdmins = users.filter(u => u.role === 'admin');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 flex items-center justify-center">
@@ -107,18 +130,18 @@ export default function AdminAccessPanel() {
                 <div
                   key={user.id}
                   className={`backdrop-blur-sm border rounded-lg px-6 py-4 flex items-center justify-between transition-all duration-200 group ${
-                    user.role === 'SuperAdmin' 
+                    user.role === 'superadmin' 
                       ? 'bg-gradient-to-r from-amber-900/30 to-slate-900/40 border-amber-700/50 hover:from-amber-900/40 hover:to-slate-900/50' 
                       : 'bg-slate-900/40 border-slate-700/50 hover:bg-slate-900/60'
                   }`}
                 >
                   <div className="flex items-center gap-4 flex-1">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${
-                      user.role === 'SuperAdmin'
+                      user.role === 'superadmin'
                         ? 'bg-gradient-to-br from-amber-500 to-orange-600'
                         : 'bg-gradient-to-br from-blue-500 to-purple-600'
                     }`}>
-                      {user.role === 'SuperAdmin' ? (
+                      {user.role === 'superadmin' ? (
                         <Crown className="w-5 h-5" />
                       ) : (
                         user.email.charAt(0).toUpperCase()
@@ -131,11 +154,11 @@ export default function AdminAccessPanel() {
                   
                   <div className="flex items-center gap-4">
                     <span className={`px-4 py-1.5 rounded-full text-sm font-medium ${
-                      user.role === 'SuperAdmin'
+                      user.role === 'superadmin'
                         ? 'bg-amber-600/30 text-amber-200 border border-amber-600/50'
                         : 'bg-slate-700/50 text-slate-200'
                     }`}>
-                      {user.role === 'SuperAdmin' ? (
+                      {user.role === 'superadmin' ? (
                         <span className="flex items-center gap-1.5">
                           <Crown className="w-3.5 h-3.5" />
                           SuperAdmin

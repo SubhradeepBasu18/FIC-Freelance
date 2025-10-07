@@ -1,6 +1,27 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { Admin } from "../models/admin.model.js";
+import { randomBytes } from "crypto";
+
+const generateAccessandRefreshToken = async(userId)=> {
+    try {
+        const user = await Admin.findById(userId)
+        // console.log("User: ", user);
+    
+        const accessToken = await user.generateAccessToken();
+        const refreshToken = await user.generateRefreshToken();
+
+        // console.log("Access Token: ", accessToken);
+        // console.log("Refresh Token: ", refreshToken);
+        
+    
+        user.refreshToken = refreshToken
+        await user.save({validateBeforeSave:false})
+    
+        return {accessToken,refreshToken}
+    } catch (error) {
+        return error;
+    }
+}
 
 // Register Superadmin (only at system setup)
 const registerSuperAdmin = async (req, res) => {
@@ -36,11 +57,25 @@ const loginAdmin = async (req, res) => {
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    const {accessToken,refreshToken} = await generateAccessandRefreshToken(admin._id)
+    // console.log("Access Token: ", accessToken);
+    // console.log("Refresh Token: ", refreshToken);
+    
 
-    return res.status(200).json({
+    const options = {
+        httpOnly: true,
+        // secure: true,
+        sameSite: "lax",
+    }
+
+    return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json({
       message: "Login successful",
-      token,
+      accessToken,
+      refreshToken,
       admin: { id: admin._id, username: admin.username, role: admin.role },
     });
   } catch (error) {
@@ -48,23 +83,63 @@ const loginAdmin = async (req, res) => {
   }
 };
 
+const generateTemporaryPassword = (email, length = 8) => {
+    if (!email || typeof email !== 'string') {
+        throw new TypeError('email (string) is required');
+      }
+    
+      const MIN_LENGTH = 8;
+      if (typeof length !== 'number' || length < MIN_LENGTH) {
+        length = MIN_LENGTH;
+      }
+    
+      const localPart = email.split('@')[0] || '';
+        // console.log(localPart)
+      // take up to 2 safe chars from local part (letters/numbers only) to make password memorable a bit
+      const prefix = (localPart.match(/[A-Za-z0-9]/g) || []).slice(0, 2).join('') || 'u';
+        // console.log(prefix)
+    
+      // charset: letters, digits and a few safe symbols
+      const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+      const needed = Math.max(length - prefix.length, 4); // ensure at least 4 random chars
+      const bytes = randomBytes(needed);
+      let randomPart = '';
+    
+      for (let i = 0; i < needed; i++) {
+        // map each random byte to a char in charset
+        randomPart += charset[bytes[i] % charset.length];
+      }
+    
+      // Simple shuffle of the combined password to avoid fixed prefix position (keeps implementation simple)
+      const combined = (prefix + randomPart).split('');
+      for (let i = combined.length - 1; i > 0; i--) {
+        const j = bytes[i % bytes.length] % (i + 1);
+        [combined[i], combined[j]] = [combined[j], combined[i]];
+      }
+    
+      return combined.join('');   
+}
+
 // Add new admin (superadmin only)
 const addAdmin = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    // const { username, email, password } = req.body;
+    const { email } = req.body;
 
     const existing = await Admin.findOne({ email });
     if (existing) return res.status(400).json({ message: "Email already exists" });
 
+    const password = generateTemporaryPassword(email)
+    // console.log("Password: ", password)
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newAdmin = await Admin.create({
-      username,
       email,
       password: hashedPassword,
       role: "admin",
     });
 
-    return res.status(201).json({ message: "Admin added", newAdmin });
+    return res.status(201).json({ message: "Admin added", newAdmin, password });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -118,4 +193,13 @@ const handoverSuperAdmin = async (req, res) => {
   }
 };
 
-export { registerSuperAdmin, loginAdmin, addAdmin, handoverSuperAdmin };
+const getAllAdmins = async (req, res) => {
+  try {
+    const admins = await Admin.find();
+    return res.status(200).json({ message: "Admins fetched successfully", admins });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export { registerSuperAdmin, loginAdmin, addAdmin, handoverSuperAdmin, getAllAdmins };

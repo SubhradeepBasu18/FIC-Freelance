@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { loginAdmin } from '@/configApi/admin';
 const SignInPage = () => {
     const [formData, setFormData] = useState({
         email: '',
@@ -9,6 +9,7 @@ const SignInPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -25,23 +26,17 @@ const SignInPage = () => {
 
         try {
             // Replace with your actual API endpoint
-            const response = await fetch('/api/admin/login', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
+            const response = await loginAdmin(formData.email, formData.password);
+            console.log("Response: ", response);
+            
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (response.status === 200) {
                 // Store token and redirect
-                localStorage.setItem('adminToken', data.token);
-                localStorage.setItem('adminRole', data.role);
-                navigate('/admin/dashboard');
+                // localStorage.setItem('adminToken', response.data.token);
+                // localStorage.setItem('adminRole', response.data.admin.role);
+                navigate('/admin');
             } else {
-                setError(data.message || 'Sign in failed');
+                setError(response.data.message || 'Sign in failed');
             }
         } catch (err) {
             setError('Network error. Please try again.');
