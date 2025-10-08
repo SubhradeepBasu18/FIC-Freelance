@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Trash2, UserPlus, Shield, Crown } from 'lucide-react';
-import { addAdmin, getAllAdmins } from '@/configApi/admin';
+import { addAdmin, getAllAdmins, getCurrentSession, removeAdmin } from '@/configApi/admin';
 
 interface AdminUser {
   id: string;
@@ -17,6 +17,7 @@ export default function AdminAccessPanel() {
     // { id: '5', email: 'admin4@gmail.com', role: 'Admin' },
   ]);
   
+  const [currentSession, setCurrentSession] = useState<AdminUser | null>(null);
   const [newEmail, setNewEmail] = useState('');
   const [showHandoverModal, setShowHandoverModal] = useState(false);
   const [currentSuperAdminId, setCurrentSuperAdminId] = useState<string | null>(null);
@@ -29,7 +30,16 @@ export default function AdminAccessPanel() {
             setUsers(response.data.admins);
         }
     }
+
+    const fetchCurrentSession = async () => {
+        const response = await getCurrentSession();
+        if (response.status === 200) {
+            console.log("Current session:", response.data);
+            setCurrentSession(response.data);
+        }
+    }
     fetchAllAdmins();
+    fetchCurrentSession();
   },[])
   const handleAdd = async () => {
     if (newEmail.trim() && newEmail.includes('@')) {
@@ -44,6 +54,9 @@ export default function AdminAccessPanel() {
 
     if (response.status === 200) {
         console.log("Admin added successfully");
+        console.log("response: ", response);
+        alert('Your temporary password: ' + response.data.password);
+        
       // If the admin is successfully added, update the local state with the new user
       setUsers([...users, newUser]);
       setNewEmail(''); // Reset the email input field
@@ -76,13 +89,16 @@ export default function AdminAccessPanel() {
     setCurrentSuperAdminId(null);
   };
 
-  const handleRemove = (id: string) => {
-    const user = users.find(u => u.id === id);
-    if (user?.role === 'superadmin') {
-      alert('Cannot remove SuperAdmin. Please handover the role first.');
-      return;
+  const handleRemove = async(id: string) => {
+    console.log("ADMIN TO BE REMOVED: ", id);
+    const response = await removeAdmin(id);
+    if (response.status === 200) {
+      console.log("Admin removed successfully");
+      console.log("response: ", response);
+      setUsers(users.filter(user => user.id !== id));
+    } else {
+      console.error('Failed to remove admin:', response);
     }
-    setUsers(users.filter(user => user.id !== id));
   };
 
   const superAdmin = users.find(u => u.role === 'superadmin');
@@ -115,6 +131,7 @@ export default function AdminAccessPanel() {
               </div>
               <button
                 onClick={handleAdd}
+                disabled={currentSession?.role !== 'superadmin'}
                 className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-blue-500/50"
               >
                 <UserPlus className="w-5 h-5" />
@@ -178,7 +195,7 @@ export default function AdminAccessPanel() {
                       <div className="w-[88px]"></div>
                     )}
                     <button
-                      onClick={() => handleRemove(user.id)}
+                      onClick={() => handleRemove(user._id)}
                       className={`p-2 rounded-lg transition-all duration-200 ${
                         user.role === 'superadmin'
                           ? 'text-slate-600 cursor-not-allowed'

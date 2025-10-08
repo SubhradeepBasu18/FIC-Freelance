@@ -3,6 +3,7 @@ import {
   registerSuperAdmin, 
   loginAdmin, 
   addAdmin, 
+  removeAdmin,
   handoverSuperAdmin, 
   getAllAdmins,
   getCurrentAdmin,
@@ -22,6 +23,7 @@ router.post("/logout", protectAdmin, logoutAdmin);
 
 // Superadmin only routes
 router.post("/add-admin", protectAdmin, superAdminOnly, addAdmin);
+router.delete("/remove-admin/:id", protectAdmin, superAdminOnly, removeAdmin);
 router.put("/handover-superadmin", protectAdmin, superAdminOnly, handoverSuperAdmin);
 router.get("/get-all-admins", protectAdmin, getAllAdmins);
 

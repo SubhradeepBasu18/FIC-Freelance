@@ -145,6 +145,17 @@ const addAdmin = async (req, res) => {
   }
 };
 
+const removeAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const admin = await Admin.findByIdAndDelete(id);
+    if (!admin) return res.status(404).json({ message: "Admin not found" });
+    return res.status(200).json({ message: "Admin removed", admin });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // Handover superadmin (delete old superadmin safely using transaction)
 const handoverSuperAdmin = async (req, res) => {
   try {
@@ -252,6 +263,7 @@ export {
   registerSuperAdmin, 
   loginAdmin, 
   addAdmin, 
+  removeAdmin,
   handoverSuperAdmin, 
   getAllAdmins, 
   getCurrentAdmin, 
