@@ -53,35 +53,64 @@ const addTeamMember = async (req, res) => {
   }
 };
 
-const updateTeamMember = async(req, res) => {
+// team.controller.js - Update the updateTeamMember function
+const updateTeamMember = async (req, res) => {
     try {
-        
-        const {name, position, linkedin} = req.body;
-        
-        const teamMember = await TeamMember.findById(req.params.id)
-        if(!teamMember) {
-            return res.status(404).json({
-                message: "Team member not found"
-            })
+        const { name, position, linkedin } = req.body;
+        const { id } = req.params;
+
+        if (!name || !position || !linkedin) {
+            return res.status(400).json({
+                message: "All fields are required",
+            });
         }
 
-        teamMember.name = name;
-        teamMember.position = position;
-        teamMember.linkedin = linkedin;
+        // Find the AboutUs document containing the team member
+        const aboutUs = await AboutUs.findOne({ 'team._id': id });
+        if (!aboutUs) {
+            return res.status(404).json({
+                message: "Team member not found"
+            });
+        }
 
-        await teamMember.save();
+        // Find the team member in the array
+        const teamMemberIndex = aboutUs.team.findIndex((member) => member._id.toString() === id);
+        if (teamMemberIndex === -1) {
+            return res.status(404).json({
+                message: "Team member not found"
+            });
+        }
+
+        // Update basic fields
+        aboutUs.team[teamMemberIndex].name = name;
+        aboutUs.team[teamMemberIndex].position = position;
+        aboutUs.team[teamMemberIndex].linkedin = linkedin;
+
+        // Handle avatar update if a new file is provided
+        const avatarLocalImgPath = req?.file?.path;
+        if (avatarLocalImgPath) {
+            const avatarURL = await uploadOnCloudinary(avatarLocalImgPath);
+            if (!avatarURL) {
+                return res.status(500).json({
+                    message: "Failed to upload new avatar",
+                });
+            }
+            aboutUs.team[teamMemberIndex].avatar = avatarURL.url;
+        }
+
+        await aboutUs.save();
 
         return res.status(200).json({
             message: "Team member updated successfully",
-            teamMember
-        })
+            teamMember: aboutUs.team[teamMemberIndex]
+        });
 
     } catch (error) {
         return res.status(500).json({
             message: error.message,
-        })
+        });
     }
-}
+};
 
 const deleteTeamMember = async (req, res) => {
     try {

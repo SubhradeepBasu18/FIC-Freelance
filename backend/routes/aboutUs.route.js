@@ -8,7 +8,8 @@ const publicTeamRouter = express.Router();
 
 //protected routes
 protectedTeamRouter.post("/addTeamMember", upload.single("avatar"), protectAdmin, addTeamMember);
-protectedTeamRouter.put("/updateTeamMember/:id", protectAdmin, updateTeamMember);
+// protectedTeamRouter.put("/updateTeamMember/:id", protectAdmin, updateTeamMember);
+protectedTeamRouter.put("/updateTeamMember/:id", upload.single("avatar"), protectAdmin, updateTeamMember);
 protectedTeamRouter.delete("/deleteTeamMember/:id", protectAdmin, deleteTeamMember);
 
 //public routes
