@@ -38,13 +38,13 @@ const Footer: React.FC = () => {
                                 />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-bold italic light-text">
+                                <h3 className="text-2xl font-bold italic text-white">
                                     FICMH
                                 </h3>
-                                <p className="text-sm text-zinc-400">Finance & Investment Club</p>
+                                <p className="text-sm text-white">Finance & Investment Club</p>
                             </div>
                         </div>
-                        <p className="light-text mb-6 max-w-md text-sm leading-relaxed">
+                        <p className="text-white mb-6 max-w-md text-sm leading-relaxed">
                             Cultivating financial literacy and empowering young minds through knowledge, innovation, 
                             and real-world financial insights.
                         </p>
@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
                                         className="w-10 h-10 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:border-zinc-500 group"
                                         aria-label={social.name}
                                     >
-                                        <IconComponent className="light-text group-hover:text-white text-sm transition-colors duration-300" />
+                                        <IconComponent className="text-white group-hover:text-white text-sm transition-colors duration-300" />
                                     </a>
                                 );
                             })}
@@ -67,8 +67,8 @@ const Footer: React.FC = () => {
 
                     {/* Quick Links */}
                     <div>
-                        <h4 className="text-lg font-semibold light-text mb-4 flex items-center">
-                            <span className="w-1.5 h-1.5 bg-zinc-400 rounded-full mr-2"></span>
+                        <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
+                            <span className="w-1.5 h-1.5 bg-white rounded-full mr-2"></span>
                             Quick Links
                         </h4>
                         <ul className="space-y-3">
@@ -76,9 +76,9 @@ const Footer: React.FC = () => {
                                 <li key={link.name}>
                                     <a
                                         href={link.href}
-                                        className="light-text hover:text-white transition-all duration-300 hover:translate-x-2 flex items-center group text-sm"
+                                        className="text-white hover:text-white transition-all duration-300 hover:translate-x-2 flex items-center group text-sm"
                                     >
-                                        <span className="w-1 h-1 bg-zinc-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                        <span className="w-1 h-1 bg-white rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                                         {link.name}
                                     </a>
                                 </li>
@@ -88,8 +88,8 @@ const Footer: React.FC = () => {
 
                     {/* Contact Info */}
                     <div>
-                        <h4 className="text-lg font-semibold light-text mb-4 flex items-center">
-                            <span className="w-1.5 h-1.5 bg-zinc-400 rounded-full mr-2"></span>
+                        <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
+                            <span className="w-1.5 h-1.5 bg-white rounded-full mr-2"></span>
                             Contact
                         </h4>
                         <ul className="space-y-3">
@@ -98,9 +98,9 @@ const Footer: React.FC = () => {
                                 return (
                                     <li key={contact.type} className="flex items-center space-x-3">
                                         <div className="w-8 h-8 bg-zinc-900 rounded-lg flex items-center justify-center border border-zinc-700">
-                                            <IconComponent className="light-text text-sm" />
+                                            <IconComponent className="text-white text-sm" />
                                         </div>
-                                        <span className="light-text text-sm">{contact.value}</span>
+                                        <span className="text-white text-sm">{contact.value}</span>
                                     </li>
                                 );
                             })}
@@ -111,12 +111,12 @@ const Footer: React.FC = () => {
                 {/* Bottom section */}
                 <div className="border-t border-zinc-800 pt-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                        <div className="light-text text-sm">
+                        <div className="text-white text-sm">
                             © {currentYear} <span className="text-white font-semibold">Finance & Investment Club, Miranda House</span>. 
                             All rights reserved.
                         </div>
                         
-                        <div className="flex items-center space-x-6 text-sm light-text">
+                        <div className="flex items-center space-x-6 text-sm text-white">
                             <a href="#" className="hover:text-white transition-colors duration-300 hover:scale-105">
                                 Privacy Policy
                             </a>

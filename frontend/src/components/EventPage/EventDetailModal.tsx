@@ -15,10 +15,9 @@ interface Event {
 interface EventDetailModalProps {
     event: Event | null;
     onClose: () => void;
-    getCategoryColor: (category: string) => string;
 }
 
-const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModalProps) => {
+const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
     if (!event) return null;
     console.log('event: ', event);
     
@@ -44,7 +43,7 @@ const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModal
             <div className="p-6 border-b border-zinc-800">
             <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                <div className={`w-2 h-8 rounded-full ${getCategoryColor(event.category).split(' ')[0]}`}></div>
+                <div className="w-2 h-8 rounded-full bg-white/20"></div>
                 <div className="flex-1">
                     <h2 className="text-2xl font-semibold text-white leading-tight tracking-tight">
                     {event.title}
@@ -53,7 +52,7 @@ const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModal
                 </div>
                 
                 <div className="flex items-center gap-3">
-                <span className={`px-3 py-1.5 rounded-lg text-sm font-medium ${getCategoryColor(event.category)} backdrop-blur-sm`}>
+                <span className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-800 text-zinc-300 border border-zinc-700 backdrop-blur-sm">
                     {event.category}
                 </span>
                 <div className="flex items-center gap-2 text-sm text-zinc-400">
@@ -81,8 +80,8 @@ const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModal
             <div className="grid grid-cols-2 gap-4">
                 <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-cyan-500/10 rounded-lg flex items-center justify-center border border-cyan-500/20">
-                    <Calendar className="w-5 h-5 text-cyan-400" />
+                    <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
+                    <Calendar className="w-5 h-5 text-white" />
                     </div>
                     <div>
                     <p className="text-zinc-400 text-sm font-medium mb-1">Date</p>
@@ -93,8 +92,8 @@ const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModal
 
                 <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-violet-500/10 rounded-lg flex items-center justify-center border border-violet-500/20">
-                    <Clock className="w-5 h-5 text-violet-400" />
+                    <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
+                    <Clock className="w-5 h-5 text-white" />
                     </div>
                     <div>
                     <p className="text-zinc-400 text-sm font-medium mb-1">Time</p>
@@ -105,8 +104,8 @@ const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModal
 
                 <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-rose-500/10 rounded-lg flex items-center justify-center border border-rose-500/20">
-                    <MapPin className="w-5 h-5 text-rose-400" />
+                    <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
+                    <MapPin className="w-5 h-5 text-white" />
                     </div>
                     <div>
                     <p className="text-zinc-400 text-sm font-medium mb-1">Venue</p>
@@ -117,8 +116,8 @@ const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModal
 
                 <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center border border-emerald-500/20">
-                    <Tag className="w-5 h-5 text-emerald-400" />
+                    <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
+                    <Tag className="w-5 h-5 text-white" />
                     </div>
                     <div>
                     <p className="text-zinc-400 text-sm font-medium mb-1">Category</p>
@@ -131,7 +130,7 @@ const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModal
             {/* Professional Description */}
             <div className="bg-zinc-800/30 rounded-xl p-5 border border-zinc-700/20">
                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
-                <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
                 Event Overview
                 </h3>
                 <p className="text-zinc-300 leading-relaxed text-[15px] tracking-wide">
@@ -179,4 +178,3 @@ const EventDetailModal = ({ event, onClose, getCategoryColor }: EventDetailModal
 };
 
 export default EventDetailModal;
-

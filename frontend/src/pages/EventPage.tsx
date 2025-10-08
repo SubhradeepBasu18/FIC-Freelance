@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import ChromaGrid from '@/components/ui/ChromaGrid';
 import EventCard from '@/components/EventPage/EventCard';
 import EventDetailModal from '@/components/EventPage/EventDetailModal';
-import { upcomingEvents, eventCategories } from '@/constants/constants';
+import { eventCategories } from '@/constants/constants';
 import { getAllEvents } from '@/configApi/events';
-// Define interfaces for both data structures
+
 interface EventCardData {
   id: number;
+  _id?: string;
   title: string;
   description: string;
   startDate: string;
@@ -35,10 +35,12 @@ const EventPage = () => {
   const [selectedEvent, setSelectedEvent] = useState<ModalEvent | null>(null);
   const [liveEvents, setLiveEvents] = useState<EventCardData[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<EventCardData[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        setLoading(true);
         const response = await getAllEvents();
         if (response.status === 200) {
           console.log("Events set");
@@ -46,52 +48,44 @@ const EventPage = () => {
         }
       } catch (error) {
         console.error('Error fetching events:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchEvents();
-  }, []); // Run only once when the component mounts
+  }, []);
 
   useEffect(() => {
     if (events.length > 0) {
       const currentTime = new Date();
-  
-      // Set current time to midnight for date comparison
       currentTime.setHours(0, 0, 0, 0);
-  
-  
+
       // Filter live events (compare only dates)
       const liveEventsList = events.filter((event) => {
         const eventStart = new Date(event.startDate);
         const eventEnd = new Date(event.endDate);
-  
-        // Set event times to midnight for date comparison
+
         eventStart.setHours(0, 0, 0, 0);
         eventEnd.setHours(0, 0, 0, 0);
-  
+
         return currentTime >= eventStart && currentTime <= eventEnd;
       });
-  
+
       setLiveEvents(liveEventsList);
       console.log("liveEventsList: ", liveEventsList);
-      
-  
+
       // Filter upcoming events (compare only dates)
       const upcomingEventsList = events.filter((event) => {
         const eventStart = new Date(event.startDate);
-  
-        // Set event start time to midnight for date comparison
         eventStart.setHours(0, 0, 0, 0);
-  
         return currentTime < eventStart;
       });
-  
+
       setUpcomingEvents(upcomingEventsList);
       console.log("upcomingEventsList: ", upcomingEventsList);
     }
   }, [events]);
-  
-
 
   // Function to convert EventCardData to ModalEvent
   const convertToModalEvent = (event: EventCardData): ModalEvent => {
@@ -101,10 +95,10 @@ const EventPage = () => {
       description: event.description,
       date: event.startDate,
       time: event.time,
-      venue: event.location, // Map location to venue
-      category: event.type,   // Map type to category
-      image: event.icon,      // Map icon to image, or use a default
-      registrationUrl: event.registrationUrl       // You can set this based on your logic
+      venue: event.location,
+      category: event.type,
+      image: event.icon,
+      registrationUrl: event.registrationUrl
     };
   };
 
@@ -117,19 +111,6 @@ const EventPage = () => {
   // Function to close modal
   const handleCloseModal = () => {
     setSelectedEvent(null);
-  };
-
-  // Category color mapping function
-  const getCategoryColor = (category: string) => {
-    const colorMap: { [key: string]: string } = {
-      workshop: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
-      conference: 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
-      seminar: 'bg-green-500/20 text-green-300 border border-green-500/30',
-      competition: 'bg-red-500/20 text-red-300 border border-red-500/30',
-      default: 'bg-zinc-500/20 text-zinc-300 border border-zinc-500/30'
-    };
-
-    return colorMap[category.toLowerCase()] || colorMap.default;
   };
 
   const speakerItems = [
@@ -189,31 +170,148 @@ const EventPage = () => {
     }
   ];
 
+  // Modern loading skeleton
+  const EventCardSkeleton = () => (
+    <div className="bg-black rounded-xl border border-gray-800 h-full flex flex-col animate-pulse overflow-hidden">
+      <div className="p-6 flex flex-col flex-1">
+        <div className="flex items-start justify-between mb-4">
+          <div className="h-4 bg-gray-800 rounded w-24"></div>
+        </div>
+        <div className="h-6 bg-gray-800 rounded mb-3 w-3/4"></div>
+        <div className="space-y-2 mb-6 flex-1">
+          <div className="h-3 bg-gray-800 rounded"></div>
+          <div className="h-3 bg-gray-800 rounded w-5/6"></div>
+          <div className="h-3 bg-gray-800 rounded w-4/6"></div>
+        </div>
+        <div className="space-y-3 mb-6">
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-gray-800 rounded mr-3"></div>
+            <div className="h-3 bg-gray-800 rounded w-32"></div>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-gray-800 rounded mr-3"></div>
+            <div className="h-3 bg-gray-800 rounded w-24"></div>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-gray-800 rounded mr-3"></div>
+            <div className="h-3 bg-gray-800 rounded w-40"></div>
+          </div>
+        </div>
+        <div className="h-12 bg-gray-800 rounded-lg"></div>
+      </div>
+    </div>
+  );
+
   return (
     <section className="min-h-screen bg-black py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold italic text-white mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
             Our Events
           </h1>
-          <div className="w-24 h-1 accent-bg mx-auto mb-8"></div>
+          <div className="w-24 h-1 bg-white mx-auto mb-8"></div>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Engaging workshops, insightful speaker sessions, and collaborative initiatives that bridge the gap
             between financial theory and real-world practice.
           </p>
         </div>
 
+        {/* Upcoming Events Section */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-white mb-4">Upcoming Events</h2>
+            <div className="w-20 h-1 bg-white mx-auto"></div>
+            <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+              Don't miss these exciting opportunities to learn, network, and grow
+            </p>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+              {[...Array(6)].map((_, index) => (
+                <EventCardSkeleton key={index} />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+              {upcomingEvents.map((event: EventCardData) => (
+                <div
+                  key={event.id || event._id}
+                  className="cursor-pointer h-full transform transition-all duration-300 hover:scale-105"
+                  onClick={() => handleEventClick(event)}
+                >
+                  <EventCard event={event} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Live Events Section */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-white mb-4">Live Events</h2>
+            <div className="w-20 h-1 bg-white mx-auto"></div>
+            <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+              Events happening right now! Join these ongoing sessions and be part of the action
+            </p>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+              {[...Array(3)].map((_, index) => (
+                <EventCardSkeleton key={index} />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+              {liveEvents.length > 0 ? (
+                liveEvents.map((event: EventCardData) => (
+                  <div
+                    key={event.id || event._id}
+                    className="cursor-pointer group relative h-full transform transition-all duration-300 hover:scale-105"
+                    onClick={() => handleEventClick(event)}
+                  >
+                    {/* Live Badge */}
+                    <div className="absolute -top-3 -right-3 z-20">
+                      <div className="bg-black border border-white text-white px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg">
+                        <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                        LIVE NOW
+                      </div>
+                    </div>
+
+                    {/* Live Event Card Container - Completely Black */}
+                    <div className="relative h-full rounded-xl border border-gray-800 bg-black overflow-hidden">
+                      <EventCard event={event} />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <div className="bg-black p-8 rounded-2xl border border-gray-800 max-w-md mx-auto">
+                    <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <div className="w-8 h-8 bg-gray-800 rounded-full"></div>
+                    </div>
+                    <p className="text-xl font-semibold text-white mb-2">No Live Events Currently</p>
+                    <p className="text-gray-400">Check back later or browse upcoming events.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Inviesta Section */}
         <div className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4">Inviesta</h2>
-            <div className="w-20 h-1 accent-bg mx-auto"></div>
+            <div className="w-20 h-1 bg-white mx-auto"></div>
           </div>
 
-          <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-accent/20 mb-12">
+          <div className="bg-black p-8 rounded-2xl border border-gray-800 mb-12">
             <p className="text-lg text-gray-300 leading-relaxed text-center max-w-4xl mx-auto">
-              <span className="text-accent font-semibold">Inviesta</span> isn't just an annual fest but where ideas come alive and connect with the real world.
+              <span className="text-white font-semibold">Inviesta</span> isn't just an annual fest but where ideas come alive and connect with the real world.
               From thought-provoking speaker sessions that deliver industry insights and career inspiration, to intellectually
               stimulating competitions that challenge skills in finance, economics and strategy,
               Inviesta brings together ambition, creativity, and learning under one roof. Blending Miranda
@@ -230,136 +328,37 @@ const EventPage = () => {
             </p>
           </div>
 
-          {/* Responsive Speaker Grid Container */}
-          <div className="relative rounded-2xl overflow-hidden">
-            {/* Mobile Fallback Grid */}
-            <div className="lg:hidden grid grid-cols-2 md:grid-cols-3 gap-4">
-              {speakerItems.map((speaker, index) => (
-                <div key={index} className="bg-zinc-900/50 rounded-xl p-4 border border-accent/20 text-center">
-                  <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden border-2"
-                    style={{ borderColor: speaker.borderColor }}>
-                    <img
-                      src={speaker.image}
-                      alt={speaker.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h4 className="text-white font-semibold text-sm">{speaker.title}</h4>
-                </div>
-              ))}
-            </div>
-
-            {/* Desktop ChromaGrid */}
-            <div className="hidden lg:block h-[800px]">
-              <ChromaGrid
-                items={speakerItems}
-                radius={250}
-                damping={0.5}
-                fadeOut={0.7}
-                ease="power3.out"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Upcoming Events Section */}
-        <div className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">Upcoming Events</h2>
-            <div className="w-20 h-1 accent-bg mx-auto"></div>
-            <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-              Don't miss these exciting opportunities to learn, network, and grow
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingEvents.map((event: EventCardData) => (
-              <div
-                key={event._id}
-                className="cursor-pointer transform transition-transform hover:scale-105"
-                onClick={() => handleEventClick(event)}
+          {/* Consistent Speaker Grid for all screen sizes */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {speakerItems.map((speaker, index) => (
+              <div 
+                key={index} 
+                className="group bg-black rounded-xl p-4 border border-gray-800 text-center hover:border-white/30 transition-all duration-300 hover:transform hover:scale-105"
               >
-                <EventCard event={event} />
+                <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden border-2 border-gray-700 group-hover:border-white/50 transition-colors duration-300">
+                  <img
+                    src={speaker.image}
+                    alt={speaker.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <h4 className="text-white font-semibold text-sm">{speaker.title}</h4>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Live Events Section */}
-        <div className="mb-20">
-        <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">Live Events</h2>
-            <div className="w-20 h-1 accent-bg mx-auto"></div>
-            <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-            Events happening right now! Join these ongoing sessions and be part of the action
-            </p>
-        </div>
-
-        {/* Live Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Check if there are live events */}
-            {liveEvents.length > 0 ? (
-            liveEvents.map((event: EventCardData) => (
-                <div
-                key={event._id}
-                className="cursor-pointer transform transition-transform hover:scale-105 relative"
-                onClick={() => handleEventClick(event)}
-                >
-                {/* Live Badge */}
-                <div className="absolute -top-2 -right-2 z-10">
-                    <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 animate-pulse">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                    LIVE NOW
-                    </div>
-                </div>
-
-                {/* Enhanced Event Card with Live Styling */}
-                <div className="relative overflow-hidden rounded-xl border-2 border-red-500/30 bg-gradient-to-br from-red-500/10 to-transparent">
-                    <EventCard event={event} />
-
-                    {/* Live Overlay Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-red-500/5 to-transparent pointer-events-none"></div>
-
-                    {/* Join Now Button Overlay */}
-                    <div className="absolute mt-2 bottom-4 left-4 right-4">
-                    <button
-                        className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
-                        onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(event.registrationUrl, '_blank');
-                        }}
-                    >
-                        Join Now
-                    </button>
-                    </div>
-                </div>
-                </div>
-            ))
-            ) : (
-            // Display message when no live events are available
-            <div className="col-span-full text-center py-8">
-                <div className="bg-zinc-800/50 p-6 rounded-lg border border-zinc-700/30">
-                <p className="text-xl font-semibold text-white">No Live Events Currently</p>
-                <p className="text-gray-400 mt-2">Check back later or browse upcoming events.</p>
-                </div>
-            </div>
-            )}
-        </div>
-        </div>
-
-
         {/* Event Detail Modal */}
         <EventDetailModal
           event={selectedEvent}
           onClose={handleCloseModal}
-          getCategoryColor={getCategoryColor}
         />
 
         {/* Event Categories Section */}
         <div className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4">Event Categories</h2>
-            <div className="w-20 h-1 accent-bg mx-auto"></div>
+            <div className="w-20 h-1 bg-white mx-auto"></div>
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
               Diverse event formats tailored to different learning styles and interests
             </p>
@@ -369,13 +368,13 @@ const EventPage = () => {
             {eventCategories.map((category, index) => (
               <div
                 key={index}
-                className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300"
+                className="group bg-black p-6 rounded-xl border border-gray-800 hover:border-white/30 transition-all duration-300 h-full flex flex-col hover:transform hover:scale-105"
               >
-                <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="text-3xl mb-4 text-white group-hover:scale-110 transition-transform duration-300">
                   {category.icon}
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">{category.name}</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-gray-300 text-sm leading-relaxed flex-1">
                   {category.description}
                 </p>
               </div>
@@ -384,36 +383,33 @@ const EventPage = () => {
         </div>
 
         {/* Event Stats Section */}
-        <div className="bg-black rounded-2xl p-8 border border-accent/20 mb-16">
+        <div className="bg-black rounded-2xl p-8 border border-gray-800 mb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-white mb-2">50+</div>
-              <div className="text-gray-400 text-sm">Events Hosted</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-white mb-2">2000+</div>
-              <div className="text-gray-400 text-sm">Participants</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-white mb-2">25+</div>
-              <div className="text-gray-400 text-sm">Industry Speakers</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-white mb-2">15+</div>
-              <div className="text-gray-400 text-sm">Partner Organizations</div>
-            </div>
+            {[
+              { number: "50+", label: "Events Hosted" },
+              { number: "2000+", label: "Participants" },
+              { number: "25+", label: "Industry Speakers" },
+              { number: "15+", label: "Partner Organizations" }
+            ].map((stat, index) => (
+              <div key={index} className="group">
+                <div className="text-3xl font-bold text-white mb-2">
+                  {stat.number}
+                </div>
+                <div className="text-gray-400 text-sm">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <div className="bg-gradient-to-r from-zinc-500/10 to-blue-500/10 rounded-2xl p-8 border border-accent/20">
+          <div className="bg-black rounded-2xl p-8 border border-gray-800">
             <h3 className="text-2xl font-bold text-white mb-4">Want to stay updated?</h3>
             <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
               Follow us on social media and join our mailing list to get notified about upcoming events,
               workshops, and opportunities.
             </p>
-            <button className="accent-bg primary-text px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300">
+            <button className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300">
               Join Our Community
             </button>
           </div>
