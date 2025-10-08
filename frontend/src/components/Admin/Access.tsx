@@ -167,7 +167,7 @@ export default function AdminAccessPanel() {
                         'Admin'
                       )}
                     </span>
-                    {user.role === 'SuperAdmin' ? (
+                    {user.role === 'superadmin' ? (
                       <button
                         onClick={() => handleHandover(user.id)}
                         className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-200 font-medium text-sm border border-amber-500"
@@ -180,12 +180,12 @@ export default function AdminAccessPanel() {
                     <button
                       onClick={() => handleRemove(user.id)}
                       className={`p-2 rounded-lg transition-all duration-200 ${
-                        user.role === 'SuperAdmin'
+                        user.role === 'superadmin'
                           ? 'text-slate-600 cursor-not-allowed'
                           : 'text-slate-400 hover:text-red-400 hover:bg-red-500/10'
                       }`}
-                      title={user.role === 'SuperAdmin' ? 'Cannot remove SuperAdmin' : 'Remove user'}
-                      disabled={user.role === 'SuperAdmin'}
+                      title={user.role === 'superadmin' ? 'Cannot remove SuperAdmin' : 'Remove user'}
+                      disabled={user.role === 'superadmin'}
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>

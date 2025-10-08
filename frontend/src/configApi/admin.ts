@@ -125,5 +125,38 @@ const getAllAdmins = async (
   }
 };
 
-export { loginAdmin, addAdmin, handoverSuperAdmin, getAllAdmins };
+const getCurrentSession = async(): Promise<{ status: number; data: Admin | string }> => {
+  try {
+    const response: AxiosResponse<Admin> = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/admin/current-session`,
+      {withCredentials: true}
+    );
+    return { status: 200, data: response.data };
+  } catch (error: any) {
+    console.error(error);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || "Failed to fetch current session",
+    };
+  }
+};
+
+const logoutAdmin = async(): Promise<{ status: number; data: string }> => {
+  try {
+    const response: AxiosResponse<string> = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/admin/logout`,
+      {},
+      {withCredentials: true},
+    );
+    return { status: 200, data: response.data };
+  } catch (error: any) {
+    console.error(error);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || "Failed to logout",
+    };
+  }
+};
+
+export { loginAdmin, addAdmin, handoverSuperAdmin, getAllAdmins, getCurrentSession, logoutAdmin };
 export type { Admin };

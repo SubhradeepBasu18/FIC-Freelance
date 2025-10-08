@@ -76,7 +76,7 @@ const loginAdmin = async (req, res) => {
       message: "Login successful",
       accessToken,
       refreshToken,
-      admin: { id: admin._id, username: admin.username, role: admin.role },
+      admin: { id: admin._id, email: admin.email, role: admin.role },
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -202,4 +202,58 @@ const getAllAdmins = async (req, res) => {
   }
 };
 
-export { registerSuperAdmin, loginAdmin, addAdmin, handoverSuperAdmin, getAllAdmins };
+// Get current admin
+const getCurrentAdmin = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin?._id).select('-password -refreshToken');
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+    res.status(200).json(admin);
+  } catch (error) {
+    console.error('Error getting admin:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Logout admin
+const logoutAdmin = async (req, res) => {
+  try {
+    await Admin.findByIdAndUpdate(
+      req.admin._id,
+      {
+        $unset: {
+          refreshToken: 1
+        }
+      },
+      {
+        new: true
+      }
+    );
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 0
+    };
+
+    return res.status(200)
+      .clearCookie('accessToken', options)
+      .clearCookie('refreshToken', options)
+      .json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Error logging out:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export { 
+  registerSuperAdmin, 
+  loginAdmin, 
+  addAdmin, 
+  handoverSuperAdmin, 
+  getAllAdmins, 
+  getCurrentAdmin, 
+  logoutAdmin 
+};
