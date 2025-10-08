@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import CircularGallery from '@/components/ui/CircularGallery'; 
-import { getGalleryImages, getVirtualAlbums} from '@/lib/galleryImages';
 import { getAllAlbums, getAllImages } from "@/configApi/gallery";
 
 interface GalleryImage {
@@ -130,7 +129,7 @@ const Gallery = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Gallery
             </h2>
-            <p className="text-xl text-gray-300">Loading gallery...</p>
+            <p className="text-xl text-white">Loading gallery...</p>
           </div>
         </div>
       </main>
@@ -150,7 +149,7 @@ const Gallery = () => {
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
                 Gallery
               </h2>
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              <p className="text-xl text-white max-w-2xl mx-auto">
                 Capturing the spirit of innovation, creativity, and collaboration from our events
               </p>
               
@@ -160,8 +159,8 @@ const Gallery = () => {
                   onClick={backToAlbums}
                   className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
                     viewMode === 'albums' 
-                      ? 'accent-bg primary-text' 
-                      : 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                      ? 'bg-white text-black' 
+                      : 'bg-zinc-800 text-white hover:bg-zinc-700'
                   }`}
                 >
                   Browse Albums
@@ -170,8 +169,8 @@ const Gallery = () => {
                   onClick={showAllImages}
                   className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
                     viewMode === 'all-images' 
-                      ? 'accent-bg primary-text' 
-                      : 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
+                      ? 'bg-white text-black' 
+                      : 'bg-zinc-800 text-white hover:bg-zinc-700'
                   }`}
                 >
                   View All Images
@@ -189,7 +188,7 @@ const Gallery = () => {
                     {albums.map((album) => (
                       <div 
                         key={album._id}
-                        className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl overflow-hidden border border-accent/20 hover:border-accent/40 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer group"
+                        className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl overflow-hidden border border-white/20 hover:border-white/40 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer group"
                         onClick={() => handleAlbumSelect(album)}
                       >
                         {/* Album Cover */}
@@ -206,26 +205,23 @@ const Gallery = () => {
                         
                         {/* Album Info */}
                         <div className="p-6">
-                          <h4 className="text-xl font-bold text-white mb-2 group-hover:text-accent transition-colors">
+                          <h4 className="text-xl font-bold text-white mb-2 group-hover:text-white transition-colors">
                             {album.title}
                           </h4>
-                          <p className="text-gray-400 text-sm mb-3">
+                          <p className="text-white text-sm mb-3">
                             {album.mediaItems.length} images
                           </p>
                           {album.description && (
-                            <p className="text-gray-500 text-xs mb-3">
+                            <p className="text-white text-xs mb-3">
                               {album.description}
                             </p>
                           )}
-                          {/* <div className="flex justify-between items-center text-xs text-gray-500">
-                            <span>Created by: {album.createdBy}</span>
-                          </div> */}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center text-gray-400 py-12">
+                  <div className="text-center text-white py-12">
                     <p className="text-lg">No albums found.</p>
                   </div>
                 )}
@@ -239,12 +235,12 @@ const Gallery = () => {
                 <div className="text-center mb-8">
                   <button
                     onClick={backToAlbums}
-                    className="mb-4 text-accent hover:text-cyan-300 transition-colors flex items-center justify-center gap-2 mx-auto"
+                    className="mb-4 text-white hover:text-white transition-colors flex items-center justify-center gap-2 mx-auto"
                   >
                     <span>‹</span> Back to Albums
                   </button>
                   <h3 className="text-3xl font-bold text-white mb-2">{selectedAlbum.title}</h3>
-                  <p className="text-gray-400">
+                  <p className="text-white">
                     {selectedAlbum.mediaItems.length} images • Created by {selectedAlbum.createdBy}
                   </p>
                 </div>
@@ -252,7 +248,7 @@ const Gallery = () => {
                 {/* Circular Gallery for Album Images */}
                 {albumLoading ? (
                   <div className="text-center py-12">
-                    <p className="text-gray-400 text-lg">Loading images...</p>
+                    <p className="text-white text-lg">Loading images...</p>
                   </div>
                 ) : galleryImages.length > 0 ? (
                   <div className="text-center">
@@ -268,13 +264,13 @@ const Gallery = () => {
                     {/* View All Images in Album Button */}
                     <button 
                       onClick={() => setSelectedImage(0)}
-                      className="mt-8 bg-zinc-950 text-white px-8 py-3 rounded-lg border-2 font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                      className="mt-8 bg-black text-white px-8 py-3 rounded-lg border-2 border-white font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
                     >
                       View All Images in this Album
                     </button>
                   </div>
                 ) : (
-                  <div className="text-center text-gray-400 py-12">
+                  <div className="text-center text-white py-12">
                     <p className="text-lg">No images found in this album.</p>
                   </div>
                 )}
@@ -288,12 +284,12 @@ const Gallery = () => {
                 <div className="text-center mb-8">
                   <button
                     onClick={backToAlbums}
-                    className="mb-4 text-accent hover:text-cyan-300 transition-colors flex items-center justify-center gap-2 mx-auto"
+                    className="mb-4 text-white hover:text-white transition-colors flex items-center justify-center gap-2 mx-auto"
                   >
                     <span>‹</span> Back to Albums
                   </button>
                   <h3 className="text-3xl font-bold text-white mb-2">All Gallery Images</h3>
-                  <p className="text-gray-400">
+                  <p className="text-white">
                     {galleryImages.length} images in total
                   </p>
                 </div>
@@ -313,13 +309,13 @@ const Gallery = () => {
                     {/* View All Images Button */}
                     <button 
                       onClick={() => setSelectedImage(0)}
-                      className="mt-8 bg-zinc-950 text-white px-8 py-3 rounded-lg border-2 font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                      className="mt-8 bg-black text-white px-8 py-3 rounded-lg border-2 border-white font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
                     >
                       View All Images
                     </button>
                   </div>
                 ) : (
-                  <div className="text-center text-gray-400 py-12">
+                  <div className="text-center text-white py-12">
                     <p className="text-lg">No images found.</p>
                   </div>
                 )}
@@ -342,7 +338,7 @@ const Gallery = () => {
           <div className="relative z-[101] max-w-6xl w-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
             {/* Close Button */}
             <button
-              className="absolute -top-12 right-0 text-white text-2xl hover:text-cyan-400 transition-colors z-10 bg-black/70 rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-sm border border-white/20"
+              className="absolute -top-12 right-0 text-white text-2xl hover:text-white transition-colors z-10 bg-black/70 rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-sm border border-white/20"
               onClick={() => setSelectedImage(null)}
             >
               ✕
@@ -350,14 +346,14 @@ const Gallery = () => {
 
             {/* Navigation Arrows */}
             <button
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-cyan-400 transition-colors z-10 bg-black/70 rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-sm border border-white/20"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-white transition-colors z-10 bg-black/70 rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-sm border border-white/20"
               onClick={prevImage}
             >
               ‹
             </button>
 
             <button
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-cyan-400 transition-colors z-10 bg-black/70 rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-sm border border-white/20"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-white transition-colors z-10 bg-black/70 rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-sm border border-white/20"
               onClick={nextImage}
             >
               ›
@@ -381,7 +377,7 @@ const Gallery = () => {
               <p className="text-xl font-semibold mb-1">
                 {galleryImages[selectedImage].text}
               </p>
-              <p className="text-gray-300 text-sm">
+              <p className="text-white text-sm">
                 {selectedAlbum?.title ? `${selectedAlbum.title} • ` : ''}
                 {selectedImage + 1} of {galleryImages.length}
               </p>
@@ -395,8 +391,8 @@ const Gallery = () => {
                     key={index}
                     className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
                       index === selectedImage 
-                        ? 'border-cyan-400 ring-2 ring-cyan-400 transform scale-110' 
-                        : 'border-gray-500 hover:border-gray-300'
+                        ? 'border-white ring-2 ring-white transform scale-110' 
+                        : 'border-white/50 hover:border-white'
                     }`}
                     onClick={() => setSelectedImage(index)}
                   >
@@ -411,7 +407,7 @@ const Gallery = () => {
             )}
 
             {/* Keyboard Navigation Hint */}
-            <div className="text-center mt-2 text-gray-400 text-xs">
+            <div className="text-center mt-2 text-white text-xs">
               <p>Use ← → arrow keys or click thumbnails to navigate • Esc to close</p>
             </div>
           </div>

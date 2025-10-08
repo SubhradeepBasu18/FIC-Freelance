@@ -1,4 +1,3 @@
-import SpotlightCard from '@/components/ui/SpotlightCard';
 import { Calendar, Clock, MapPin, ExternalLink } from 'lucide-react';
 
 interface EventCardProps {
@@ -18,7 +17,6 @@ interface EventCardProps {
 
 const EventCard = ({ event }: EventCardProps) => {
     const formatDate = (dateString: string) => {
-
         return new Date(dateString).toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
@@ -27,55 +25,112 @@ const EventCard = ({ event }: EventCardProps) => {
         });
     };
 
+    const getTypeGradient = (type: string) => {
+        const gradientMap: { [key: string]: string } = {
+            workshop: 'from-blue-500/10 via-blue-600/5 to-transparent',
+            conference: 'from-purple-500/10 via-purple-600/5 to-transparent',
+            seminar: 'from-green-500/10 via-green-600/5 to-transparent',
+            competition: 'from-red-500/10 via-red-600/5 to-transparent',
+            default: 'from-zinc-500/10 via-zinc-600/5 to-transparent'
+        };
+        return gradientMap[type.toLowerCase()] || gradientMap.default;
+    };
+
+    const getTypeBorder = (type: string) => {
+        const borderMap: { [key: string]: string } = {
+            workshop: 'border-blue-500/20',
+            conference: 'border-purple-500/20',
+            seminar: 'border-green-500/20',
+            competition: 'border-red-500/20',
+            default: 'border-zinc-500/20'
+        };
+        return borderMap[type.toLowerCase()] || borderMap.default;
+    };
+
+    const getTypeColor = (type: string) => {
+        const colorMap: { [key: string]: string } = {
+            workshop: 'text-blue-400',
+            conference: 'text-purple-400',
+            seminar: 'text-green-400',
+            competition: 'text-red-400',
+            default: 'text-accent'
+        };
+        return colorMap[type.toLowerCase()] || colorMap.default;
+    };
+
     return (
-        <SpotlightCard 
-            className="h-full custom-spotlight-card" 
-            spotlightColor="rgba(0, 229, 255, 0.2)"
-        >
-            <div className="p-6 h-full flex flex-col">
-                {/* Event Header */}
-                <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                        <div>
-                            <h3 className="text-2xl italic font-bold light-text">{event.title}</h3>
-                            <p className="text-accent text-sm capitalize">{event.type}</p>
+        <div className="group h-full flex flex-col">
+            <div className={`
+                relative h-full flex flex-col bg-gradient-to-br ${getTypeGradient(event.type)}
+                border ${getTypeBorder(event.type)} rounded-2xl overflow-hidden
+                transition-all duration-500 hover:scale-105 hover:shadow-2xl
+                hover:shadow-accent/10 backdrop-blur-sm
+            `}>
+                {/* Animated background gradient */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className={`absolute -inset-1 bg-gradient-to-r ${getTypeGradient(event.type).replace('bg-gradient-to-br ', '')} rounded-2xl blur-sm group-hover:blur-md transition-all duration-500`}></div>
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10 p-6 flex flex-col flex-1">
+                    {/* Header */}
+                    <div className="mb-4">
+                        <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1">
+                                <h3 className="text-xl font-bold text-white mb-2 line-clamp-2 leading-tight">
+                                    {event.title}
+                                </h3>
+                                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getTypeColor(event.type)} bg-black/30 backdrop-blur-sm border ${getTypeBorder(event.type)}`}>
+                                    {event.type}
+                                </span>
+                            </div>
                         </div>
                     </div>
+
+                    {/* Description */}
+                    <p className="text-gray-300 text-sm mb-6 flex-1 leading-relaxed line-clamp-3">
+                        {event.description}
+                    </p>
+
+                    {/* Event Details */}
+                    <div className="space-y-3 mb-6">
+                        <div className="flex items-center text-sm">
+                            <Calendar className={`w-4 h-4 ${getTypeColor(event.type)} mr-3 flex-shrink-0`} />
+                            <span className="text-gray-300">{formatDate(event.startDate)}</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                            <Clock className={`w-4 h-4 ${getTypeColor(event.type)} mr-3 flex-shrink-0`} />
+                            <span className="text-gray-300">{event.time}</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                            <MapPin className={`w-4 h-4 ${getTypeColor(event.type)} mr-3 flex-shrink-0`} />
+                            <span className="text-gray-300 line-clamp-1">{event.location}</span>
+                        </div>
+                    </div>
+
+                    {/* Register Button */}
+                    <a
+                        href={event.registrationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`
+                            group/btn w-full py-3 px-4 rounded-xl font-semibold text-center
+                            transition-all duration-300 transform hover:scale-105
+                            flex items-center justify-center gap-2 backdrop-blur-sm
+                            bg-gradient-to-r ${getTypeGradient(event.type)} 
+                            border ${getTypeBorder(event.type)}
+                            hover:shadow-lg text-white
+                        `}
+                    >
+                        <span>Register Now</span>
+                        <ExternalLink className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-0.5" />
+                    </a>
                 </div>
 
-                {/* Event Description */}
-                <p className="text-gray-300 mb-6 flex-grow leading-relaxed">
-                    {event.description}
-                </p>
-
-                {/* Event Details */}
-                <div className="space-y-3 mb-6">
-                    <div className="flex items-center text-sm text-gray-400">
-                        <Calendar className="w-4 h-4 text-accent mr-2" />
-                        <span>{formatDate(event.startDate)}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-400">
-                        <Clock className="w-4 h-4 text-accent mr-2" />
-                        <span>{event.time}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-400">
-                        <MapPin className="w-4 h-4 text-accent mr-2" />
-                        <span>{event.location}</span>
-                    </div>
-                </div>
-
-                {/* Register Button */}
-                <a
-                    href={event.registrationUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full bg-accent light-text py-3 px-4 rounded-lg font-semibold text-center hover:bg-cyan-400 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
-                >
-                    <span>Register on Unstop</span>
-                    <ExternalLink className="w-4 h-4" />
-                </a>
+                {/* Hover effect overlay */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             </div>
-        </SpotlightCard>
+        </div>
     );
 };
 

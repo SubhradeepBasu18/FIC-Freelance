@@ -1,5 +1,3 @@
-import ChromaGrid from '../components/ui/ChromaGrid';
-
 // Import all sponsor images
 import ChaseProtein from '../assets/Collaborations/Chase Protein.png';
 import Crowwd from '../assets/Collaborations/Crowwd.png';
@@ -81,10 +79,10 @@ const SponsorsPage = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold italic text-white mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
             Our Partners
           </h1>
-          <div className="w-24 h-1 accent-bg mx-auto mb-8"></div>
+          <div className="w-24 h-1 bg-white mx-auto mb-8"></div>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             We're proud to collaborate with visionary organizations that share our commitment to 
             financial education and empowerment. Together, we're building the next generation of financial leaders.
@@ -95,55 +93,44 @@ const SponsorsPage = () => {
         <div className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4">Current Partners</h2>
-            <div className="w-20 h-1 accent-bg mx-auto"></div>
+            <div className="w-20 h-1 bg-white mx-auto"></div>
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
               Organizations currently supporting our mission and events
             </p>
           </div>
 
-          {/* Responsive Sponsor Grid Container */}
-          <div className="relative rounded-2xl overflow-hidden">
-            {/* Mobile Fallback Grid */}
-            <div className="lg:hidden grid grid-cols-2 md:grid-cols-3 gap-6">
-              {sponsorItems.map((sponsor, index) => (
-                <div key={index} className="bg-zinc-900/50 rounded-xl p-6 border border-accent/20 text-center group hover:border-accent/40 transition-all duration-300">
-                  <div className="w-24 h-24 mx-auto mb-4 rounded-xl overflow-hidden bg-white/5 p-3 flex items-center justify-center">
-                    <img 
-                      src={sponsor.image} 
-                      alt={sponsor.title}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <h4 className="text-white font-semibold text-lg mb-1">{sponsor.title}</h4>
-                  <p className="text-accent text-sm">{sponsor.subtitle}</p>
+          {/* Consistent Sponsor Grid for all screen sizes */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {sponsorItems.map((sponsor, index) => (
+              <div 
+                key={index} 
+                className="group bg-black rounded-xl p-6 border border-gray-800 text-center hover:border-white/30 transition-all duration-300 hover:transform hover:scale-105"
+              >
+                <div className="w-32 h-32 mx-auto mb-4 rounded-xl overflow-hidden bg-white/5 p-4 flex items-center justify-center group-hover:bg-white/10 transition-colors duration-300">
+                  <img 
+                    src={sponsor.image} 
+                    alt={sponsor.title}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
-              ))}
-            </div>
-
-            {/* Desktop ChromaGrid */}
-            <div className="hidden lg:block h-[800px]">
-              <ChromaGrid 
-                items={sponsorItems}
-                radius={200}
-                damping={0.5}
-                fadeOut={0.7}
-                ease="power3.out"
-              />
-            </div>
+                <h4 className="text-white font-semibold text-lg mb-1">{sponsor.title}</h4>
+                <p className="text-gray-400 text-sm">{sponsor.subtitle}</p>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Why Partner With Us */}
         <div className="mb-20">
-          <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl p-8 border border-accent/20">
+          <div className="bg-black rounded-2xl p-8 border border-gray-800">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-white mb-4">Why Partner With Us?</h2>
-              <div className="w-20 h-1 accent-bg mx-auto"></div>
+              <div className="w-20 h-1 bg-white mx-auto"></div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="text-center group">
-                <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                   <span className="text-2xl">🎯</span>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Targeted Audience</h3>
@@ -153,7 +140,7 @@ const SponsorsPage = () => {
               </div>
 
               <div className="text-center group">
-                <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                   <span className="text-2xl">🌟</span>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Brand Visibility</h3>
@@ -163,7 +150,7 @@ const SponsorsPage = () => {
               </div>
 
               <div className="text-center group">
-                <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                   <span className="text-2xl">💼</span>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">Talent Acquisition</h3>
@@ -176,7 +163,7 @@ const SponsorsPage = () => {
         </div>
 
         {/* Partnership Stats */}
-        <div className="bg-black rounded-2xl p-8 border border-accent/20 mb-16">
+        <div className="bg-black rounded-2xl p-8 border border-gray-800 mb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold text-white mb-2">50+</div>
@@ -199,17 +186,17 @@ const SponsorsPage = () => {
 
         {/* Call to Action */}
         <div className="text-center">
-          <div className="bg-gradient-to-r from-zinc-500/10 to-green-500/10 rounded-2xl p-8 border border-accent/20">
+          <div className="bg-black rounded-2xl p-8 border border-gray-800">
             <h3 className="text-2xl font-bold text-white mb-4">Interested in Partnering With Us?</h3>
             <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
               Let's discuss how we can create meaningful impact together. Reach out to our partnership team 
               to explore collaboration opportunities.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="accent-bg primary-text px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300">
+              <button className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300">
                 Download Sponsorship Deck
               </button>
-              <button className="border border-accent text-accent px-8 py-3 rounded-lg font-semibold hover:bg-accent hover:scale-105 transition-all duration-300">
+              <button className="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-black transition-all duration-300">
                 Contact Partnership Team
               </button>
             </div>
