@@ -39,7 +39,6 @@ const ArticleManagement: React.FC = () => {
       const result = await getAllArticles();
       if (result.status === 200) {
         setArticles(result.data.articles || result.data || []);
-        console.log(result.data);
       } else {
         console.error('Failed to load articles:', result.data);
         alert('Failed to load articles');

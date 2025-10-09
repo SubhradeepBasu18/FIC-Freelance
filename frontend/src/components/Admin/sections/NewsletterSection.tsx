@@ -56,7 +56,6 @@ const NewsletterSection: React.FC = () => {
   };
 
   const toggleExpand = (id: string) => {
-    console.log('Toggling expand for ID:', id);
     setExpandedId(expandedId === id ? null : id);
   };
 
@@ -83,10 +82,6 @@ const NewsletterSection: React.FC = () => {
       if (selectedFile) {
         formDataToSend.append('file', selectedFile);
       }
-
-      console.log('Updating newsletter with:', formDataToSend);
-      console.log('Formdata: ', formData);
-      
 
       const response = await updateNewsletter(editingNewsletter.id, formData);
       
@@ -119,13 +114,6 @@ const NewsletterSection: React.FC = () => {
       formDataToSend.append('file', selectedFile);
       formDataToSend.append('isPublic', String(formData.isPublic));
 
-      console.log('Adding newsletter with:', {
-        title: formData.title,
-        authors: formData.authors,
-        isPublic: formData.isPublic,
-        file: selectedFile.name
-      });
-
       const response = await addNewsletter(formDataToSend);
       
       if (response.status === 201) {
@@ -144,15 +132,12 @@ const NewsletterSection: React.FC = () => {
   };
 
   const handleDeleteConfirm = async () => {
-    console.log('Deleting newsletter with ID:', deletingNewsletterId);
     if (!deletingNewsletterId) return;
 
     try {
       setLoading(true);
-      console.log('Deleting newsletter with ID:', deletingNewsletterId);
       
       const response = await deleteNewsletter(deletingNewsletterId);
-      console.log('Delete response:', response);
       
       if (response.status === 200) {
         await fetchNewsletters(); // Refresh the list

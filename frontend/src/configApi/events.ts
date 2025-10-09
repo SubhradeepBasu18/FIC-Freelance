@@ -23,7 +23,6 @@ interface GetAllEventsResponse {
 const getAllEvents = async(): Promise<GetAllEventsResponse> => {
     try {
         const response : AxiosResponse<Event[]> = await axios.get(`${import.meta.env.VITE_BASE_URL}/event/getAllEvents`)
-        console.log(response.data)
         return {status: 200, data: response.data}
     } catch (error: any) {
         console.log(error)

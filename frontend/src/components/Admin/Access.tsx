@@ -34,7 +34,7 @@ export default function AdminAccessPanel() {
     const fetchCurrentSession = async () => {
         const response = await getCurrentSession();
         if (response.status === 200) {
-            console.log("Current session:", response.data);
+            // console.log("Current session:", response.data);
             setCurrentSession(response.data);
         }
     }

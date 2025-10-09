@@ -43,7 +43,7 @@ const JournalSection: React.FC = () => {
       setLoading(true);
       const response = await getAllJournals();
       if (response.status === 200) {
-        console.log("Response: ", response.data);
+        // console.log("Response: ", response.data);
         
         const transformedJournals = response.data.journals.map((journal: Journal) => ({
             id: journal._id, // Map _id to id
@@ -125,7 +125,7 @@ const JournalSection: React.FC = () => {
         journalData.append('file', formData.file);
       }
 
-      console.log("Journal Data: ", formData);
+    //   console.log("Journal Data: ", formData);
       
 
       const response = await updateJournal(editingJournal.id, formData);
@@ -156,7 +156,7 @@ const JournalSection: React.FC = () => {
       if (formData.file) {
         journalData.append('file', formData.file);
       }
-      console.log('Journal Data:  ', formData);
+    //   console.log('Journal Data:  ', formData);
       
 
       const response = await addJournal(formData);

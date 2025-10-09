@@ -39,7 +39,7 @@ const PodcastManagement: React.FC<PodcastManagementProps> = () => {
       setError(null);
       try {
         const response = await getAllPodcasts();
-        console.log('Fetch podcasts response:', response);
+        // console.log('Fetch podcasts response:', response);
         if (response.status === 200) {
           // Handle both response formats
           const podcastsData = response.data.podcasts || response.data;
@@ -80,7 +80,7 @@ const PodcastManagement: React.FC<PodcastManagementProps> = () => {
           editingPodcast.isPublic
         );
 
-        console.log('Update podcast response:', response);
+        // console.log('Update podcast response:', response);
 
         if (response.status === 200) {
           setPodcasts(podcasts.map(p => 
@@ -114,7 +114,7 @@ const PodcastManagement: React.FC<PodcastManagementProps> = () => {
   
     const handleDeleteClick = (podcastId: string, e: React.MouseEvent) => {
       e.stopPropagation();
-      console.log('Delete button clicked for podcast:', podcastId);
+    //   console.log('Delete button clicked for podcast:', podcastId);
       setShowDeleteConfirm(podcastId);
     };
   
@@ -123,9 +123,9 @@ const PodcastManagement: React.FC<PodcastManagementProps> = () => {
         setLoading(true);
         setError(null);
         try {
-          console.log('Deleting podcast with ID:', showDeleteConfirm);
+        //   console.log('Deleting podcast with ID:', showDeleteConfirm);
           const response = await deletePodcast(showDeleteConfirm);
-          console.log('Delete podcast response:', response);
+        //   console.log('Delete podcast response:', response);
           
           if (response.status === 200) {
             // Successfully deleted - remove from local state
@@ -181,12 +181,12 @@ const PodcastManagement: React.FC<PodcastManagementProps> = () => {
         //     spotifyLink: newPodcast.spotifyLink || '',
         //     isPublic: newPodcast.isPublic
         // }
-        console.log("new podcast data -> ", newPodcast);
+        // console.log("new podcast data -> ", newPodcast);
         
 
         const response = await addPodcast(newPodcast);
         
-        console.log('Add podcast response:', response);
+        // console.log('Add podcast response:', response);
         
         if (response.status === 201 || response.status === 200) {
           await fetchPodcasts(); // Refresh the list

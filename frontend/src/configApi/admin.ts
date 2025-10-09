@@ -84,7 +84,6 @@ const addAdmin = async (
 
 const removeAdmin = async(id: string) => {
     try {
-        console.log("ADMIN TO BE REMOVED: ", id);
         const response: AxiosResponse<Admin[]> = await axios.delete(
             `${import.meta.env.VITE_BASE_URL}/admin/remove-admin/${id}`,
             {withCredentials: true}

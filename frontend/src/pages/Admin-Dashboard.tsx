@@ -29,7 +29,7 @@ export default function AdminDashboard() {
       const { status, data } = await getCurrentSession();
       if (status === 200) {
         setCurrentSession(data);
-        console.log("currentSession: ", data);
+        // console.log("currentSession: ", data);
       }
     }
     fetchCurrentSession();

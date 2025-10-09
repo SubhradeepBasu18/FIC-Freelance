@@ -80,7 +80,6 @@ const deleteTeamMember = async (id: string) => {
             }
         );
 
-        console.log("Delete Response: ", response);
         if (response.status === 200) {
             return { status: response.status, data: response.data };
         } else {

@@ -13,7 +13,7 @@ const getAllArticles = async() => {
 
 const updateArticle = async(id: string, title: string, authors: string, textContent: string, isPublic: boolean) => {
     try {
-        console.log("isPublic: ", isPublic);
+        // console.log("isPublic: ", isPublic);
         
         const response = await axios.put(`${import.meta.env.VITE_BASE_URL}/admin/publication/update-article/${id}`, {
             title,
@@ -120,7 +120,7 @@ const getAllNewsletters = async () => {
 
 const addNewsletter = async (newsletterData: FormData) => {
     try {
-        console.log("Newletter Data: ", newsletterData);
+        // console.log("Newletter Data: ", newsletterData);
         
         const response = await axios.post(
             `${import.meta.env.VITE_BASE_URL}/admin/publication/add-newsletter`, 
@@ -156,8 +156,8 @@ const deleteNewsletter = async (id: string) => {
 
 const updateNewsletter = async (id: string, newsletterData: FormData) => {
     try {
-        console.log("Newletter Data: ", newsletterData);
-        console.log("ID: ", id);
+        // console.log("Newletter Data: ", newsletterData);
+        // console.log("ID: ", id);
         
         const response = await axios.put(
             `${import.meta.env.VITE_BASE_URL}/admin/publication/update-newsletter/${id}`,
@@ -182,7 +182,7 @@ const updateNewsletter = async (id: string, newsletterData: FormData) => {
 const getAllJournals = async() => {
     try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/publication/get-all-journals`);
-        console.log('Response: ', response.data);
+        // console.log('Response: ', response.data);
         
         return { status: response.status, data: response.data };
     } catch (error) {
@@ -193,7 +193,7 @@ const getAllJournals = async() => {
 
 const addJournal = async(journalData: FormData) => {
     try {
-        console.log("Journal Data: ", journalData);
+        // console.log("Journal Data: ", journalData);
         
         const response = await axios.post(
             `${import.meta.env.VITE_BASE_URL}/admin/publication/add-journal`, 
@@ -214,8 +214,8 @@ const addJournal = async(journalData: FormData) => {
 
 const updateJournal = async(id: String, journalData: FormData) => {
     try {
-        console.log("Journal Data: ", journalData);
-        console.log("ID: ", id);
+        // console.log("Journal Data: ", journalData);
+        // console.log("ID: ", id);
         
         const response = await axios.put(
             `${import.meta.env.VITE_BASE_URL}/admin/publication/update-journal/${id}`,

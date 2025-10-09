@@ -30,7 +30,6 @@ export default function Team() {
       const {status, data, error} = await getAllTeamMembers();
       if(status === 200){
         setTeamMembers(data.team);
-        console.log("Data: ", data);
       }else{
         setError(error?.message || "Failed to fetch team members")
       }
