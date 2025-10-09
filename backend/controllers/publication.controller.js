@@ -95,9 +95,9 @@ const getAllJournals = async(req, res) => {
 const addArticle = async(req, res) => {
     try {
 
-        const {title, description, textContent} = req.body
+        const {title, authors, textContent, isPublic = true} = req.body
 
-        if(!title || !description || !textContent) {
+        if(!title || !authors || !textContent) {
             return res.status(400).json({
                 message: "All fields are required"
             })
@@ -105,8 +105,9 @@ const addArticle = async(req, res) => {
 
         const newArticle = await article.create({
             title,
-            description,
-            textContent
+            authors,
+            textContent,
+            isPublic
         })
 
         if(!newArticle) {
@@ -172,13 +173,42 @@ const getAllArticles = async(req, res) => {
     }
 }
 
+const updateArticle = async(req, res) => {
+    try {
+        const {title, description, textContent, isPublic} = req.body;
+        const {id} = req.params;
+
+        const updatedArticle = await article.findByIdAndUpdate(id, {
+            title,
+            description,
+            textContent,
+            isPublic
+        })
+
+        if(!updatedArticle) {
+            return res.status(404).json({
+                message: "Article not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Article updated successfully",
+            article: updatedArticle
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
 //Podcast Controller
 const addPodcast = async(req, res) => {
     try {
 
-        const {title, description, spotifyLink} = req.body
+        const {title, hosts, spotifyLink, isPublic = true} = req.body
 
-        if(!title || !description || !spotifyLink) {
+        if(!title || !hosts || !spotifyLink) {
             return res.status(400).json({
                 message: "All fields are required"
             })
@@ -186,8 +216,9 @@ const addPodcast = async(req, res) => {
 
         const newPodcast = await podcast.create({
             title,
-            description,
-            spotifyLink
+            hosts,
+            spotifyLink,
+            isPublic
         })
 
         if(!newPodcast) {
@@ -245,6 +276,35 @@ const getAllPodcasts = async(req, res) => {
             message: "Podcasts fetched successfully",
             podcasts
         })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+const updatePodcast = async(req, res) => {
+    try {
+        const {id} = req.params
+        const {title, hosts, spotifyLink, isPublic = true} = req.body
+
+        const updatedPodcast = await podcast.findByIdAndUpdate(id, {
+            title,
+            hosts,
+            spotifyLink,
+            isPublic
+        })
+
+        if(!updatedPodcast) {
+            return res.status(404).json({
+                message: "Podcast not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Podcast updated successfully",
+            podcast: updatedPodcast
+        })       
     } catch (error) {
         return res.status(500).json({
             message: error.message
@@ -351,5 +411,7 @@ export {
     getAllJournals, 
     getAllArticles, 
     getAllPodcasts, 
-    getAllNewsletters
+    getAllNewsletters,
+    updateArticle,
+    updatePodcast
 }

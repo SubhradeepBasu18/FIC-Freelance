@@ -47,7 +47,7 @@ export const NAV_ITEMS = [
     ],
   },
   {
-    label: "COLLABORATORS",
+    label: "COLLABORATIONS",
     bgColor: "#27272a", // zinc-800
     textColor: "#ffffff",
     links: [

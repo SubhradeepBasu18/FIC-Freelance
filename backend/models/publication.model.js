@@ -23,7 +23,7 @@ const journalSchema = new mongoose.Schema({
   // Podcast Schema (for Spotify links)
   const podcastSchema = new mongoose.Schema({
     title: String,
-    authors: String,
+    hosts: String,
     spotifyLink: String,  // Only Spotify links for podcasts
     isPublic: Boolean
   }, {timestamps: true});
