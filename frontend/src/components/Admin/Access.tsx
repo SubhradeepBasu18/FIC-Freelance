@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Trash2, UserPlus, Shield, Crown } from 'lucide-react';
-import { addAdmin, getAllAdmins, getCurrentSession, removeAdmin } from '@/configApi/admin';
+import { addAdmin, getAllAdmins, getCurrentSession, removeAdmin, handoverSuperAdmin } from '@/configApi/admin';
+import { useNavigate } from 'react-router-dom';
 
 interface AdminUser {
   id: string;
@@ -21,26 +22,28 @@ export default function AdminAccessPanel() {
   const [newEmail, setNewEmail] = useState('');
   const [showHandoverModal, setShowHandoverModal] = useState(false);
   const [currentSuperAdminId, setCurrentSuperAdminId] = useState<string | null>(null);
-
+  const navigate = useNavigate();
+  
   useEffect(()=>{
-    const fetchAllAdmins = async () => {
-        const response = await getAllAdmins();
-        if (response.status === 200) {
-            console.log(response.data);
-            setUsers(response.data.admins);
-        }
-    }
-
-    const fetchCurrentSession = async () => {
-        const response = await getCurrentSession();
-        if (response.status === 200) {
-            // console.log("Current session:", response.data);
-            setCurrentSession(response.data);
-        }
-    }
+    
     fetchAllAdmins();
     fetchCurrentSession();
   },[])
+  const fetchAllAdmins = async () => {
+    const response = await getAllAdmins();
+    if (response.status === 200) {
+        console.log(response.data);
+        setUsers(response.data.admins);
+    }
+}
+
+const fetchCurrentSession = async () => {
+    const response = await getCurrentSession();
+    if (response.status === 200) {
+        // console.log("Current session:", response.data);
+        setCurrentSession(response.data);
+    }
+}
   const handleAdd = async () => {
     if (newEmail.trim() && newEmail.includes('@')) {
       const newUser: AdminUser = {
@@ -60,6 +63,7 @@ export default function AdminAccessPanel() {
       // If the admin is successfully added, update the local state with the new user
       setUsers([...users, newUser]);
       setNewEmail(''); // Reset the email input field
+      fetchAllAdmins();
     } else {
       // Handle error (e.g., show a message to the user)
       console.error('Failed to add admin:', response.data);
@@ -70,20 +74,40 @@ export default function AdminAccessPanel() {
 
   const handleHandover = (fromId: string) => {
     setCurrentSuperAdminId(fromId);
+    console.log("Handovering superadmin from: ", fromId);
+    alert("Alert! Handovering Superadmin role will delete your account")
+    
     setShowHandoverModal(true);
   };
 
-  const confirmHandover = (toId: string) => {
+  const confirmHandover = async (toId: string) => {
+    console.log("Handovering superadmin to: ", toId);
+    console.log("Current superadmin: ", currentSuperAdminId);
+    console.log("Users: ", users);
+    
+    
     if (currentSuperAdminId) {
-      setUsers(users.map(user => {
-        if (user.id === currentSuperAdminId) {
-          return { ...user, role: 'admin' };
-        }
-        if (user.id === toId) {
-          return { ...user, role: 'superadmin' };
-        }
-        return user;
-      }));
+    //   setUsers(users.map(user => {
+    //     if (user.id === currentSuperAdminId) {
+    //       return { ...user, role: 'admin' };
+    //     }
+    //     if (user.id === toId) {
+    //       return { ...user, role: 'superadmin' };
+    //     }
+    //     return user;
+    //   }));
+    const {status, data} = await handoverSuperAdmin(toId);
+    if (status === 200) {
+        console.log("Superadmin handovered successfully");
+        console.log("response: ", data);
+        alert('Superadmin handovered successfully');
+        fetchAllAdmins()
+        navigate('/signin')
+        
+    }else{
+        console.error('Failed to handover superadmin:', data);
+        alert('Failed to handover superadmin');
+    }
     }
     setShowHandoverModal(false);
     setCurrentSuperAdminId(null);
@@ -96,6 +120,7 @@ export default function AdminAccessPanel() {
       console.log("Admin removed successfully");
       console.log("response: ", response);
       setUsers(users.filter(user => user.id !== id));
+      fetchAllAdmins();
     } else {
       console.error('Failed to remove admin:', response);
     }
@@ -145,7 +170,7 @@ export default function AdminAccessPanel() {
             <div className="space-y-3">
               {users.map((user) => (
                 <div
-                  key={user.id}
+                  key={user._id}
                   className={`backdrop-blur-sm border rounded-lg px-6 py-4 flex items-center justify-between transition-all duration-200 group ${
                     user.role === 'superadmin' 
                       ? 'bg-gradient-to-r from-amber-900/30 to-slate-900/40 border-amber-700/50 hover:from-amber-900/40 hover:to-slate-900/50' 
@@ -186,7 +211,7 @@ export default function AdminAccessPanel() {
                     </span>
                     {user.role === 'superadmin' ? (
                       <button
-                        onClick={() => handleHandover(user.id)}
+                        onClick={() => handleHandover(user._id)}
                         className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-200 font-medium text-sm border border-amber-500"
                       >
                         Handover
@@ -250,7 +275,7 @@ export default function AdminAccessPanel() {
                   eligibleAdmins.map((admin) => (
                     <button
                       key={admin.id}
-                      onClick={() => confirmHandover(admin.id)}
+                      onClick={() => confirmHandover(admin._id)}
                       className="w-full px-4 py-3 bg-slate-900/50 hover:bg-slate-700 border border-slate-600 hover:border-amber-500 rounded-lg text-left transition-all duration-200 group"
                     >
                       <div className="flex items-center gap-3">

@@ -7,7 +7,8 @@ import {
   handoverSuperAdmin, 
   getAllAdmins,
   getCurrentAdmin,
-  logoutAdmin 
+  logoutAdmin,
+  resetPassword
 } from "../controllers/admin.controller.js";
 import { protectAdmin, superAdminOnly } from "../middlewares/auth.middleware.js";
 
@@ -16,15 +17,17 @@ const router = express.Router();
 // Public routes
 router.post("/register-superadmin", registerSuperAdmin); // only once at setup
 router.post("/login", loginAdmin);
+router.put("/reset-password", resetPassword);
 
 // Protected routes (require authentication)
 router.get("/current-session", protectAdmin, getCurrentAdmin);
 router.post("/logout", protectAdmin, logoutAdmin);
 
 // Superadmin only routes
-router.post("/add-admin", protectAdmin, superAdminOnly, addAdmin);
+router.post("/add-admin", addAdmin);
 router.delete("/remove-admin/:id", protectAdmin, superAdminOnly, removeAdmin);
 router.put("/handover-superadmin", protectAdmin, superAdminOnly, handoverSuperAdmin);
 router.get("/get-all-admins", protectAdmin, getAllAdmins);
+
 
 export default router;

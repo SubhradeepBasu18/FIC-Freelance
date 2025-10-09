@@ -9,6 +9,7 @@ import Gallery from "@/pages/GalleryPage";
 import Sponsors from "@/pages/Sponsors";
 import AdminDashboard from "@/pages/Admin-Dashboard";
 import SignInPage from '@/pages/SignInPage';
+import ResetPassword from '@/pages/ResetPassword';
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const App: React.FC = () => {
           <Route path="/sponsors" element={<Sponsors />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/signin" element={<SignInPage />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           {/* 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>

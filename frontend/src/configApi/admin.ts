@@ -100,18 +100,15 @@ const removeAdmin = async(id: string) => {
 
 //  Handover Superadmin
 const handoverSuperAdmin = async (
-  token: string,
   newSuperAdminId: string
 ): Promise<HandoverResponse> => {
   try {
+    console.log("Handovering superadmin to: ", newSuperAdminId);
+    
     const response: AxiosResponse<HandoverResponse["data"]> = await axios.put(
-      `${import.meta.env.VITE_BASE_URL}/api/admin/handover-superadmin`,
+      `${import.meta.env.VITE_BASE_URL}/admin/handover-superadmin`,
       { newSuperAdminId },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      {withCredentials: true}
     );
     return { status: 200, data: response.data };
   } catch (error: any) {
@@ -174,5 +171,22 @@ const logoutAdmin = async(): Promise<{ status: number; data: string }> => {
   }
 };
 
-export { loginAdmin, addAdmin, handoverSuperAdmin, getAllAdmins, getCurrentSession, logoutAdmin, removeAdmin };
+const resetPassword = async(email: string, currentPassword: string, newPassword: string, confirmNewPassword: string): Promise<{ status: number; data: string }> => {
+  try {
+    const response: AxiosResponse<string> = await axios.put(
+      `${import.meta.env.VITE_BASE_URL}/admin/reset-password`,
+      { email, currentPassword, newPassword, confirmNewPassword },
+      {withCredentials: true},
+    );
+    return { status: 200, data: response.data };
+  } catch (error: any) {
+    console.error(error);
+    return {
+      status: error.response?.status || 500,
+      data: error.response?.data || "Failed to reset password",
+    };
+  }
+};
+
+export { loginAdmin, addAdmin, handoverSuperAdmin, getAllAdmins, getCurrentSession, logoutAdmin, removeAdmin, resetPassword };
 export type { Admin };

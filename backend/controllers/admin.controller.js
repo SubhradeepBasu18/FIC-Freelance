@@ -259,6 +259,31 @@ const logoutAdmin = async (req, res) => {
   }
 };
 
+const resetPassword = async(req, res) => {
+    try {
+        const {email, currentPassword, newPassword, confirmNewPassword} = req.body;
+        if(!email || !currentPassword || !newPassword || !confirmNewPassword) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
+        const admin = await Admin.findOne({email});
+        if(!admin) return res.status(404).json({ message: "Admin not found" });
+
+        const isMatch = await bcrypt.compare(currentPassword, admin.password);
+        if(!isMatch) return res.status(400).json({ message: "Invalid current password" });
+
+        if(newPassword !== confirmNewPassword) return res.status(400).json({ message: "New passwords do not match" });
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        admin.password = hashedPassword;
+        await admin.save();
+
+        return res.status(200).json({ message: "Password reset successfully", admin });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 export { 
   registerSuperAdmin, 
   loginAdmin, 
@@ -267,5 +292,6 @@ export {
   handoverSuperAdmin, 
   getAllAdmins, 
   getCurrentAdmin, 
-  logoutAdmin 
+  logoutAdmin,
+  resetPassword
 };
