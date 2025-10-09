@@ -106,6 +106,149 @@ const updatePodcast = async(id: string, title: string, hosts: string, spotifyLin
     }
 }
 
+// Newsletter APIs
+
+const getAllNewsletters = async () => {
+    try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/publication/get-all-newsletters`);
+        return { status: response.status, data: response.data };
+    } catch (error) {
+        console.error("Error fetching newsletters:", error);
+        return { status: error.response?.status, data: error.response?.data };
+    }
+}
+
+const addNewsletter = async (newsletterData: FormData) => {
+    try {
+        console.log("Newletter Data: ", newsletterData);
+        
+        const response = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/admin/publication/add-newsletter`, 
+            newsletterData,
+            {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
+        return { status: response.status, data: response.data };
+    } catch (error) {
+        console.error("Error adding newsletter:", error);
+        return { status: error.response?.status, data: error.response?.data };
+    }
+}
+
+const deleteNewsletter = async (id: string) => {
+    try {
+        const response = await axios.delete(
+            `${import.meta.env.VITE_BASE_URL}/admin/publication/delete-newsletter/${id}`,
+            {
+                withCredentials: true
+            }
+        );
+        return { status: response.status, data: response.data };
+    } catch (error) {
+        console.error("Error deleting newsletter:", error);
+        return { status: error.response?.status, data: error.response?.data };
+    }
+}
+
+const updateNewsletter = async (id: string, newsletterData: FormData) => {
+    try {
+        console.log("Newletter Data: ", newsletterData);
+        console.log("ID: ", id);
+        
+        const response = await axios.put(
+            `${import.meta.env.VITE_BASE_URL}/admin/publication/update-newsletter/${id}`,
+            newsletterData,
+            {
+                withCredentials: true,
+                // headers: {
+                //     'Content-Type': 'multipart/form-data'
+                // }
+            }
+        );
+        return { status: response.status, data: response.data };
+    } catch (error) {
+        console.error("Error updating newsletter:", error);
+        return { status: error.response?.status, data: error.response?.data };
+    }
+}
+
+
+// Journal APIs
+
+const getAllJournals = async() => {
+    try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/publication/get-all-journals`);
+        console.log('Response: ', response.data);
+        
+        return { status: response.status, data: response.data };
+    } catch (error) {
+        console.error("Error fetching journals:", error);
+        return { status: error.response?.status, data: error.response?.data };
+    }
+}
+
+const addJournal = async(journalData: FormData) => {
+    try {
+        console.log("Journal Data: ", journalData);
+        
+        const response = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/admin/publication/add-journal`, 
+            journalData,
+            {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
+        return { status: response.status, data: response.data };
+    } catch (error) {
+        console.error("Error adding journal:", error);
+        return { status: error.response?.status, data: error.response?.data };
+    }
+}
+
+const updateJournal = async(id: String, journalData: FormData) => {
+    try {
+        console.log("Journal Data: ", journalData);
+        console.log("ID: ", id);
+        
+        const response = await axios.put(
+            `${import.meta.env.VITE_BASE_URL}/admin/publication/update-journal/${id}`,
+            journalData,
+            {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
+        return { status: response.status, data: response.data };
+    } catch (error) {
+        console.error("Error updating journal:", error);
+        return { status: error.response?.status, data: error.response?.data };
+    }
+}
+
+const deleteJournal = async(id: String) => {
+    try {
+        const response = await axios.delete(
+            `${import.meta.env.VITE_BASE_URL}/admin/publication/delete-journal/${id}`,
+            {
+                withCredentials: true
+            }
+        );
+        return { status: response.status, data: response.data };
+    } catch (error) {
+        console.error("Error deleting journal:", error);
+        return { status: error.response?.status, data: error.response?.data };
+    }
+}
+
 export {
     getAllArticles,
     updateArticle,
@@ -114,5 +257,13 @@ export {
     getAllPodcasts,
     addPodcast,
     deletePodcast,
-    updatePodcast
+    updatePodcast,
+    getAllNewsletters,
+    addNewsletter,
+    deleteNewsletter,
+    updateNewsletter,
+    getAllJournals,
+    addJournal,
+    updateJournal,
+    deleteJournal
 }

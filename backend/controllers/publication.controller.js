@@ -5,9 +5,9 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const addJournal = async(req, res) => {
     try {
         
-        const {title, description} = req.body
+        const {title, authors, isPublic = true} = req.body
 
-        if(!title || !description) {
+        if(!title || !authors) {
             return res.status(400).json({
                 message: "All fields are required"
             })
@@ -24,8 +24,9 @@ const addJournal = async(req, res) => {
 
         const newJournal = await journal.create({
             title,
-            description,
-            fileUrl: journalFileURL.url
+            authors,
+            fileUrl: journalFileURL.url,
+            isPublic
         })
 
         if(!newJournal) {
@@ -83,6 +84,48 @@ const getAllJournals = async(req, res) => {
         return res.status(200).json({
             message: "Journals fetched successfully",
             journals
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+const updateJournal = async(req, res) => {
+    try {
+        const {id} = req.params
+        const {title, authors, isPublic} = req.body
+
+        const fileLocalPath = req?.file?.path
+        // console.log("File Local Path: ", fileLocalPath);
+        
+        let fileURL = ""
+        if(fileLocalPath) {
+            fileURL = await uploadOnCloudinary(fileLocalPath)
+        }
+
+        console.log("Title: ", title);
+        console.log("Authors: ", authors);
+        console.log("isPublic: ", isPublic);
+        
+        
+        const updatedJournal = await journal.findByIdAndUpdate(id, {
+            title,
+            authors,
+            isPublic,
+            fileUrl: fileURL?.url
+        })
+
+        if(!updatedJournal) {
+            return res.status(404).json({
+                message: "Journal not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Journal updated successfully",
+            journal: updatedJournal
         })
     } catch (error) {
         return res.status(500).json({
@@ -316,16 +359,16 @@ const updatePodcast = async(req, res) => {
 const addNewsletter = async(req, res) => {
     try {
         
-        const { title, description } = req.body
+        const { title, authors, isPublic } = req.body
 
-        if(!title || !description) {
+        if(!title || !authors) {
             return res.status(400).json({
                 message: "All fields are required"
             })
         }
 
         const fileLocalPath = req?.file?.path
-        const fileUrl = await uploadOnCloudinary(fileLocalPath)
+        const fileUrl = await uploadOnCloudinary(fileLocalPath, "newsletters")
 
         if(!fileUrl) {
             return res.status(400).json({
@@ -333,11 +376,17 @@ const addNewsletter = async(req, res) => {
             })
         }
 
+        // console.log("fileUrl: ", fileUrl);
+
         const newNewsletter = await newsletter.create({
             title,
-            description,
-            fileUrl
+            authors,
+            fileUrl: fileUrl.url,
+            isPublic
         })
+
+        // console.log("newNewsletter: ", newNewsletter);
+        
 
         if(!newNewsletter) {
             return res.status(400).json({
@@ -399,6 +448,38 @@ const getAllNewsletters = async(req, res) => {
     }
 }
 
+const updateNewsletter = async(req, res) => {
+    try {
+        const {id} = req.params
+        const {title, authors} = req.body
+
+        console.log("Title: ", title);
+        console.log("Authors: ", authors);
+        
+        const updatedNewsletter = await newsletter.findByIdAndUpdate(id, {
+            title,
+            authors
+        })
+
+        if(!updatedNewsletter) {
+            return res.status(404).json({
+                message: "Newsletter not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Newsletter updated successfully",
+            newsletter: updatedNewsletter
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+
+
 
 export {
     addJournal, 
@@ -413,5 +494,7 @@ export {
     getAllPodcasts, 
     getAllNewsletters,
     updateArticle,
-    updatePodcast
+    updatePodcast,
+    updateNewsletter,
+    updateJournal
 }
