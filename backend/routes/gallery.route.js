@@ -1,5 +1,5 @@
 import express from "express";
-import { createAlbum, uploadMediaToAlbum, getAlbumById, getAllAlbums, deleteAlbum, deleteMediaFromAlbumByID, getAllImages } from "../controllers/gallery.controller.js";
+import { createAlbum, uploadMediaToAlbum, getAlbumById, getAllAlbums, deleteAlbum, deleteMediaFromAlbumByID, getAllImages, updateAlbum } from "../controllers/gallery.controller.js";
 import { protectAdmin } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
@@ -10,7 +10,8 @@ const publicGalleryRouter = express.Router();
 protectedGalleryRouter.post("/create-album", protectAdmin, upload.single("coverImage"), createAlbum);
 protectedGalleryRouter.post("/upload-media-to-album/:albumId", protectAdmin, upload.array("media", 10), uploadMediaToAlbum);
 protectedGalleryRouter.delete("/delete-album/:albumId",protectAdmin, deleteAlbum);
-protectedGalleryRouter.delete("/delete-media-from-album/:albumId/:mediaId",protectAdmin, deleteMediaFromAlbumByID);
+protectedGalleryRouter.post("/delete-media-from-album/:albumId",protectAdmin, deleteMediaFromAlbumByID);
+protectedGalleryRouter.put("/update-album/:albumId", protectAdmin, updateAlbum);
 
 //public routes
 publicGalleryRouter.get("/get-album/:albumId", getAlbumById);

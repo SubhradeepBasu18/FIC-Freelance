@@ -119,23 +119,42 @@ const deleteAlbum = async(req, res) => {
 
 const deleteMediaFromAlbumByID = async(req, res) => {
     try {
-        const {albumId, mediaId} = req.params
+        const {albumId} = req.params;
+        const {mediaUrl} = req.body;
 
-        const album = await Album.findById(albumId)
-        if(!album) return res.status(400).json({message: "Album not found"})
+        console.log("Deleting media from album:", albumId);
+        console.log("Media URL to delete:", mediaUrl);
 
-        const media = await album.updateOne({
-            $pull: { mediaItems: mediaId }
-        })
+        const album = await Album.findById(albumId);
+        if(!album) {
+            console.log("Album not found");
+            return res.status(404).json({message: "Album not found"});
+        }
+
+        console.log("Current media items:", album.mediaItems);
+
+        // Remove the specific media URL from the array
+        const initialLength = album.mediaItems.length;
+        album.mediaItems = album.mediaItems.filter(item => item !== mediaUrl);
+        
+        if (album.mediaItems.length === initialLength) {
+            console.log("Media URL not found in album");
+            return res.status(404).json({message: "Media not found in album"});
+        }
+        
+        await album.save();
+
+        console.log("Media deleted successfully. Remaining items:", album.mediaItems.length);
 
         return res.status(200).json({
             message: "Media deleted successfully",
-            media
-        })
+            album
+        });
     } catch (error) {
+        console.error("Error in deleteMediaFromAlbumByID:", error);
         return res.status(500).json({
             message: error.message || "Something went wrong while deleting media from album"
-        })
+        });
     }
 }
 
@@ -158,4 +177,30 @@ const getAllImages = async(req, res) => {
     }
 }
 
-export { createAlbum, uploadMediaToAlbum, getAlbumById, getAllAlbums, deleteAlbum, deleteMediaFromAlbumByID, getAllImages }
+const updateAlbum = async(req, res) => {
+    try {
+        const {albumId} = req.params
+        const { title, isPublic } = req.body
+
+        const album = await Album.findById(albumId)
+        if(!album) return res.status(400).json({message: "Album not found"})
+
+        // Update fields if provided
+        if (title !== undefined) album.title = title
+        if (isPublic !== undefined) album.isPublic = isPublic
+
+        // Save the updated album
+        const updatedAlbum = await album.save()
+
+        return res.status(200).json({
+            message: "Album updated successfully",
+            album: updatedAlbum
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Something went wrong while updating album"
+        })
+    }
+}
+
+export { createAlbum, uploadMediaToAlbum, getAlbumById, getAllAlbums, deleteAlbum, deleteMediaFromAlbumByID, getAllImages, updateAlbum }

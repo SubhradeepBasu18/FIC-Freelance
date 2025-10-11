@@ -42,8 +42,9 @@ const Gallery = () => {
             throw new Error(data);
         }
         console.log(data.albums);
-        
-        setAlbums(data.albums);
+
+        const publicAlbums = data.albums.filter(album => album.isPublic === true);
+        setAlbums(publicAlbums);
         
         // Load all images for the "all images" view
         const allImages = await getAllImages();
