@@ -25,7 +25,7 @@ export const NAV_ITEMS = [
     textColor: "#ffffff",
     links: [
       { label: "About Company", href: "/about", ariaLabel: "About our company" },
-      { label: "Our Team", href: "/about/team", ariaLabel: "Meet our team" },
+      { label: "Our Team", href: "/team", ariaLabel: "Meet our team" },
     ],
   },
   {
