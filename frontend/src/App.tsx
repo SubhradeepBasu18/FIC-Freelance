@@ -10,6 +10,11 @@ import Sponsors from "@/pages/Sponsors";
 import AdminDashboard from "@/pages/Admin-Dashboard";
 import SignInPage from '@/pages/SignInPage';
 import ResetPassword from '@/pages/ResetPassword';
+import Publications from '@/pages/Publications';
+import ArticlesPage from '@/components/PublicationsPage/Article';
+import NewslettersPage from '@/components/PublicationsPage/Newsletter';
+import PodcastsPage from '@/components/PublicationsPage/Podcast';
+import JournalsPage from '@/components/PublicationsPage/Journal';
 
 const App: React.FC = () => {
   return (
@@ -21,9 +26,14 @@ const App: React.FC = () => {
           <Route path="/events" element={<Events />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/sponsors" element={<Sponsors />} />
+          <Route path="/publications" element={<Publications />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/articles" element={<ArticlesPage />} />
+          <Route path="/newsletter" element={<NewslettersPage />} />
+          <Route path="/podcasts" element={<PodcastsPage />} />
+          <Route path="/journals" element={<JournalsPage />} />
           {/* 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>

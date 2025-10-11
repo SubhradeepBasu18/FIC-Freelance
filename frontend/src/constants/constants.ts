@@ -47,6 +47,17 @@ export const NAV_ITEMS = [
     ],
   },
   {
+    label: "PUBLICATIONS",
+    bgColor: "#27272a", // zinc-800
+    textColor: "#ffffff",
+    links: [
+      { label: "Articles", href: "/articles", ariaLabel: "View all articles" },
+      { label: "Newsletter", href: "/newsletter", ariaLabel: "View all newsletters" },
+      { label: "Journals", href: "/journals", ariaLabel: "View all journals" },
+      { label: "Podcasts", href: "/podcasts", ariaLabel: "View all podcasts" },
+    ],
+  },
+  {
     label: "COLLABORATIONS",
     bgColor: "#27272a", // zinc-800
     textColor: "#ffffff",
