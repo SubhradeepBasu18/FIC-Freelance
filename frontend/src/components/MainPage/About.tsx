@@ -1,74 +1,81 @@
+import React from 'react';
+import { Sparkles, TrendingUp, Target, MessageSquare } from 'lucide-react';
+
 const AboutSection = () => {
-  return (
-    <section
-      id="about"
-      className="relative min-h-screen mt-2 bg-black flex items-center justify-center px-6 py-16 overflow-hidden"
-    >
-      {/* Foreground content */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-        {/* Left side (text) */}
-        <div id="about-text" className="space-y-8 text-left">
-          <h2 className="text-4xl sm:text-5xl font-bold italic text-white">
-            About FICMH
-          </h2>
-          
-          <div className="space-y-6">
-            <div>
-              <p className="text-lg sm:text-xl text-light leading-relaxed">
-                Established in 2021, the Finance and Investment Club of Miranda House is a student-led initiative 
-                that seeks to cultivate financial literacy and awareness among young minds. By hosting interactive 
-                workshops, thought-provoking speaker sessions, and engaging events, the club strives to bridge the 
-                gap between theory and practice while making finance more accessible and relevant.
-              </p>
+    return (
+      <section className="relative px-6 py-20 overflow-hidden bg-black">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent"></div>
+        
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-block">
+              <h2 className="text-5xl md:text-6xl font-bold text-white mb-4 relative">
+                About <span className="text-cyan-400">FICMH</span>
+                <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+              </h2>
             </div>
-
-            <div className="bg-zinc-800/50 p-6 rounded-lg border-l-4 accent-text">
-              <h3 className="text-2xl font-bold text-white mb-3">Our Mission</h3>
-              <p className="text-light leading-relaxed">
-                Our mission is to foster financial literacy, critical thinking, and real-world awareness among students 
-                by creating opportunities to learn, engage, and apply knowledge. Guided by our motto <span className="accent-text font-semibold">"Insight. Action. Impact."</span>, 
-                we strive to bridge the gap between classroom concepts and practical applications through workshops, 
-                speaker sessions, and collaborative initiatives.
-              </p>
+            <p className="text-gray-400 text-lg mt-6 max-w-3xl mx-auto">
+              A journey that began in 2021, transforming financial education
+            </p>
+          </div>
+  
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-zinc-800/80 to-zinc-900/80 backdrop-blur-sm p-8 rounded-2xl border border-cyan-400/20 hover:border-cyan-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/10">
+                <p className="text-gray-200 text-lg leading-relaxed">
+                  Established in 2021, the Finance and Investment Club of Miranda House is a student-led initiative 
+                  that seeks to cultivate financial literacy and awareness among young minds.
+                </p>
+              </div>
+              
+              <div className="bg-gradient-to-br from-zinc-800/80 to-zinc-900/80 backdrop-blur-sm p-8 rounded-2xl border border-cyan-400/20 hover:border-cyan-400/40 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/10">
+                <p className="text-gray-200 text-lg leading-relaxed">
+                  By hosting interactive workshops, thought-provoking speaker sessions, and engaging events, the club 
+                  strives to bridge the gap between theory and practice while making finance more accessible and relevant.
+                </p>
+              </div>
             </div>
-
-            <div className="bg-zinc-800/50 p-6 rounded-lg border-l-4 accent-text">
-              <h3 className="text-2xl font-bold text-white mb-3">Our Vision</h3>
-              <p className="text-light leading-relaxed">
-                We envision FIC Miranda House as a dynamic platform that empowers students to become informed, 
-                responsible, and future-ready individuals. With the belief that we are <span className="accent-text font-semibold">"Fueling Futures Through Finance,"</span> 
-                the club aspires to nurture curiosity, inspire innovation, and build a community where financial 
-                knowledge translates into meaningful change.
-              </p>
+  
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-purple-600/20 rounded-3xl blur-3xl"></div>
+              <div className="relative bg-zinc-800/50 backdrop-blur-xl p-10 rounded-2xl border border-cyan-400/30">
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-cyan-400/10 p-3 rounded-lg">
+                      <TrendingUp className="text-cyan-400" size={28} />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-semibold text-white mb-2">Interactive Learning</h4>
+                      <p className="text-gray-400">Workshops and practical sessions</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="bg-cyan-400/10 p-3 rounded-lg">
+                      <Target className="text-cyan-400" size={28} />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-semibold text-white mb-2">Real-World Focus</h4>
+                      <p className="text-gray-400">Bridging theory and practice</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="bg-cyan-400/10 p-3 rounded-lg">
+                      <MessageSquare className="text-cyan-400" size={28} />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-semibold text-white mb-2">Expert Insights</h4>
+                      <p className="text-gray-400">Speaker sessions with industry leaders</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Right side (image with text below) */}
-        <div id="about-visual" className="flex flex-col justify-start items-center md:items-end space-y-8">
-          {/* Image positioned higher */}
-          <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl -mt-8">
-            <img 
-              src="/src/assets/HomePageGroupPhoto/home_page_photo.jpg"
-              alt="FICMH Team Photo"
-              className="w-full h-auto object-cover"
-              loading="lazy"
-            />
-          </div>
-          
-          {/* Text below the image */}
-          <div className="w-full max-w-md">
-            <div className="bg-zinc-800/50 p-6 rounded-lg border border-cyan-400/20">
-              <p className="text-lg text-light leading-relaxed font-medium text-center">
-                With each endeavor, FICMH continues to inspire students to think critically, explore new perspectives, 
-                and engage meaningfully with the evolving world of finance and economics.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
+      </section>
+    );
+  };
 
 export default AboutSection;
