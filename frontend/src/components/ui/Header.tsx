@@ -78,7 +78,7 @@ const Header = () => {
         className={`fixed top-0 left-0 right-0 text-white z-50 transition-all duration-300 ${
             isScrolled
             ? "bg-transparent backdrop-blur-sm shadow-lg"
-            : "bg-transparent backdrop-blur-0"
+            : "bg-transparent backdrop-blur-lg"
         }`}
         ref={dropdownRef}
         >
