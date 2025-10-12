@@ -126,7 +126,7 @@ const EventPage = () => {
 
   const speakerItems = [
     {
-      image: "/src/assets/EventSpeakers/Ajitesh Gupta.JPG",
+      image: "/assets/EventSpeakers/Ajitesh Gupta.JPG",
       title: "Ajitesh Gupta",
       subtitle: "",
       handle: "",
@@ -135,7 +135,7 @@ const EventPage = () => {
       url: "#"
     },
     {
-      image: "/src/assets/EventSpeakers/Dhruv Soni.JPG",
+      image: "/assets/EventSpeakers/Dhruv Soni.JPG",
       title: "Dhruv Soni",
       subtitle: "",
       handle: "",
@@ -144,7 +144,7 @@ const EventPage = () => {
       url: "#"
     },
     {
-      image: "/src/assets/EventSpeakers/Harsh Goela.JPG",
+      image: "/assets/EventSpeakers/Harsh Goela.JPG",
       title: "Harsh Goela",
       subtitle: "",
       handle: "",
@@ -153,7 +153,7 @@ const EventPage = () => {
       url: "#"
     },
     {
-      image: "/src/assets/EventSpeakers/Ranjika Mitra.JPG",
+      image: "/assets/EventSpeakers/Ranjika Mitra.JPG",
       title: "Ranjika Mitra",
       subtitle: "",
       handle: "",
@@ -162,7 +162,7 @@ const EventPage = () => {
       url: "#"
     },
     {
-      image: "/src/assets/EventSpeakers/Pranjal Kamra.JPG",
+      image: "/assets/EventSpeakers/Pranjal Kamra.JPG",
       title: "Pranjal Kamra",
       subtitle: "",
       handle: "",
@@ -171,7 +171,7 @@ const EventPage = () => {
       url: "#"
     },
     {
-      image: "/src/assets/EventSpeakers/Vandana Tolani.JPG",
+      image: "/assets/EventSpeakers/Vandana Tolani.JPG",
       title: "Vandana Tolani",
       subtitle: "",
       handle: "",
@@ -483,7 +483,7 @@ const EventPage = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
+        {/* Call to Action
         <div className="text-center mt-16">
           <div className="bg-black rounded-2xl p-8 border border-gray-800">
             <h3 className="text-2xl font-bold text-white mb-4">Want to stay updated?</h3>
@@ -495,7 +495,7 @@ const EventPage = () => {
               Join Our Community
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

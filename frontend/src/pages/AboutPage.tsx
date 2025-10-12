@@ -58,7 +58,7 @@ const AboutPage = () => {
           <div className="lg:col-span-1">
             <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl overflow-hidden border border-gray-700 h-full">
               <img 
-                src="/src/assets/HomePageGroupPhoto/home_page_photo.jpg"
+                src="/assets/HomePageGroupPhoto/home_page_photo.jpg"
                 alt="FICMH Team"
                 className="w-full h-48 object-cover"
               />

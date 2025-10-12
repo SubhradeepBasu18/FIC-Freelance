@@ -1,11 +1,11 @@
 // Import all sponsor images
-import ChaseProtein from '../assets/Collaborations/Chase Protein.png';
-import Crowwd from '../assets/Collaborations/Crowwd.png';
-import EvePaper from '../assets/Collaborations/EvePaper.png';
-import GLBXTNT from '../assets/Collaborations/GLBXTNT.png';
-import HDFC from '../assets/Collaborations/HDFC.png';
-import LazerCrazer from '../assets/Collaborations/Lazer Crazer.png';
-import Unstop from '../assets/Collaborations/Unstop.png';
+import ChaseProtein from '/assets/Collaborations/Chase Protein.png';
+import Crowwd from '/assets/Collaborations/Crowwd.png';
+import EvePaper from '/assets/Collaborations/EvePaper.png';
+import GLBXTNT from '/assets/Collaborations/GLBXTNT.png';
+import HDFC from '/assets/Collaborations/HDFC.png';
+import LazerCrazer from '/assets/Collaborations/Lazer Crazer.png';
+import Unstop from '/assets/Collaborations/Unstop.png';
 
 const SponsorsPage = () => {
   const sponsorItems = [

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { NAV_ITEMS } from "@/constants/constants";
-import logo from "@/assets/logo0.png";
+import logo from '/assets/logo0.png';
 
 const Header = () => {
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
