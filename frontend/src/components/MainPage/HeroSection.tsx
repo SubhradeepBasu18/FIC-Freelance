@@ -20,9 +20,9 @@ const HeroSection = () => {
         {/* Text Content Over Photo - Positioned at Bottom */}
         <div className="relative z-10 w-full pb-32 px-6">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-7xl md:text-9xl font-bold text-transparent mb-6 tracking-widest drop-shadow-2xl 
-                  [text-stroke:2px_white] [-webkit-text-stroke:2px_white]">
-              FIC<span className="[text-stroke:2px_#22d3ee] [-webkit-text-stroke:2px_#22d3ee]">MH</span>
+            <h1 className="text-7xl md:text-9xl font-bold mb-6 tracking-widest drop-shadow-2xl 
+                  text-white">
+              FIC<span className="text-cyan-400">MH</span>
             </h1>
             <div className="h-1 w-32 bg-gradient-to-r from-transparent via-cyan-400 to-transparent mx-auto mb-6"></div>
             <p className="text-transparent italic text-3xl md:text-4xl font-light 
