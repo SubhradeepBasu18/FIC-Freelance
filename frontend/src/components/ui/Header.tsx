@@ -6,6 +6,7 @@ import logo from '/assets/logo0.png';
 const Header = () => {
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
     const location = useLocation();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -61,10 +62,16 @@ const Header = () => {
 
     const handleLinkClick = () => {
         setActiveDropdown(null);
+        setMobileAccordion(null);
     };
 
     const handleMobileMenuToggle = () => {
         setActiveDropdown(activeDropdown === "mobile" ? null : "mobile");
+        setMobileAccordion(null);
+    };
+
+    const toggleMobileAccordion = (label: string) => {
+        setMobileAccordion(mobileAccordion === label ? null : label);
     };
 
     return (
@@ -207,45 +214,72 @@ const Header = () => {
                             <div className="absolute inset-0 bg-cyan-400/20 blur-lg rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </button>
 
-                        {/* Mobile Dropdown Menu */}
+                        {/* Mobile Dropdown Menu with Accordion */}
                         {activeDropdown === "mobile" && (
-                            <div className="absolute top-full left-0 right-0 bg-black/70 backdrop-blur-xl border-b border-white/20 py-4 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <div className="absolute top-full left-0 right-0 bg-black/70 backdrop-blur-xl border-b border-white/20 py-4 z-50 animate-in fade-in slide-in-from-top-4 duration-300 max-h-[calc(100vh-80px)] overflow-y-auto">
                                 <div className="container mx-auto px-4 space-y-1">
                                     {NAV_ITEMS.map((item, itemIndex) => {
                                         const isActive = isNavItemActive(item);
+                                        const isOpen = mobileAccordion === item.label;
                                         return (
                                             <div
                                                 key={item.label}
                                                 className="border-b border-white/10 last:border-b-0 py-2"
                                                 style={{ animationDelay: `${itemIndex * 50}ms` }}
                                             >
-                                                <div className={`py-2 font-semibold text-sm tracking-wide ${
-                                                    isActive ? "text-cyan-300" : "text-white/70"
-                                                }`}>
-                                                    {item.label}
-                                                </div>
-                                                <div className="space-y-1">
-                                                    {item.links.map((link) => (
-                                                        <Link
-                                                            key={link.href}
-                                                            to={link.href}
-                                                            className={`relative block py-2.5 px-4 text-sm rounded-xl transition-all duration-200 overflow-hidden group ${
-                                                                isLinkActive(link.href)
-                                                                    ? "text-cyan-300 font-medium"
-                                                                    : "text-white/80 hover:text-white"
-                                                            }`}
-                                                            onClick={handleLinkClick}
-                                                        >
-                                                            <span className="relative z-10 flex items-center">
-                                                                {isLinkActive(link.href) && (
-                                                                    <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full mr-2 animate-pulse"></span>
-                                                                )}
-                                                                {link.label}
-                                                            </span>
-                                                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/20 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                                            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-                                                        </Link>
-                                                    ))}
+                                                <button
+                                                    onClick={() => toggleMobileAccordion(item.label)}
+                                                    className={`w-full flex items-center justify-between py-2 font-semibold text-sm tracking-wide transition-colors duration-200 ${
+                                                        isActive ? "text-cyan-300" : "text-white/90 hover:text-white"
+                                                    }`}
+                                                >
+                                                    <span>{item.label}</span>
+                                                    <svg
+                                                        className={`w-5 h-5 transition-transform duration-300 ${
+                                                            isOpen ? "rotate-180" : ""
+                                                        }`}
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M19 9l-7 7-7-7"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                                
+                                                {/* Accordion Content */}
+                                                <div
+                                                    className={`overflow-hidden transition-all duration-300 ${
+                                                        isOpen ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
+                                                    }`}
+                                                >
+                                                    <div className="space-y-1">
+                                                        {item.links.map((link) => (
+                                                            <Link
+                                                                key={link.href}
+                                                                to={link.href}
+                                                                className={`relative block py-2.5 px-4 text-sm rounded-xl transition-all duration-200 overflow-hidden group ${
+                                                                    isLinkActive(link.href)
+                                                                        ? "text-cyan-300 font-medium"
+                                                                        : "text-white/80 hover:text-white"
+                                                                }`}
+                                                                onClick={handleLinkClick}
+                                                            >
+                                                                <span className="relative z-10 flex items-center">
+                                                                    {isLinkActive(link.href) && (
+                                                                        <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full mr-2 animate-pulse"></span>
+                                                                    )}
+                                                                    {link.label}
+                                                                </span>
+                                                                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/20 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                                                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                                                            </Link>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </div>
                                         );
