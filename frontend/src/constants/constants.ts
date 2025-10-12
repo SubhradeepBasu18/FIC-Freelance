@@ -85,7 +85,7 @@ export const socialLinks = [
 ];
 
 export const contactInfo = [
-  { type: "Email", value: "techfest@fichm.ac.in", icon: FaEnvelope },
+  { type: "Email", value: "finance.club@mirandahouse.ac.in", icon: FaEnvelope },
   { type: "Phone", value: "+91 XXXXXXXXXX", icon: FaPhone },
   { type: "Address", value: "Finance and Investment Club of Miranda House", icon: FaMapMarkerAlt },
 ];

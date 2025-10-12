@@ -16,6 +16,7 @@ import NewslettersPage from '@/components/PublicationsPage/Newsletter';
 import PodcastsPage from '@/components/PublicationsPage/Podcast';
 import JournalsPage from '@/components/PublicationsPage/Journal';
 import Team from '@/pages/Team';
+import ContactPage from './pages/ContactPage';
 
 const App: React.FC = () => {
   return (
@@ -36,6 +37,7 @@ const App: React.FC = () => {
           <Route path="/podcasts" element={<PodcastsPage />} />
           <Route path="/journals" element={<JournalsPage />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/contact" element={<ContactPage/>} />
           {/* 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>
