@@ -14,7 +14,7 @@ const addJournal = async(req, res) => {
         }
 
         const journalFilePath = req?.file?.path
-        const journalFileURL = await uploadOnCloudinary(journalFilePath)
+        const journalFileURL = await uploadOnCloudinary(journalFilePath, "journals")
 
         if(!journalFileURL) {
             return res.status(400).json({
@@ -25,7 +25,7 @@ const addJournal = async(req, res) => {
         const newJournal = await journal.create({
             title,
             authors,
-            fileUrl: journalFileURL.url,
+            fileUrl: journalFileURL.secure_url,
             isPublic
         })
 
@@ -381,7 +381,7 @@ const addNewsletter = async(req, res) => {
         const newNewsletter = await newsletter.create({
             title,
             authors,
-            fileUrl: fileUrl.url,
+            fileUrl: fileUrl.secure_url,
             isPublic
         })
 
