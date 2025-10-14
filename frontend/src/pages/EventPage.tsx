@@ -230,89 +230,94 @@ const EventPage = () => {
 
         {/* Inviesta Section - Enhanced Styling */}
         <div className="mb-20">
-          <div className="relative bg-gradient-to-br from-black via-gray-900 to-black rounded-3xl border border-gray-800 p-8 md:p-12 mb-12 overflow-hidden">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+  <div className="relative bg-gradient-to-br from-black via-gray-900 to-black rounded-3xl border border-gray-800 p-6 md:p-12 mb-12 overflow-hidden">
+    {/* Background Pattern */}
+    <div className="absolute inset-0 opacity-10">
+      <div className="absolute top-0 right-0 w-32 h-32 md:w-64 md:h-64 bg-white rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-32 h-32 md:w-64 md:h-64 bg-white rounded-full blur-3xl"></div>
+    </div>
+    
+    <div className="relative z-10 text-center">
+      {/* Flagship Event Header - Improved for mobile */}
+      <div className="flex flex-col sm:flex-row items-center justify-center mb-6 gap-4">
+        <div className="hidden sm:block w-20 md:w-32 h-1 bg-gradient-to-r from-transparent via-white to-transparent"></div>
+        <span className="text-white font-semibold text-base md:text-lg px-4 py-2 border border-white/30 rounded-full">
+          FLAGSHIP EVENT
+        </span>
+        <div className="hidden sm:block w-20 md:w-32 h-1 bg-gradient-to-r from-transparent via-white to-transparent"></div>
+      </div>
+      
+      {/* Title */}
+      <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+        Inviesta
+      </h2>
+      
+      <div className="w-16 md:w-24 h-1 bg-white mx-auto mb-6 md:mb-8"></div>
+      
+      {/* Description */}
+      <div className="bg-black/50 backdrop-blur-sm p-4 md:p-8 rounded-2xl border border-gray-700/50 mb-6 md:mb-8">
+        <p className="text-base md:text-lg lg:text-xl text-gray-300 leading-relaxed text-center max-w-4xl mx-auto">
+          <span className="text-white font-bold text-xl md:text-2xl">Inviesta</span> isn't just an annual fest but where ideas come alive and connect with the real world.
+          From thought-provoking speaker sessions that deliver industry insights and career inspiration, to intellectually
+          stimulating competitions that challenge skills in finance, economics and strategy,
+          Inviesta brings together ambition, creativity, and learning under one roof. Blending Miranda
+          House's prestige with interactive formats, it transforms knowledge into capital and growth into
+          return, making it a true celebration of insight, action, and impact.
+        </p>
+      </div>
+
+      {/* Stats for Inviesta - Improved grid for mobile */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6 mt-6 md:mt-8 max-w-2xl mx-auto">
+        {[
+          { number: "1000+", label: "Participants" },
+          { number: "15+", label: "Speakers" },
+          { number: "20+", label: "Colleges" },
+          { number: "₹50K+", label: "Prize Pool" }
+        ].map((stat, index) => (
+          <div key={index} className="text-center group p-3 md:p-0">
+            <div className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-1 group-hover:scale-110 transition-transform duration-300">
+              {stat.number}
             </div>
-            
-            <div className="relative z-10 text-center">
-              <div className="inline-flex items-center justify-center mb-6">
-                <div className="w-32 h-1 bg-gradient-to-r from-transparent via-white to-transparent"></div>
-                <span className="mx-4 text-white font-semibold text-lg">FLAGSHIP EVENT</span>
-                <div className="w-32 h-1 bg-gradient-to-r from-transparent via-white to-transparent"></div>
-              </div>
-              
-              <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                Inviesta
-              </h2>
-              
-              <div className="w-24 h-1 bg-white mx-auto mb-8"></div>
-              
-              <div className="bg-black/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 mb-8">
-                <p className="text-lg md:text-xl text-gray-300 leading-relaxed text-center max-w-4xl mx-auto">
-                  <span className="text-white font-bold text-2xl">Inviesta</span> isn't just an annual fest but where ideas come alive and connect with the real world.
-                  From thought-provoking speaker sessions that deliver industry insights and career inspiration, to intellectually
-                  stimulating competitions that challenge skills in finance, economics and strategy,
-                  Inviesta brings together ambition, creativity, and learning under one roof. Blending Miranda
-                  House's prestige with interactive formats, it transforms knowledge into capital and growth into
-                  return, making it a true celebration of insight, action, and impact.
-                </p>
-              </div>
-
-              {/* Stats for Inviesta */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8 max-w-2xl mx-auto">
-                {[
-                  { number: "1000+", label: "Participants" },
-                  { number: "15+", label: "Speakers" },
-                  { number: "20+", label: "Colleges" },
-                  { number: "₹50K+", label: "Prize Pool" }
-                ].map((stat, index) => (
-                  <div key={index} className="text-center group">
-                    <div className="text-2xl md:text-3xl font-bold text-white mb-1 group-hover:scale-110 transition-transform duration-300">
-                      {stat.number}
-                    </div>
-                    <div className="text-gray-400 text-xs md:text-sm">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <div className="text-gray-400 text-xs md:text-sm">{stat.label}</div>
           </div>
+        ))}
+      </div>
+    </div>
+  </div>
 
-          {/* Speaker Grid Section */}
-          <div className="text-center mb-8">
-            <h3 className="text-3xl font-bold text-white mb-4">Our Past Speakers</h3>
-            <div className="w-16 h-1 bg-white mx-auto mb-4"></div>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Industry leaders and experts who have shared their knowledge and insights at our events
-            </p>
-          </div>
+  {/* Speaker Grid Section */}
+  <div className="text-center mb-8">
+    <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Our Past Speakers</h3>
+    <div className="w-12 md:w-16 h-1 bg-white mx-auto mb-4"></div>
+    <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto px-4">
+      Industry leaders and experts who have shared their knowledge and insights at our events
+    </p>
+  </div>
 
-          {/* Consistent Speaker Grid for all screen sizes */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {speakerItems.map((speaker, index) => (
-              <div 
-                key={index} 
-                className="group bg-black rounded-xl p-4 border border-gray-800 text-center hover:border-white/50 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-white/10"
-              >
-                <div 
-                  className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden border-2 group-hover:scale-110 transition-all duration-300"
-                  style={{ borderColor: speaker.borderColor }}
-                >
-                  <img
-                    src={speaker.image}
-                    alt={speaker.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                </div>
-                <h4 className="text-white font-semibold text-sm group-hover:text-gray-200 transition-colors duration-300">
-                  {speaker.title}
-                </h4>
-              </div>
-            ))}
-          </div>
+  {/* Responsive Speaker Grid */}
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 px-2">
+    {speakerItems.map((speaker, index) => (
+      <div 
+        key={index} 
+        className="group bg-black rounded-xl p-3 md:p-4 border border-gray-800 text-center hover:border-white/50 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-white/10"
+      >
+        <div 
+          className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-2 md:mb-3 rounded-full overflow-hidden border-2 group-hover:scale-110 transition-all duration-300"
+          style={{ borderColor: speaker.borderColor }}
+        >
+          <img
+            src={speaker.image}
+            alt={speaker.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
         </div>
+        <h4 className="text-white font-semibold text-xs md:text-sm group-hover:text-gray-200 transition-colors duration-300 leading-tight">
+          {speaker.title}
+        </h4>
+      </div>
+    ))}
+  </div>
+</div>
 
         {/* Upcoming Events Section */}
         <div className="mb-20">

@@ -6,12 +6,22 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 // Delete team member
 // Get team member
 
-
 const addTeamMember = async (req, res) => {
   try {
-    const { name, position, linkedin} = req.body;
+    // Check if file was uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        message: "Avatar image is required",
+      });
+    }
+
+    const { name, position, linkedin } = req.body;
 
     if (!name || !position || !linkedin) {
+      // Clean up the uploaded file if validation fails
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       return res.status(400).json({
         message: "All fields are required",
       });
@@ -22,24 +32,30 @@ const addTeamMember = async (req, res) => {
       aboutUs = new AboutUs({ team: [] });
     }
 
-    const avatarLocalImgPath = req?.file?.path;
+    const avatarLocalImgPath = req.file.path;
     
-    if(!avatarLocalImgPath) {
-        return res.status(400).json({
-            message: "Avatar is required",
-        })
-    }
+    // console.log('Uploading file from path:', avatarLocalImgPath);
 
     const avatarURL = await uploadOnCloudinary(avatarLocalImgPath);
-    if(!avatarURL) {
-        return res.status(500).json({
-            message: "Failed to upload avatar",
-        })
+    
+    if (!avatarURL) {
+      // Clean up the local file if Cloudinary upload fails
+      if (fs.existsSync(avatarLocalImgPath)) {
+        fs.unlinkSync(avatarLocalImgPath);
+      }
+      return res.status(500).json({
+        message: "Failed to upload avatar to Cloudinary",
+      });
     }
 
-    const teamMember = { name, position, linkedin, avatar: avatarURL.url };
+    const teamMember = { 
+      name, 
+      position, 
+      linkedin, 
+      avatar: avatarURL.url 
+    };
+    
     aboutUs.team.push(teamMember);
-
     await aboutUs.save();
 
     return res.status(201).json({
@@ -47,12 +63,19 @@ const addTeamMember = async (req, res) => {
       teamMember,
     });
   } catch (error) {
+    console.error('Add team member error:', error);
+    
+    // Clean up uploaded file in case of error
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    
     return res.status(500).json({
-      message: error.message,
+      message: "Internal server error",
+      error: error.message
     });
   }
 };
-
 // team.controller.js - Update the updateTeamMember function
 const updateTeamMember = async (req, res) => {
     try {

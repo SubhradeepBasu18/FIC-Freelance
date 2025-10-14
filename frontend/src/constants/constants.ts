@@ -38,15 +38,6 @@ export const NAV_ITEMS = [
     ],
   },
   {
-    label: "GALLERY",
-    bgColor: "#27272a", // zinc-800
-    textColor: "#ffffff",
-    links: [
-      { label: "Photo Gallery", href: "/gallery", ariaLabel: "View photo gallery" },
-      { label: "Event Photos", href: "/gallery/events", ariaLabel: "Event photos" },
-    ],
-  },
-  {
     label: "PUBLICATIONS",
     bgColor: "#27272a", // zinc-800
     textColor: "#ffffff",
@@ -55,6 +46,15 @@ export const NAV_ITEMS = [
       { label: "Newsletter", href: "/newsletter", ariaLabel: "View all newsletters" },
       { label: "Journals", href: "/journals", ariaLabel: "View all journals" },
       { label: "Podcasts", href: "/podcasts", ariaLabel: "View all podcasts" },
+    ],
+  },
+  {
+    label: "GALLERY",
+    bgColor: "#27272a", // zinc-800
+    textColor: "#ffffff",
+    links: [
+      { label: "Photo Gallery", href: "/gallery", ariaLabel: "View photo gallery" },
+      { label: "Event Photos", href: "/gallery/events", ariaLabel: "Event photos" },
     ],
   },
   {

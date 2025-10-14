@@ -7,7 +7,7 @@ const AboutPage = () => {
           <h1 className="text-5xl md:text-6xl font-bold italic text-white mb-6 tracking-tight">
             About FICMH
           </h1>
-          <div className="w-24 h-1 accent-bg mx-auto mb-8"></div>
+          <div className="w-24 h-1 bg-white mx-auto mb-8"></div>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             The Finance and Investment Club of Miranda House - where financial literacy meets innovation, 
             and young minds shape the future of finance.
@@ -76,7 +76,7 @@ const AboutPage = () => {
         <div className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4">Our Departments</h2>
-            <div className="w-20 h-1 accent-bg mx-auto"></div>
+            <div className="w-20 h-1 bg-white mx-auto"></div>
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
               Four specialized teams working together to drive financial literacy and innovation forward
             </p>

@@ -25,10 +25,10 @@ const HeroSection = () => {
               FIC<span className="text-cyan-400">MH</span>
             </h1>
             <div className="h-1 w-32 bg-gradient-to-r from-transparent via-cyan-400 to-transparent mx-auto mb-6"></div>
-            <p className="text-transparent italic text-3xl md:text-4xl font-light 
+            {/* <p className="text-transparent italic text-3xl md:text-4xl font-light 
                   [text-stroke:1px_#facc15] [-webkit-text-stroke:1px_#facc15] drop-shadow-lg">
               Cultivating financial literacy, empowering young minds
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

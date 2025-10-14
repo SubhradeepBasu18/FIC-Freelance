@@ -50,18 +50,18 @@ const SignInPage = () => {
         <section className="min-h-screen bg-black py-20 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md mx-auto">
                 {/* Header Section */}
-                <div className="text-center mb-12">
+                <div className="text-center mb-16">
                     <h1 className="text-5xl md:text-6xl font-bold italic text-white mb-6 tracking-tight">
                         Admin Sign In
                     </h1>
-                    <div className="w-24 h-1 accent-bg mx-auto mb-8"></div>
+                    <div className="w-24 h-1 bg-white mx-auto mb-8"></div>
                     <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
                         Access the admin dashboard to manage events, sponsors, and website content.
                     </p>
                 </div>
 
                 {/* Sign In Form */}
-                <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-accent/20">
+                <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-cyan-400/20 transform hover:scale-[1.02] transition-all duration-300">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Email Field */}
                         <div>
@@ -75,7 +75,7 @@ const SignInPage = () => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all duration-300"
+                                className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all duration-300"
                                 placeholder="Enter your email"
                             />
                         </div>
@@ -93,13 +93,13 @@ const SignInPage = () => {
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
-                                    className="w-full px-4 py-3 pr-10 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all duration-300"
+                                    className="w-full px-4 py-3 pr-10 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all duration-300"
                                     placeholder="Enter your password"
                                 />
                                 <button
                                     type="button"
                                     onClick={togglePasswordVisibility}
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cyan-400 transition-colors duration-200"
                                 >
                                     {showPassword ? (
                                         <EyeOff className="w-5 h-5" />
@@ -121,7 +121,7 @@ const SignInPage = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full accent-bg primary-text py-3 px-4 rounded-lg font-semibold hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                         >
                             {loading ? (
                                 <div className="flex items-center justify-center">
@@ -139,7 +139,7 @@ const SignInPage = () => {
                         <div className="text-center">
                             <p className="text-gray-400 text-sm">
                                 Forgot your password?{' '}
-                                <a href="/reset-password" className="text-accent hover:underline">
+                                <a href="/reset-password" className="text-cyan-400 hover:underline">
                                     Reset here
                                 </a>
                             </p>
@@ -148,12 +148,26 @@ const SignInPage = () => {
                 </div>
 
                 {/* Security Notice */}
-                <div className="mt-8 text-center">
-                    <div className="bg-gradient-to-r from-zinc-500/10 to-blue-500/10 rounded-2xl p-6 border border-accent/20">
-                        <h3 className="text-lg font-bold text-white mb-2">Security Notice</h3>
-                        <p className="text-gray-300 text-sm">
+                <div className="mt-12">
+                    <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl p-6 border border-blue-400/20">
+                        <h3 className="text-lg font-bold text-white mb-2 text-center">Security Notice</h3>
+                        <p className="text-gray-300 text-sm text-center">
                             This area is restricted to authorized personnel only. Unauthorized access attempts will be logged.
                         </p>
+                    </div>
+                </div>
+
+                {/* Stats Section - Inspired by About Page */}
+                <div className="mt-12 bg-black rounded-2xl p-8 border border-cyan-400/20">
+                    <div className="grid grid-cols-2 gap-8 text-center">
+                        <div>
+                            <div className="text-2xl font-bold text-white mb-2">Secure</div>
+                            <div className="text-gray-400 text-sm">Authentication</div>
+                        </div>
+                        <div>
+                            <div className="text-2xl font-bold text-white mb-2">Admin</div>
+                            <div className="text-gray-400 text-sm">Access Only</div>
+                        </div>
                     </div>
                 </div>
             </div>

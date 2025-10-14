@@ -94,7 +94,7 @@ const TeamPage = () => {
         )}
 
         {/* Join Us CTA */}
-        <div className="mt-20 bg-gradient-to-br from-zinc-900 to-black rounded-2xl p-12 border border-cyan-400/20 text-center">
+        {/* <div className="mt-20 bg-gradient-to-br from-zinc-900 to-black rounded-2xl p-12 border border-cyan-400/20 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Join Our Team</h2>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
             Interested in being part of FICMH? We're always looking for passionate individuals 
@@ -103,7 +103,7 @@ const TeamPage = () => {
           <button className="px-8 py-3 bg-gradient-to-r from-cyan-400 to-blue-400 text-black font-semibold rounded-full hover:shadow-lg hover:shadow-cyan-400/20 transition-all duration-300 transform hover:scale-105">
             Get in Touch
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

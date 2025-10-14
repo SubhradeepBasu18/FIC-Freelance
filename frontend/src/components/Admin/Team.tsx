@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent } from 'react';
-import { Plus, Edit2, Trash2, Linkedin, X, Check } from 'lucide-react';
+import { Plus, Edit2, Trash2, Linkedin, X, Check, AlertTriangle } from 'lucide-react';
 import { getAllTeamMembers, addTeamMember, updateTeamMember, deleteTeamMember } from '@/configApi/team.admin';
 
 interface TeamMember {
@@ -15,6 +15,10 @@ export default function Team() {
   const [error, setError] = useState<string | null>(null);
   const [isAddingMember, setIsAddingMember] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; member: TeamMember | null }>({
+    isOpen: false,
+    member: null
+  });
   const [formData, setFormData] = useState({
     name: '',
     position: '',
@@ -138,14 +142,21 @@ export default function Team() {
     setIsLoading(false);
   };
 
-  const handleDelete = async (_id: string) => {
-    if (!confirm('Are you sure you want to delete this team member?')) return;
+  const handleDeleteClick = (member: TeamMember) => {
+    setDeleteConfirm({
+      isOpen: true,
+      member
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.member) return;
 
     setIsLoading(true);
     try {
-      const {status, data, error} = await deleteTeamMember(_id);
+      const {status, data, error} = await deleteTeamMember(deleteConfirm.member._id);
       if(status === 200){
-        setTeamMembers((prevMembers) => prevMembers.filter((member) => member._id !== _id));
+        setTeamMembers((prevMembers) => prevMembers.filter((member) => member._id !== deleteConfirm.member!._id));
         setError(null);
       }else{
         setError(error?.message || "Failed to delete team member");
@@ -153,7 +164,13 @@ export default function Team() {
     } catch (err: any) {
       setError(err.message || "Failed to delete team member");
     }
+    
+    setDeleteConfirm({ isOpen: false, member: null });
     setIsLoading(false);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ isOpen: false, member: null });
   };
 
   const resetForm = () => {
@@ -170,17 +187,69 @@ export default function Team() {
   };
 
   return (
-    <div className="max-w-7xl">
+    <div className="max-w-7xl mx-auto">
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm.isOpen && deleteConfirm.member && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-red-400/30 p-6 max-w-md w-full transform scale-95 animate-in fade-in-0 zoom-in-95">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-red-400" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-2">Delete Team Member</h3>
+              <div className="w-12 h-1 bg-red-400 mx-auto mb-4"></div>
+              
+              <p className="text-gray-300 text-lg mb-2">
+                Are you sure you want to delete <span className="text-white font-semibold">{deleteConfirm.member.name}</span>?
+              </p>
+              <p className="text-red-400 text-sm">
+                This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleDeleteCancel}
+                disabled={isLoading}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-zinc-800 hover:bg-zinc-700 disabled:bg-zinc-600 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105 border border-gray-600"
+              >
+                <X size={18} />
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={isLoading}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-red-400 disabled:to-red-500 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={18} />
+                    Delete
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Section Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-2">Team Management</h2>
-          <p className="text-zinc-400">Manage your team members, positions, and contact information</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div className="text-center sm:text-left">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Team Management</h2>
+          <div className="w-16 h-1 bg-white mx-auto sm:mx-0 mb-4"></div>
+          <p className="text-gray-300 text-lg">Manage your team members, positions, and contact information</p>
         </div>
         <button
           onClick={() => setIsAddingMember(true)}
           disabled={isLoading}
-          className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg font-medium transition-all shadow-lg shadow-blue-600/30"
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 disabled:from-cyan-400 disabled:to-blue-500 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg shadow-cyan-500/30 mx-auto sm:mx-0"
         >
           <Plus size={20} />
           Add Member
@@ -189,43 +258,52 @@ export default function Team() {
 
       {/* Error Message */}
       {error && (
-        <div className="mb-6 p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-200">
+        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-center">
           {error}
         </div>
       )}
 
       {/* Loading State */}
       {isLoading && (
-        <div className="mb-6 p-4 bg-blue-900/50 border border-blue-700 rounded-lg text-blue-200 text-center">
-          Processing...
+        <div className="mb-6 p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-cyan-400 text-center">
+          <div className="flex items-center justify-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-cyan-400"></div>
+            Processing...
+          </div>
         </div>
       )}
 
       {/* Add Member Form */}
       {isAddingMember && (
-        <div className="bg-zinc-900 rounded-xl p-6 mb-6 border border-zinc-800">
-          <h3 className="text-xl font-semibold mb-4 text-white">Add New Team Member</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={handleInputChange}
-              disabled={isLoading}
-              className="px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
-            />
-            <input
-              type="text"
-              name="position"
-              placeholder="Position"
-              value={formData.position}
-              onChange={handleInputChange}
-              disabled={isLoading}
-              className="px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
-            />
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-zinc-400 mb-2">
+        <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl p-6 mb-8 border border-cyan-400/20 transform hover:scale-[1.01] transition-all duration-300">
+          <h3 className="text-2xl font-bold text-white mb-6 text-center">Add New Team Member</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-300">Full Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter full name"
+                value={formData.name}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 disabled:opacity-50 transition-all duration-300"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-300">Position</label>
+              <input
+                type="text"
+                name="position"
+                placeholder="Enter position"
+                value={formData.position}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 disabled:opacity-50 transition-all duration-300"
+              />
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              <label className="block text-sm font-medium text-gray-300">
                 Avatar Image *
               </label>
               <input
@@ -233,42 +311,45 @@ export default function Team() {
                 accept="image/*"
                 onChange={handleFileChange}
                 disabled={isLoading}
-                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 disabled:opacity-50"
+                className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-cyan-500 file:to-blue-600 file:text-white hover:file:from-cyan-600 hover:file:to-blue-700 disabled:opacity-50 transition-all duration-300"
               />
               {avatarPreview && (
-                <div className="mt-3">
-                  <p className="text-sm text-zinc-400 mb-2">Preview:</p>
+                <div className="mt-3 flex items-center gap-4">
+                  <p className="text-sm text-gray-300">Preview:</p>
                   <img 
                     src={avatarPreview} 
                     alt="Avatar preview" 
-                    className="w-20 h-20 rounded-full object-cover border border-zinc-700"
+                    className="w-16 h-16 rounded-full object-cover border-2 border-cyan-400/50"
                   />
                 </div>
               )}
             </div>
-            <input
-              type="text"
-              name="linkedin"
-              placeholder="LinkedIn URL"
-              value={formData.linkedin}
-              onChange={handleInputChange}
-              disabled={isLoading}
-              className="px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
-            />
+            <div className="md:col-span-2 space-y-2">
+              <label className="block text-sm font-medium text-gray-300">LinkedIn URL</label>
+              <input
+                type="text"
+                name="linkedin"
+                placeholder="https://linkedin.com/in/username"
+                value={formData.linkedin}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 disabled:opacity-50 transition-all duration-300"
+              />
+            </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={handleAdd}
               disabled={isLoading}
-              className="flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-lg font-medium transition-all"
+              className="flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-green-400 disabled:to-green-500 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
             >
               <Check size={18} />
-              {isLoading ? 'Saving...' : 'Save'}
+              {isLoading ? 'Saving...' : 'Save Member'}
             </button>
             <button
               onClick={handleCancel}
               disabled={isLoading}
-              className="flex items-center gap-2 px-6 py-2.5 bg-zinc-700 hover:bg-zinc-600 disabled:bg-zinc-500 text-white rounded-lg font-medium transition-all"
+              className="flex items-center justify-center gap-2 px-8 py-3 bg-zinc-800 hover:bg-zinc-700 disabled:bg-zinc-600 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105 border border-gray-600"
             >
               <X size={18} />
               Cancel
@@ -278,84 +359,100 @@ export default function Team() {
       )}
 
       {/* Team Members Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {teamMembers.map((member) => (
-          <div key={member._id} className="bg-zinc-900 rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition-all">
+          <div key={member._id} className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl p-6 border border-gray-700 hover:border-cyan-400/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/10">
             {editingId === member._id ? (
               // Edit Mode
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
-                  placeholder="Full Name"
-                />
-                <input
-                  type="text"
-                  name="position"
-                  value={formData.position}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
-                  placeholder="Position"
-                />
-                <div>
-                  <label className="block text-sm text-zinc-400 mb-1">Avatar (Leave empty to keep current)</label>
+              <div className="space-y-4">
+                <h4 className="text-lg font-bold text-white text-center mb-4">Edit Member</h4>
+                
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-gray-300">Full Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
+                    className="w-full px-3 py-2 bg-zinc-800/50 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-400 disabled:opacity-50"
+                    placeholder="Full Name"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-gray-300">Position</label>
+                  <input
+                    type="text"
+                    name="position"
+                    value={formData.position}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
+                    className="w-full px-3 py-2 bg-zinc-800/50 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-400 disabled:opacity-50"
+                    placeholder="Position"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-xs text-gray-300">Avatar (Leave empty to keep current)</label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
                     disabled={isLoading}
-                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white disabled:opacity-50"
+                    className="w-full px-3 py-2 bg-zinc-800/50 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gradient-to-r file:from-cyan-500 file:to-blue-600 file:text-white disabled:opacity-50"
                   />
-                  {avatarPreview && (
-                    <div className="mt-2 flex items-center gap-3">
-                      <img 
-                        src={avatarPreview} 
-                        alt="New avatar preview" 
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <span className="text-xs text-green-400">New avatar selected</span>
-                    </div>
-                  )}
-                  {!avatarPreview && member.avatar && (
-                    <div className="mt-2 flex items-center gap-3">
-                      <img 
-                        src={member.avatar} 
-                        alt="Current avatar" 
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <span className="text-xs text-zinc-400">Current avatar</span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-3 mt-2">
+                    {avatarPreview ? (
+                      <>
+                        <img 
+                          src={avatarPreview} 
+                          alt="New avatar preview" 
+                          className="w-10 h-10 rounded-full object-cover border-2 border-green-400"
+                        />
+                        <span className="text-xs text-green-400">New avatar selected</span>
+                      </>
+                    ) : (
+                      <>
+                        <img 
+                          src={member.avatar} 
+                          alt="Current avatar" 
+                          className="w-10 h-10 rounded-full object-cover border-2 border-gray-400"
+                        />
+                        <span className="text-xs text-gray-400">Current avatar</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <input
-                  type="text"
-                  name="linkedin"
-                  value={formData.linkedin}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                  placeholder="LinkedIn URL"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
-                />
+
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-gray-300">LinkedIn URL</label>
+                  <input
+                    type="text"
+                    name="linkedin"
+                    value={formData.linkedin}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
+                    placeholder="LinkedIn URL"
+                    className="w-full px-3 py-2 bg-zinc-800/50 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-400 disabled:opacity-50"
+                  />
+                </div>
+
                 <div className="flex gap-2 pt-2">
                   <button
                     onClick={handleUpdate}
                     disabled={isLoading}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-lg text-sm font-medium transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-green-400 disabled:to-green-500 text-white rounded-lg text-sm font-semibold transition-all duration-300"
                   >
-                    <Check size={16} />
+                    <Check size={14} />
                     {isLoading ? 'Saving...' : 'Save'}
                   </button>
                   <button
                     onClick={handleCancel}
                     disabled={isLoading}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 disabled:bg-zinc-500 text-white rounded-lg text-sm font-medium transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:bg-zinc-600 text-white rounded-lg text-sm font-semibold transition-all duration-300 border border-gray-600"
                   >
-                    <X size={16} />
+                    <X size={14} />
                     Cancel
                   </button>
                 </div>
@@ -367,21 +464,21 @@ export default function Team() {
                   <img
                     src={member.avatar}
                     alt={member.name}
-                    className="w-16 h-16 rounded-full bg-zinc-800 object-cover"
+                    className="w-16 h-16 rounded-full object-cover border-2 border-cyan-400/50"
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(member)}
                       disabled={isLoading}
-                      className="p-2 bg-zinc-800 hover:bg-zinc-700 disabled:bg-zinc-600 text-blue-400 rounded-lg transition-all"
+                      className="p-2 bg-zinc-800 hover:bg-cyan-500/20 disabled:bg-zinc-600 text-cyan-400 rounded-lg transition-all duration-300 hover:scale-110 border border-cyan-400/30"
                       title="Edit"
                     >
                       <Edit2 size={16} />
                     </button>
                     <button
-                      onClick={() => handleDelete(member._id)}
+                      onClick={() => handleDeleteClick(member)}
                       disabled={isLoading}
-                      className="p-2 bg-zinc-800 hover:bg-zinc-700 disabled:bg-zinc-600 text-red-400 rounded-lg transition-all"
+                      className="p-2 bg-zinc-800 hover:bg-red-500/20 disabled:bg-zinc-600 text-red-400 rounded-lg transition-all duration-300 hover:scale-110 border border-red-400/30"
                       title="Delete"
                     >
                       <Trash2 size={16} />
@@ -389,15 +486,15 @@ export default function Team() {
                   </div>
                 </div>
 
-                <h3 className="text-lg font-semibold text-white mb-1">{member.name}</h3>
-                <p className="text-zinc-400 text-sm mb-4">{member.position}</p>
+                <h3 className="text-xl font-bold text-white mb-2">{member.name}</h3>
+                <p className="text-gray-300 text-lg mb-4">{member.position}</p>
 
                 {member.linkedin && (
                   <a
                     href={member.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all"
+                    className="inline-flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
                   >
                     <Linkedin size={16} />
                     LinkedIn Profile
@@ -410,8 +507,8 @@ export default function Team() {
       </div>
 
       {teamMembers.length === 0 && !isAddingMember && (
-        <div className="text-center py-16 bg-zinc-900 rounded-xl border border-zinc-800">
-          <p className="text-zinc-400 text-lg">No team members yet. Click "Add Member" to get started.</p>
+        <div className="text-center py-16 bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-cyan-400/20">
+          <p className="text-gray-300 text-xl">No team members yet. Click "Add Member" to get started.</p>
         </div>
       )}
     </div>

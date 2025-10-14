@@ -164,9 +164,9 @@ const updateNewsletter = async (id: string, newsletterData: FormData) => {
             newsletterData,
             {
                 withCredentials: true,
-                // headers: {
-                //     'Content-Type': 'multipart/form-data'
-                // }
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             }
         );
         return { status: response.status, data: response.data };
