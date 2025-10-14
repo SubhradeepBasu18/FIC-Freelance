@@ -54,7 +54,7 @@ const ConvenorNoteSection = () => {
                 {/* Image with round frame */}
                 <div className="relative overflow-hidden rounded-full w-72 h-72 border-4 border-blue-400/20 group-hover:border-blue-400/40 transition-all duration-500">
                   <img
-                    src="../../assets/convenor_photo.jpg"
+                    src="../../assets/ConvenorPic.png"
                     alt="Rashmi Gopi - Convenor"
                     className="w-full h-full object-cover transform group-hover:scale-105 transition duration-700"
                   />
