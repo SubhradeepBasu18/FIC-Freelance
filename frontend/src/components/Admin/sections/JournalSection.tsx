@@ -1,6 +1,5 @@
-// JournalSection.tsx (Updated)
 import React, { useEffect, useState } from 'react';
-import { FileText, ExternalLink, Edit2, Trash2, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { FileText, ExternalLink, Edit2, Trash2, ChevronDown, ChevronUp, Plus, Upload, X, Check, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import { getAllJournals, addJournal, updateJournal, deleteJournal } from '@/configApi/publications.admin';
 
 interface Journal {
@@ -11,26 +10,26 @@ interface Journal {
   isPublic: boolean;
   fileUrl?: string;
   createdAt: string;
-  file?: File;
 }
 
 const JournalSection: React.FC = () => {
   const [journals, setJournals] = useState<Journal[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingJournal, setEditingJournal] = useState<Journal | null>(null);
-  const [deletingJournalId, setDeletingJournalId] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; journal: Journal | null }>({
+    isOpen: false,
+    journal: null
+  });
   const [showAddModal, setShowAddModal] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
   const [formData, setFormData] = useState({
     title: '',
     authors: '',
     journal: '',
-    isPublic: false,
-    file: null as File | null,
-  });
-  const [formErrors, setFormErrors] = useState({
-    title: '',
-    file: '',
+    isPublic: true,
   });
 
   // Fetch journals on component mount
@@ -40,28 +39,27 @@ const JournalSection: React.FC = () => {
 
   const fetchJournals = async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const response = await getAllJournals();
       if (response.status === 200) {
-        // console.log("Response: ", response.data);
-        
-        const transformedJournals = response.data.journals.map((journal: Journal) => ({
-            id: journal._id, // Map _id to id
-            title: journal.title,
-            authors: journal.authors,
-            createdAt: journal.createdAt,
-            isPublic: journal.isPublic,
-            fileUrl: journal.fileUrl,
-          }));
-
+        const transformedJournals = response.data.journals.map((journal: any) => ({
+          id: journal._id,
+          title: journal.title,
+          authors: journal.authors,
+          journal: journal.journal,
+          createdAt: journal.createdAt,
+          isPublic: journal.isPublic,
+          fileUrl: journal.fileUrl,
+        }));
         setJournals(transformedJournals);
+        setError(null);
       } else {
-        console.error('Failed to fetch journals:', response.data);
+        setError('Failed to fetch journals');
       }
     } catch (error) {
-      console.error('Error fetching journals:', error);
+      setError('Error fetching journals');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -76,134 +74,121 @@ const JournalSection: React.FC = () => {
       authors: journal.authors || '',
       journal: journal.journal || '',
       isPublic: journal.isPublic,
-      file: null,
     });
-    setFormErrors({ title: '', file: '' });
-  };
-
-  const handleAddClick = () => {
-    setShowAddModal(true);
-    setFormData({
-      title: '',
-      authors: '',
-      journal: '',
-      isPublic: false,
-      file: null,
-    });
-    setFormErrors({ title: '', file: '' });
-  };
-
-  const validateForm = (isEdit: boolean = false) => {
-    const errors = { title: '', file: '' };
-    let isValid = true;
-
-    if (!formData.title.trim()) {
-      errors.title = 'Title is required';
-      isValid = false;
-    }
-
-    if (!isEdit && !formData.file) {
-      errors.file = 'PDF file is required';
-      isValid = false;
-    }
-
-    setFormErrors(errors);
-    return isValid;
+    setSelectedFile(null);
   };
 
   const handleEditSubmit = async () => {
-    if (!editingJournal || !validateForm(true)) return;
+    if (!editingJournal) return;
 
     try {
-      const journalData = new FormData();
-      journalData.append('title', formData.title);
-      journalData.append('authors', formData.authors);
-      journalData.append('journal', formData.journal);
-      journalData.append('isPublic', String(formData.isPublic));
+      setIsLoading(true);
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title || '');
+      formDataToSend.append('authors', formData.authors || '');
+      formDataToSend.append('journal', formData.journal || '');
+      formDataToSend.append('isPublic', String(formData.isPublic));
       
-      if (formData.file) {
-        journalData.append('file', formData.file);
+      if (selectedFile) {
+        formDataToSend.append('file', selectedFile);
       }
-
-    //   console.log("Journal Data: ", formData);
-      
 
       const response = await updateJournal(editingJournal.id, formData);
       
       if (response.status === 200) {
-        await fetchJournals(); // Refresh the list
+        await fetchJournals();
         setEditingJournal(null);
+        setSelectedFile(null);
+        resetForm();
+        setError(null);
       } else {
-        console.error('Failed to update journal:', response.data);
-        alert('Failed to update journal. Please try again.');
+        setError('Failed to update journal');
       }
     } catch (error) {
-      console.error('Error updating journal:', error);
-      alert('Error updating journal. Please try again.');
+      setError('Error updating journal');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleAddSubmit = async () => {
-    if (!validateForm()) return;
+    if (!formData.title.trim() || !formData.authors.trim() || !selectedFile) {
+      setError('Please fill all required fields and select a file');
+      return;
+    }
 
     try {
-      const journalData = new FormData();
-      journalData.append('title', formData.title);
-      journalData.append('authors', formData.authors);
-      journalData.append('journal', formData.journal);
-      journalData.append('isPublic', String(formData.isPublic));
-      
-      if (formData.file) {
-        journalData.append('file', formData.file);
-      }
-    //   console.log('Journal Data:  ', formData);
-      
+      setIsLoading(true);
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('authors', formData.authors);
+      formDataToSend.append('journal', formData.journal);
+      formDataToSend.append('file', selectedFile);
+      formDataToSend.append('isPublic', String(formData.isPublic));
 
-      const response = await addJournal(formData);
+      const response = await addJournal(formDataToSend);
       
       if (response.status === 201 || response.status === 200) {
-        await fetchJournals(); // Refresh the list
+        await fetchJournals();
         setShowAddModal(false);
-        alert('Journal added successfully!');
+        setSelectedFile(null);
+        resetForm();
+        setError(null);
       } else {
-        console.error('Failed to add journal:', response.data);
-        alert('Failed to add journal. Please try again.');
+        setError('Failed to add journal');
       }
     } catch (error) {
-      console.error('Error adding journal:', error);
-      alert('Error adding journal. Please try again.');
+      setError('Error adding journal');
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleDeleteClick = (journal: Journal) => {
+    setDeleteConfirm({
+      isOpen: true,
+      journal
+    });
   };
 
   const handleDeleteConfirm = async () => {
-    if (!deletingJournalId) return;
+    if (!deleteConfirm.journal) return;
 
     try {
-      const response = await deleteJournal(deletingJournalId);
+      setIsLoading(true);
+      const response = await deleteJournal(deleteConfirm.journal.id);
       
       if (response.status === 200) {
-        await fetchJournals(); // Refresh the list
-        setDeletingJournalId(null);
-        alert('Journal deleted successfully!');
+        await fetchJournals();
+        setDeleteConfirm({ isOpen: false, journal: null });
+        setError(null);
       } else {
-        console.error('Failed to delete journal:', response.data);
-        alert('Failed to delete journal. Please try again.');
+        setError('Failed to delete journal');
       }
     } catch (error) {
-      console.error('Error deleting journal:', error);
-      alert('Error deleting journal. Please try again.');
+      setError('Error deleting journal');
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ isOpen: false, journal: null });
+    setError(null);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      authors: '',
+      journal: '',
+      isPublic: true,
+    });
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.type !== 'application/pdf') {
-        setFormErrors({ ...formErrors, file: 'Please select a PDF file' });
-        return;
-      }
-      setFormData({ ...formData, file });
-      setFormErrors({ ...formErrors, file: '' });
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
     }
   };
 
@@ -223,90 +208,180 @@ const JournalSection: React.FC = () => {
     return url;
   };
 
-  if (loading) {
+  const toggleVisibility = () => {
+    setFormData(prev => ({
+      ...prev,
+      isPublic: !prev.isPublic
+    }));
+  };
+
+  if (isLoading && journals.length === 0) {
     return (
-      <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      <div className="flex justify-center items-center py-16">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+        <span className="ml-2 text-white">Loading journals...</span>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header with Add Button */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">Research Journals</h2>
+    <div className="max-w-7xl mx-auto">
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm.isOpen && deleteConfirm.journal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-red-400/30 p-6 max-w-md w-full transform scale-95 animate-in fade-in-0 zoom-in-95">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-red-400" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-2">Delete Journal</h3>
+              <div className="w-12 h-1 bg-red-400 mx-auto mb-4"></div>
+              
+              <p className="text-gray-300 text-lg mb-2">
+                Are you sure you want to delete <span className="text-white font-semibold">{deleteConfirm.journal.title}</span>?
+              </p>
+              <p className="text-red-400 text-sm">
+                This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleDeleteCancel}
+                disabled={isLoading}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-zinc-800 hover:bg-zinc-700 disabled:bg-zinc-600 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105 border border-gray-600"
+              >
+                <X size={18} />
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={isLoading}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-red-400 disabled:to-red-500 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={18} />
+                    Delete
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Section Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div className="text-center sm:text-left">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Research Journal Management</h2>
+          <div className="w-16 h-1 bg-white mx-auto sm:mx-0 mb-4"></div>
+          <p className="text-gray-300 text-lg">Manage your research journal publications and PDF files</p>
+        </div>
         <button
-          onClick={handleAddClick}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+          onClick={() => setShowAddModal(true)}
+          disabled={isLoading}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-500 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg shadow-blue-500/30 mx-auto sm:mx-0"
         >
-          <Plus className="w-5 h-5" />
+          <Plus size={20} />
           Add Journal
         </button>
       </div>
 
-      {/* Journals List */}
-      <div className="space-y-4">
-        {journals.length === 0 ? (
-          <div className="text-center py-8 text-zinc-400">
-            No journals found. Add your first journal to get started.
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-center">
+          {error}
+        </div>
+      )}
+
+      {/* Loading State */}
+      {isLoading && (
+        <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-blue-400 text-center">
+          <div className="flex items-center justify-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+            Processing...
+          </div>
+        </div>
+      )}
+
+      {/* Journals Grid */}
+      <div className="space-y-6">
+        {journals.length === 0 && !isLoading ? (
+          <div className="text-center py-16 bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-blue-400/20">
+            <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-white mb-2">No Journals Yet</h3>
+            <p className="text-gray-300 text-lg mb-6">Get started by creating your first research journal</p>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg shadow-blue-500/30 mx-auto"
+            >
+              <Plus size={20} />
+              Create Your First Journal
+            </button>
           </div>
         ) : (
           journals.map((journal) => (
             <div
               key={journal.id}
-              className="bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-xl border border-zinc-800 overflow-hidden hover:border-zinc-700 transition-all duration-300"
+              className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-gray-700 hover:border-blue-400/30 transition-all duration-300 hover:scale-[1.01] hover:shadow-2xl hover:shadow-blue-500/10"
             >
               {/* Header Section */}
               <div className="p-6">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
                   {/* Title and Metadata */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="p-2 bg-blue-500/10 rounded-lg mt-1">
-                        <FileText className="w-5 h-5 text-blue-400" />
+                  <div className="flex-1">
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="p-3 bg-blue-500/10 rounded-lg mt-1">
+                        <FileText className="w-6 h-6 text-blue-400" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-white mb-2 leading-tight">
-                          {journal.title}
-                        </h3>
-                        <div className="flex flex-wrap gap-4 text-sm text-zinc-400">
+                        <h3 className="text-xl font-bold text-white mb-2">{journal.title}</h3>
+                        <div className="space-y-2 mb-3">
                           {journal.authors && (
-                            <span className="flex items-center gap-1">
-                              <span className="text-zinc-500">Authors:</span>
-                              <span className="text-zinc-300">{journal.authors}</span>
-                            </span>
+                            <p className="text-gray-300 text-lg">{journal.authors}</p>
                           )}
                           {journal.journal && (
-                            <span className="flex items-center gap-1">
-                              <span className="text-zinc-500">Journal:</span>
-                              <span className="text-zinc-300">{journal.journal}</span>
-                            </span>
+                            <p className="text-blue-300 text-md">Published in: {journal.journal}</p>
                           )}
-                          <span className="flex items-center gap-1">
-                            <span className="text-zinc-500">Published:</span>
-                            <span className="text-zinc-300">{formatDate(journal.createdAt)}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-4 text-sm">
+                          <span className="text-gray-400">
+                            Published: {formatDate(journal.createdAt)}
+                          </span>
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                            journal.isPublic 
+                              ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' 
+                              : 'bg-gradient-to-r from-gray-500 to-gray-600 text-white'
+                          }`}>
+                            {journal.isPublic ? 'Public' : 'Private'}
                           </span>
                         </div>
                       </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-wrap gap-2 mt-4">
+                    <div className="flex flex-wrap gap-3 mt-4">
                       {journal.fileUrl && (
                         <>
                           <button
                             onClick={() => toggleExpand(journal.id)}
-                            className="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors duration-200"
+                            className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105 border border-gray-600"
                           >
                             {expandedId === journal.id ? (
                               <>
-                                <ChevronUp className="w-4 h-4" />
+                                <ChevronUp size={16} />
                                 Hide PDF
                               </>
                             ) : (
                               <>
-                                <ChevronDown className="w-4 h-4" />
+                                <ChevronDown size={16} />
                                 View PDF
                               </>
                             )}
@@ -315,9 +390,9 @@ const JournalSection: React.FC = () => {
                             href={journal.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
                           >
-                            <ExternalLink className="w-4 h-4" />
+                            <ExternalLink size={16} />
                             Open PDF
                           </a>
                         </>
@@ -326,45 +401,34 @@ const JournalSection: React.FC = () => {
                   </div>
 
                   {/* Edit and Delete Buttons */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleEditClick(journal)}
-                      className="p-2.5 bg-blue-600/10 text-blue-400 rounded-lg hover:bg-blue-600/20 transition-colors duration-200 group"
+                      disabled={isLoading}
+                      className="p-2 bg-zinc-800 hover:bg-blue-500/20 disabled:bg-zinc-600 text-blue-400 rounded-lg transition-all duration-300 hover:scale-110 border border-blue-400/30"
                       title="Edit"
                     >
-                      <Edit2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <Edit2 size={16} />
                     </button>
                     <button
-                      onClick={() => setDeletingJournalId(journal.id)}
-                      className="p-2.5 bg-red-600/10 text-red-400 rounded-lg hover:bg-red-600/20 transition-colors duration-200 group"
+                      onClick={() => handleDeleteClick(journal)}
+                      disabled={isLoading}
+                      className="p-2 bg-zinc-800 hover:bg-red-500/20 disabled:bg-zinc-600 text-red-400 rounded-lg transition-all duration-300 hover:scale-110 border border-red-400/30"
                       title="Delete"
                     >
-                      <Trash2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <Trash2 size={16} />
                     </button>
                   </div>
-                </div>
-
-                {/* Status Badge */}
-                <div className="mt-4">
-                  <span
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                      journal.isPublic
-                        ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                        : 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-                    }`}
-                  >
-                    {journal.isPublic ? '🌐 Public' : '🔒 Private'}
-                  </span>
                 </div>
               </div>
 
               {/* PDF Viewer Section */}
               {expandedId === journal.id && journal.fileUrl && (
-                <div className="border-t border-zinc-800 bg-black/30">
+                <div className="border-t border-gray-700 bg-black/30">
                   <div className="p-4">
                     <iframe
                       src={getGoogleDrivePreviewUrl(journal.fileUrl)}
-                      className="w-full h-[600px] rounded-lg border border-zinc-800"
+                      className="w-full h-[400px] sm:h-[500px] lg:h-[600px] rounded-lg border border-gray-600"
                       title={`PDF Viewer - ${journal.title}`}
                     />
                   </div>
@@ -378,117 +442,128 @@ const JournalSection: React.FC = () => {
       {/* Add Journal Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-zinc-800">
-              <h2 className="text-2xl font-bold text-white">Add New Journal</h2>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Title *
-                </label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => {
-                    setFormData({ ...formData, title: e.target.value });
-                    setFormErrors({ ...formErrors, title: '' });
-                  }}
-                  className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter journal title"
-                />
-                {formErrors.title && (
-                  <p className="text-red-400 text-sm mt-1">{formErrors.title}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Authors
-                </label>
-                <input
-                  type="text"
-                  value={formData.authors}
-                  onChange={(e) => setFormData({ ...formData, authors: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter authors (e.g., John Doe, Jane Smith)"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Journal Name
-                </label>
-                <input
-                  type="text"
-                  value={formData.journal}
-                  onChange={(e) => setFormData({ ...formData, journal: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter journal name"
-                />
-              </div>
-
-              <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">
-                PDF File *
-            </label>
-            
-            {/* Custom File Input Container */}
-            <div className="relative">
-                <input
-                type="file"
-                accept=".pdf"
-                onChange={handleFileChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                id="file-upload-add"
-                />
-                <div className="flex items-center gap-3 px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white">
-                <FileText className="w-5 h-5 text-blue-400" />
-                <span className="flex-1">
-                    {formData.file ? formData.file.name : 'Choose PDF file'}
-                </span>
-                <button
-                    type="button"
-                    className="px-3 py-1.5 bg-zinc-700 text-white rounded-md text-sm hover:bg-zinc-600 transition-colors duration-200"
-                >
-                    Browse
-                </button>
-                </div>
-            </div>
-            
-            {formErrors.file && (
-                <p className="text-red-400 text-sm mt-1">{formErrors.file}</p>
-            )}
-            <p className="text-zinc-400 text-sm mt-1">Only PDF files are accepted</p>
-            </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="isPublic"
-                  checked={formData.isPublic}
-                  onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-                  className="w-5 h-5 bg-zinc-800 border-zinc-700 rounded focus:ring-2 focus:ring-blue-500"
-                />
-                <label htmlFor="isPublic" className="text-sm font-medium text-zinc-300 cursor-pointer">
-                  Make this journal public
-                </label>
-              </div>
-            </div>
-
-            <div className="p-6 border-t border-zinc-800 flex justify-end gap-3">
+          <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-blue-400/20 max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col transform scale-95 animate-in fade-in-0 zoom-in-95">
+            <div className="flex justify-between items-center p-6 border-b border-gray-700">
+              <h2 className="text-2xl font-bold text-white">Add New Research Journal</h2>
               <button
-                onClick={() => setShowAddModal(false)}
-                className="px-5 py-2.5 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors duration-200"
+                onClick={() => {
+                  setShowAddModal(false);
+                  resetForm();
+                  setSelectedFile(null);
+                }}
+                className="text-gray-400 hover:text-white transition-all duration-300 p-2 hover:bg-gray-700 rounded-lg"
               >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              {error && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-center">
+                  {error}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 gap-4 mb-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Title *</label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all duration-300"
+                    placeholder="Enter journal title"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Authors *</label>
+                  <textarea
+                    value={formData.authors}
+                    onChange={(e) => setFormData({ ...formData, authors: e.target.value })}
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all duration-300 resize-none"
+                    placeholder="Enter journal authors"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Journal Name</label>
+                  <input
+                    type="text"
+                    value={formData.journal}
+                    onChange={(e) => setFormData({ ...formData, journal: e.target.value })}
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all duration-300"
+                    placeholder="Enter journal name"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">PDF File *</label>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <label className="flex-1 cursor-pointer">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                      <div className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white hover:bg-zinc-700/50 transition-all duration-300 flex items-center justify-center gap-2">
+                        <Upload size={18} />
+                        {selectedFile ? selectedFile.name : 'Choose PDF File'}
+                      </div>
+                    </label>
+                  </div>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Supported formats: PDF, DOC, DOCX
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Visibility</label>
+                  <button
+                    type="button"
+                    onClick={toggleVisibility}
+                    disabled={isLoading}
+                    className={`flex items-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-300 w-full ${
+                      formData.isPublic
+                        ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
+                        : 'bg-zinc-800 text-gray-400 border border-gray-600'
+                    } hover:scale-105`}
+                  >
+                    {formData.isPublic ? <Eye size={18} /> : <EyeOff size={18} />}
+                    {formData.isPublic ? 'Public' : 'Private'}
+                  </button>
+                  <p className="text-sm text-gray-400">
+                    {formData.isPublic 
+                      ? 'This journal will be visible to all users' 
+                      : 'This journal will only be visible to admins'
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-end p-6 border-t border-gray-700">
+              <button
+                onClick={() => {
+                  setShowAddModal(false);
+                  resetForm();
+                  setSelectedFile(null);
+                }}
+                disabled={isLoading}
+                className="flex items-center justify-center gap-2 px-8 py-3 bg-zinc-800 hover:bg-zinc-700 disabled:bg-zinc-600 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105 border border-gray-600"
+              >
+                <X size={18} />
                 Cancel
               </button>
               <button
                 onClick={handleAddSubmit}
-                className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                disabled={!formData.title.trim() || !formData.authors.trim() || !selectedFile || isLoading}
+                className="flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-green-400 disabled:to-green-500 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Add Journal
+                <Check size={18} />
+                {isLoading ? 'Adding...' : 'Add Journal'}
               </button>
             </div>
           </div>
@@ -498,156 +573,127 @@ const JournalSection: React.FC = () => {
       {/* Edit Modal */}
       {editingJournal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-zinc-800">
-              <h2 className="text-2xl font-bold text-white">Edit Journal</h2>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Title *
-                </label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => {
-                    setFormData({ ...formData, title: e.target.value });
-                    setFormErrors({ ...formErrors, title: '' });
-                  }}
-                  className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter journal title"
-                />
-                {formErrors.title && (
-                  <p className="text-red-400 text-sm mt-1">{formErrors.title}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Authors
-                </label>
-                <input
-                  type="text"
-                  value={formData.authors}
-                  onChange={(e) => setFormData({ ...formData, authors: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter authors (e.g., John Doe, Jane Smith)"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
-                  Journal Name
-                </label>
-                <input
-                  type="text"
-                  value={formData.journal}
-                  onChange={(e) => setFormData({ ...formData, journal: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter journal name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">
-                    PDF File (Leave empty to keep current file)
-                </label>
-                
-                {/* Custom File Input Container */}
-                <div className="relative">
-                    <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleFileChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    id="file-upload-edit"
-                    />
-                    <div className="flex items-center gap-3 px-4 py-2.5 bg-zinc-800 border border-zinc-700 rounded-lg text-white">
-                    <FileText className="w-5 h-5 text-blue-400" />
-                    <span className="flex-1">
-                        {formData.file 
-                        ? formData.file.name 
-                        : editingJournal?.fileUrl 
-                            ? 'Current file: ' + editingJournal.fileUrl.split('/').pop()
-                            : 'Choose new PDF file (optional)'}
-                    </span>
-                    <button
-                        type="button"
-                        className="px-3 py-1.5 bg-zinc-700 text-white rounded-md text-sm hover:bg-zinc-600 transition-colors duration-200"
-                    >
-                        Browse
-                    </button>
-                    </div>
-                </div>
-  
-  {formErrors.file && (
-    <p className="text-red-400 text-sm mt-1">{formErrors.file}</p>
-  )}
-  <p className="text-zinc-400 text-sm mt-1">Only PDF files are accepted</p>
-</div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="editIsPublic"
-                  checked={formData.isPublic}
-                  onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-                  className="w-5 h-5 bg-zinc-800 border-zinc-700 rounded focus:ring-2 focus:ring-blue-500"
-                />
-                <label htmlFor="editIsPublic" className="text-sm font-medium text-zinc-300 cursor-pointer">
-                  Make this journal public
-                </label>
-              </div>
-            </div>
-
-            <div className="p-6 border-t border-zinc-800 flex justify-end gap-3">
+          <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-blue-400/20 max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col transform scale-95 animate-in fade-in-0 zoom-in-95">
+            <div className="flex justify-between items-center p-6 border-b border-gray-700">
+              <h2 className="text-2xl font-bold text-white">Edit Research Journal</h2>
               <button
-                onClick={() => setEditingJournal(null)}
-                className="px-5 py-2.5 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors duration-200"
+                onClick={() => {
+                  setEditingJournal(null);
+                  setSelectedFile(null);
+                }}
+                className="text-gray-400 hover:text-white transition-all duration-300 p-2 hover:bg-gray-700 rounded-lg"
               >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              {error && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-center">
+                  {error}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 gap-4 mb-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Title *</label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all duration-300"
+                    placeholder="Enter journal title"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Authors *</label>
+                  <textarea
+                    value={formData.authors}
+                    onChange={(e) => setFormData({ ...formData, authors: e.target.value })}
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all duration-300 resize-none"
+                    placeholder="Enter journal authors"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Journal Name</label>
+                  <input
+                    type="text"
+                    value={formData.journal}
+                    onChange={(e) => setFormData({ ...formData, journal: e.target.value })}
+                    className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all duration-300"
+                    placeholder="Enter journal name"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Update PDF File (Optional)</label>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <label className="flex-1 cursor-pointer">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                      <div className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white hover:bg-zinc-700/50 transition-all duration-300 flex items-center justify-center gap-2">
+                        <Upload size={18} />
+                        {selectedFile ? selectedFile.name : 'Choose New PDF File'}
+                      </div>
+                    </label>
+                  </div>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Leave empty to keep current file
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Visibility</label>
+                  <button
+                    type="button"
+                    onClick={toggleVisibility}
+                    disabled={isLoading}
+                    className={`flex items-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-300 w-full ${
+                      formData.isPublic
+                        ? 'bg-gradient-to-r from-green-500 to-green-600 text-white'
+                        : 'bg-zinc-800 text-gray-400 border border-gray-600'
+                    } hover:scale-105`}
+                  >
+                    {formData.isPublic ? <Eye size={18} /> : <EyeOff size={18} />}
+                    {formData.isPublic ? 'Public' : 'Private'}
+                  </button>
+                  <p className="text-sm text-gray-400">
+                    {formData.isPublic 
+                      ? 'This journal will be visible to all users' 
+                      : 'This journal will only be visible to admins'
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-end p-6 border-t border-gray-700">
+              <button
+                onClick={() => {
+                  setEditingJournal(null);
+                  setSelectedFile(null);
+                }}
+                disabled={isLoading}
+                className="flex items-center justify-center gap-2 px-8 py-3 bg-zinc-800 hover:bg-zinc-700 disabled:bg-zinc-600 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105 border border-gray-600"
+              >
+                <X size={18} />
                 Cancel
               </button>
               <button
                 onClick={handleEditSubmit}
-                disabled={!formData.title.trim()}
-                className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!formData.title.trim() || !formData.authors.trim() || isLoading}
+                className="flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-green-400 disabled:to-green-500 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
-                Save Changes
+                <Check size={18} />
+                {isLoading ? 'Updating...' : 'Save Changes'}
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {deletingJournalId && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 max-w-md w-full">
-            <div className="p-6">
-              <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-                <Trash2 className="w-6 h-6 text-red-400" />
-              </div>
-
-              <h2 className="text-xl font-bold text-white mb-2">Delete Journal</h2>
-              <p className="text-zinc-400 mb-6">
-                Are you sure you want to delete this journal? This action cannot be undone.
-              </p>
-
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setDeletingJournalId(null)}
-                  className="px-5 py-2.5 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors duration-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeleteConfirm}
-                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
-                >
-                  Delete
-                </button>
-              </div>
             </div>
           </div>
         </div>
