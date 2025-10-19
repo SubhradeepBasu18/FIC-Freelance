@@ -19,12 +19,12 @@ const ConvenorNoteSection = () => {
           <div className="lg:w-1/3 flex justify-center">
             <div className="relative group">
               {/* Outer glow effect */}
-              <div className="absolute -inset-4 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition duration-500"></div>
+              <div className="absolute -inset-4 bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 rounded-2xl blur-2xl opacity-20 group-hover:opacity-30 transition duration-500"></div>
               
               {/* Main image container */}
-              <div className="relative bg-gradient-to-br from-zinc-800 to-zinc-900 p-6 rounded-full border-2 border-blue-400/30 shadow-2xl shadow-blue-400/10 group-hover:shadow-blue-400/20 transition-all duration-500">
-                {/* Image with round frame */}
-                <div className="relative overflow-hidden rounded-full w-72 h-72 border-4 border-blue-400/20 group-hover:border-blue-400/40 transition-all duration-500">
+              <div className="relative bg-gradient-to-br from-zinc-800 to-zinc-900 p-6 rounded-2xl border-2 border-blue-400/30 shadow-2xl shadow-blue-400/10 group-hover:shadow-blue-400/20 transition-all duration-500">
+                {/* Image with square frame */}
+                <div className="relative overflow-hidden rounded-xl w-72 h-72 border-4 border-blue-400/20 group-hover:border-blue-400/40 transition-all duration-500">
                   <img
                     src="../../assets/ConvenorPic.png"
                     alt="Rashmi Gopi - Convenor"
@@ -32,12 +32,12 @@ const ConvenorNoteSection = () => {
                   />
                   
                   {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent rounded-full"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent rounded-xl"></div>
                 </div>
                 
-                {/* Decorative rings */}
-                <div className="absolute -inset-2 border-2 border-blue-400/10 rounded-full group-hover:border-blue-400/20 transition duration-500"></div>
-                <div className="absolute -inset-4 border border-blue-400/5 rounded-full"></div>
+                {/* Decorative borders */}
+                <div className="absolute -inset-2 border-2 border-blue-400/10 rounded-2xl group-hover:border-blue-400/20 transition duration-500"></div>
+                <div className="absolute -inset-4 border border-blue-400/5 rounded-2xl"></div>
                 
                 {/* Floating name badge */}
                 <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
