@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
                     </div>
 
                     {/* Quick Links */}
-                    <div>
+                    {/* <div>
                         <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
                             <span className="w-1.5 h-1.5 bg-white rounded-full mr-2"></span>
                             Quick Links
@@ -84,7 +84,7 @@ const Footer: React.FC = () => {
                                 </li>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
 
                     {/* Contact Info */}
                     <div>
@@ -116,7 +116,7 @@ const Footer: React.FC = () => {
                             All rights reserved.
                         </div>
                         
-                        <div className="flex items-center space-x-6 text-sm text-white">
+                        {/* <div className="flex items-center space-x-6 text-sm text-white">
                             <a href="#" className="hover:text-white transition-colors duration-300 hover:scale-105">
                                 Privacy Policy
                             </a>
@@ -126,7 +126,7 @@ const Footer: React.FC = () => {
                             <a href="#" className="hover:text-white transition-colors duration-300 hover:scale-105">
                                 Code of Conduct
                             </a>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

@@ -473,7 +473,7 @@ const EventPage = () => {
         <div className="bg-black rounded-2xl p-8 border border-gray-800 mb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { number: "50+", label: "Events Hosted" },
+              { number: "25+", label: "Events Hosted" },
               { number: "2000+", label: "Participants" },
               { number: "25+", label: "Industry Speakers" },
               { number: "15+", label: "Partner Organizations" }

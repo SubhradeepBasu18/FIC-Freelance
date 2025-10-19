@@ -20,9 +20,9 @@ const AboutPage = () => {
           <div className="lg:col-span-1">
             <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-cyan-400/20 h-full transform hover:scale-[1.02] transition-all duration-300">
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
+                {/* <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
                   <span className="text-2xl">🎯</span>
-                </div>
+                </div> */}
                 <h2 className="text-3xl font-bold text-white">Mission</h2>
               </div>
               <p className="text-gray-300 leading-relaxed text-lg">
@@ -39,9 +39,9 @@ const AboutPage = () => {
           <div className="lg:col-span-1">
             <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-blue-400/20 h-full transform hover:scale-[1.02] transition-all duration-300">
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
+                {/* <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
                   <span className="text-2xl">🔭</span>
-                </div>
+                </div> */}
                 <h2 className="text-3xl font-bold text-white">Vision</h2>
               </div>
               <p className="text-gray-300 leading-relaxed text-lg">
@@ -85,7 +85,7 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Social Media and Design */}
             <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">✨</div>
+              {/* <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">✨</div> */}
               <h3 className="text-xl font-bold text-white mb-3">Social Media & Design</h3>
               <p className="text-gray-300 text-sm leading-relaxed">
                 The creative hub managing digital presence, curating engaging content, and designing visuals that 
@@ -95,7 +95,7 @@ const AboutPage = () => {
 
             {/* Research and Editorial */}
             <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">📊</div>
+              {/* <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">📊</div> */}
               <h3 className="text-xl font-bold text-white mb-3">Research & Editorial</h3>
               <p className="text-gray-300 text-sm leading-relaxed">
                 The analytical backbone producing well-researched articles and reports that simplify complex financial 
@@ -105,7 +105,7 @@ const AboutPage = () => {
 
             {/* Logistics and Sponsorship */}
             <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">⚡</div>
+              {/* <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">⚡</div> */}
               <h3 className="text-xl font-bold text-white mb-3">Logistics & Sponsorship</h3>
               <p className="text-gray-300 text-sm leading-relaxed">
                 Responsible for seamless event execution, coordinating operations, and forging partnerships to ensure 
@@ -115,7 +115,7 @@ const AboutPage = () => {
 
             {/* Public Relations and Marketing */}
             <div className="group bg-zinc-950 p-6 rounded-xl border border-gray-700 hover:border-accent/30 transition-all duration-300">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">🌐</div>
+              {/* <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">🌐</div> */}
               <h3 className="text-xl font-bold text-white mb-3">PR & Marketing</h3>
               <p className="text-gray-300 text-sm leading-relaxed">
                 Building meaningful connections with stakeholders through outreach and promotions, ensuring club 

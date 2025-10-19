@@ -24,7 +24,7 @@ export const NAV_ITEMS = [
     bgColor: "#27272a", // zinc-800
     textColor: "#ffffff",
     links: [
-      { label: "About Company", href: "/about", ariaLabel: "About our company" },
+      { label: "About FIC", href: "/about", ariaLabel: "About FIC" },
       { label: "Our Team", href: "/team", ariaLabel: "Meet our team" },
     ],
   },
@@ -78,15 +78,15 @@ export const quickLinks = [
 
 export const socialLinks = [
   { name: "Instagram", href: "#", icon: FaInstagram },
-  { name: "Twitter", href: "#", icon: FaTwitter },
+//   { name: "Twitter", href: "#", icon: FaTwitter },
   { name: "LinkedIn", href: "#", icon: FaLinkedin },
-  { name: "GitHub", href: "#", icon: FaGithub },
-  { name: "Discord", href: "#", icon: FaDiscord },
+//   { name: "GitHub", href: "#", icon: FaGithub },
+//   { name: "Discord", href: "#", icon: FaDiscord },
 ];
 
 export const contactInfo = [
   { type: "Email", value: "finance.club@mirandahouse.ac.in", icon: FaEnvelope },
-  { type: "Phone", value: "+91 XXXXXXXXXX", icon: FaPhone },
+//   { type: "Phone", value: "+91 XXXXXXXXXX", icon: FaPhone },
   { type: "Address", value: "Finance and Investment Club of Miranda House", icon: FaMapMarkerAlt },
 ];
 

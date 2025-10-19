@@ -15,35 +15,7 @@ const ConvenorNoteSection = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row items-center lg:items-start gap-12">
-          {/* Text Content Card */}
-          <div className="lg:w-2/3 relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition duration-700"></div>
-            <div className="relative bg-gradient-to-br from-zinc-800/90 to-zinc-900/90 backdrop-blur-xl rounded-2xl border border-blue-400/30 overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600"></div>
-              
-              <div className="p-8 md:p-12">
-                <div className="flex items-start gap-4 mb-8">
-                  <div className="bg-blue-400/20 p-4 rounded-xl flex-shrink-0">
-                    <MessageSquare className="text-blue-400" size={36} />
-                  </div>
-                  <div>
-                    <p className="text-gray-200 text-lg md:text-xl leading-relaxed italic">
-                      "Financial independence and intelligent investments are hallmarks of a dignified life. These traits are conventionally attached to a certain group of men in a patriarchal society. At Miranda House, we are breaking these barriers, one step at a time, with the Finance and Investment Club (FIC). We not only ensure financial and investment awareness among the students but also prepare them as they venture out into the world of employment. We provide a platform to connect and clear their doubts on finance and investment. The workshops and interactive sessions by FIC have given ample opportunities for students to gain exposure in these matters. We are constantly collaborating with established institutions to enrich this learning curve"
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex justify-end">
-                  <div className="bg-zinc-800/50 px-6 py-3 rounded-xl border border-blue-400/20">
-                    <p className="text-blue-400 font-semibold text-lg">— Rashmi Gopi</p>
-                    <p className="text-gray-400 text-sm text-center">Convenor, FICMH</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Convenor Image - Outside the card */}
+            {/* Convenor Image - Outside the card */}
           <div className="lg:w-1/3 flex justify-center">
             <div className="relative group">
               {/* Outer glow effect */}
@@ -81,6 +53,35 @@ const ConvenorNoteSection = () => {
               <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-blue-400/30 rounded-full blur-sm"></div>
             </div>
           </div>
+          {/* Text Content Card */}
+          <div className="lg:w-2/3 relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition duration-700"></div>
+            <div className="relative bg-gradient-to-br from-zinc-800/90 to-zinc-900/90 backdrop-blur-xl rounded-2xl border border-blue-400/30 overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600"></div>
+              
+              <div className="p-8 md:p-12">
+                <div className="flex items-start gap-4 mb-8">
+                  <div className="bg-blue-400/20 p-4 rounded-xl flex-shrink-0">
+                    <MessageSquare className="text-blue-400" size={36} />
+                  </div>
+                  <div>
+                    <p className="text-gray-200 text-lg md:text-xl leading-relaxed italic">
+                      "Financial independence and intelligent investments are hallmarks of a dignified life. These traits are conventionally attached to a certain group of men in a patriarchal society. At Miranda House, we are breaking these barriers, one step at a time, with the Finance and Investment Club (FIC). We not only ensure financial and investment awareness among the students but also prepare them as they venture out into the world of employment. We provide a platform to connect and clear their doubts on finance and investment. The workshops and interactive sessions by FIC have given ample opportunities for students to gain exposure in these matters. We are constantly collaborating with established institutions to enrich this learning curve"
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end">
+                  <div className="bg-zinc-800/50 px-6 py-3 rounded-xl border border-blue-400/20">
+                    <p className="text-blue-400 font-semibold text-lg">— Rashmi Gopi</p>
+                    <p className="text-gray-400 text-sm text-center">Convenor, FICMH</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
         </div>
 
         {/* Additional decorative element */}
