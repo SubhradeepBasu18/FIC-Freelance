@@ -16,7 +16,7 @@ export const NAV_ITEMS = [
     textColor: "#ffffff",
     links: [
       { label: "Go to Home", href: "/", ariaLabel: "Go to Home page" },
-      { label: "Home Details", href: "/details", ariaLabel: "Home page details" },
+      // { label: "Home Details", href: "/details", ariaLabel: "Home page details" },
     ],
   },
   {
@@ -34,7 +34,7 @@ export const NAV_ITEMS = [
     textColor: "#ffffff",
     links: [
       { label: "All Events", href: "/events", ariaLabel: "View all events" },
-      { label: "Upcoming Events", href: "/events/upcoming", ariaLabel: "Upcoming events" },
+      // { label: "Upcoming Events", href: "/events/upcoming", ariaLabel: "Upcoming events" },
     ],
   },
   {
@@ -54,7 +54,7 @@ export const NAV_ITEMS = [
     textColor: "#ffffff",
     links: [
       { label: "Photo Gallery", href: "/gallery", ariaLabel: "View photo gallery" },
-      { label: "Event Photos", href: "/gallery/events", ariaLabel: "Event photos" },
+      // { label: "Event Photos", href: "/gallery/events", ariaLabel: "Event photos" },
     ],
   },
   {
