@@ -77,9 +77,9 @@ export const quickLinks = [
 ];
 
 export const socialLinks = [
-  { name: "Instagram", href: "#", icon: FaInstagram },
+  { name: "Instagram", href: "https://www.instagram.com/fic.mh?igsh=cTZieW9xdm1xdHo2", icon: FaInstagram },
 //   { name: "Twitter", href: "#", icon: FaTwitter },
-  { name: "LinkedIn", href: "#", icon: FaLinkedin },
+  { name: "LinkedIn", href: "https://www.linkedin.com/company/finance-and-investment-club-mh/", icon: FaLinkedin },
 //   { name: "GitHub", href: "#", icon: FaGithub },
 //   { name: "Discord", href: "#", icon: FaDiscord },
 ];
@@ -87,7 +87,7 @@ export const socialLinks = [
 export const contactInfo = [
   { type: "Email", value: "finance.club@mirandahouse.ac.in", icon: FaEnvelope },
 //   { type: "Phone", value: "+91 XXXXXXXXXX", icon: FaPhone },
-  { type: "Address", value: "Finance and Investment Club of Miranda House", icon: FaMapMarkerAlt },
+  { type: "Address", value: "Miranda House, University of Delhi", icon: FaMapMarkerAlt },
 ];
 
 
