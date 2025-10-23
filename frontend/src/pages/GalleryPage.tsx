@@ -40,8 +40,7 @@ const Gallery = () => {
         if(status !== 200){
             throw new Error(data);
         }
-        console.log(data.albums);
-
+        
         const publicAlbums = data.albums.filter(album => album.isPublic === true);
         setAlbums(publicAlbums);
         
@@ -81,7 +80,8 @@ const Gallery = () => {
   const showAllImages = async() => {
     const allImages = await getAllImages();
     const images = allImages.data.images.map((image) => ({
-        image: image.mediaItems,  // Just take the mediaItems URL (the image link)
+        image: image.mediaItems,
+        text: "",
       }));
 
     setGalleryImages(images);
@@ -241,7 +241,7 @@ const Gallery = () => {
                   </button>
                   <h3 className="text-3xl font-bold text-white mb-2">{selectedAlbum.title}</h3>
                   <p className="text-white">
-                    {selectedAlbum.mediaItems.length} images • Created by {selectedAlbum.createdBy}
+                    {selectedAlbum.mediaItems.length} images 
                   </p>
                 </div>
 
