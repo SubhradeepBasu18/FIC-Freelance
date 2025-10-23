@@ -1,5 +1,5 @@
 import express from "express";
-import { addJournal, deleteJournal, addArticle, deleteArticle, addPodcast, deletePodcast, getAllJournals, getAllArticles, getAllPodcasts, getAllNewsletters, updateArticle, updatePodcast, addNewsletter, deleteNewsletter, updateNewsletter, updateJournal } from "../controllers/publication.controller.js";
+import { addJournal, deleteJournal, addArticle, deleteArticle, addPodcast, deletePodcast, getAllJournals, getAllArticles, getAllPodcasts, getAllNewsletters, updateArticle, updatePodcast, addNewsletter, deleteNewsletter, updateNewsletter, updateJournal, getJournalById, getArticleById, getPodcastById, getNewsletterById } from "../controllers/publication.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { protectAdmin } from "../middlewares/auth.middleware.js";
 
@@ -27,6 +27,10 @@ publicPublicationRouter.get("/get-all-journals", getAllJournals);
 publicPublicationRouter.get("/get-all-articles", getAllArticles);
 publicPublicationRouter.get("/get-all-podcasts", getAllPodcasts);
 publicPublicationRouter.get("/get-all-newsletters", getAllNewsletters);
+publicPublicationRouter.get("/get-journal/:id", getJournalById);
+publicPublicationRouter.get("/get-article/:id", getArticleById);
+publicPublicationRouter.get("/get-podcast/:id", getPodcastById);
+publicPublicationRouter.get("/get-newsletter/:id", getNewsletterById);
 
 
 export {protectedPublicationRouter, publicPublicationRouter};

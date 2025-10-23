@@ -4,7 +4,6 @@ import { getAllAlbums, getAllImages } from "@/configApi/gallery";
 
 interface GalleryImage {
   image: string;
-  text: string;
   fileName: string;
 }
 

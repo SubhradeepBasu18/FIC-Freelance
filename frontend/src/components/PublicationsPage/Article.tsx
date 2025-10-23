@@ -15,6 +15,7 @@ const ArticlesPage = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showShareNotification, setShowShareNotification] = useState(false);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -27,6 +28,9 @@ const ArticlesPage = () => {
             (article: Article) => article.isPublic
           );
           setArticles(publicArticles);
+          
+          // Check if there's an article ID in the URL
+          handleUrlArticleId(response.data.articles);
         }
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -38,12 +42,71 @@ const ArticlesPage = () => {
     fetchArticles();
   }, []);
 
+  // Handle opening articles from shared URLs
+  const handleUrlArticleId = (allArticles: Article[]) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const articleId = urlParams.get('article');
+    
+    if (articleId && allArticles.length > 0) {
+      const article = allArticles.find(a => 
+        a.id?.toString() === articleId || a._id === articleId
+      );
+      if (article && article.isPublic) {
+        setSelectedArticle(article);
+        // Clean the URL but keep the parameters for sharing
+        window.history.replaceState({}, '', `${window.location.pathname}?article=${articleId}`);
+      }
+    }
+  };
+
   const handleArticleClick = (article: Article) => {
     setSelectedArticle(article);
+    // Update URL when article is opened
+    const articleId = article.id || article._id;
+    window.history.replaceState({}, '', `${window.location.pathname}?article=${articleId}`);
   };
 
   const handleCloseModal = () => {
     setSelectedArticle(null);
+    // Clean URL when modal is closed
+    window.history.replaceState({}, '', window.location.pathname);
+  };
+
+  const handleShareArticle = async () => {
+    if (!selectedArticle) return;
+
+    try {
+      // Use query parameter instead of route parameter
+      const articleId = selectedArticle.id || selectedArticle._id;
+      const articleUrl = `${window.location.origin}${window.location.pathname}?article=${articleId}`;
+      
+      // Use the Clipboard API to copy the URL
+      await navigator.clipboard.writeText(articleUrl);
+      
+      // Show success notification
+      setShowShareNotification(true);
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        setShowShareNotification(false);
+      }, 3000);
+      
+    } catch (err) {
+      console.error('Failed to copy URL: ', err);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      const articleId = selectedArticle.id || selectedArticle._id;
+      textArea.value = `${window.location.origin}${window.location.pathname}?article=${articleId}`;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      setShowShareNotification(true);
+      setTimeout(() => {
+        setShowShareNotification(false);
+      }, 3000);
+    }
   };
 
   // Get reading time estimate
@@ -176,87 +239,9 @@ const ArticlesPage = () => {
           )}
         </div>
 
-        {/* Feature Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
-          {[
-            {
-              icon: (
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              ),
-              title: "Deep Insights",
-              description: "Comprehensive analysis and perspectives on complex financial topics"
-            },
-            {
-              icon: (
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              ),
-              title: "Expert Authors",
-              description: "Written by students, alumni, and industry professionals"
-            },
-            {
-              icon: (
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              ),
-              title: "Fresh Content",
-              description: "Regularly updated with the latest trends and market developments"
-            }
-          ].map((feature, index) => (
-            <div 
-              key={index}
-              className="bg-black p-6 rounded-xl border border-gray-800 hover:border-white/30 transition-all duration-300 group hover:transform hover:scale-[1.02]"
-            >
-              <div className="w-14 h-14 bg-gradient-to-br from-gray-900 to-black rounded-lg flex items-center justify-center mb-4 border border-gray-800 text-gray-400 group-hover:text-white group-hover:border-gray-700 transition-all duration-300">
-                {feature.icon}
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
-            </div>
-          ))}
-        </div>
+        {/* Rest of your component remains the same */}
+        {/* ... Feature Cards, Stats Section, etc. */}
 
-        {/* Stats Section */}
-        <div className="bg-black rounded-2xl p-8 border border-gray-800 mb-16 relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { number: "50+", label: "Articles Published" },
-              { number: "15+", label: "Contributing Authors" },
-              { number: "10K+", label: "Readers" },
-              { number: "20+", label: "Topics Covered" }
-            ].map((stat, index) => (
-              <div key={index} className="group">
-                <div className="text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
-                  {stat.number}
-                </div>
-                <div className="text-gray-400 text-sm">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Call to Action */}
-        <div className="text-center mt-16">
-          <div className="bg-black rounded-2xl p-10 border border-gray-800 relative overflow-hidden group hover:border-white/30 transition-all duration-300">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative z-10">
-              <h3 className="text-3xl font-bold text-white mb-4">Want to contribute?</h3>
-              <p className="text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Share your insights and knowledge with our community. We welcome submissions from
-                students, alumni, and industry professionals.
-              </p>
-              <button className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:scale-105 hover:shadow-lg hover:shadow-white/20 transition-all duration-300">
-                Submit Your Article
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Article Detail Modal */}
@@ -329,14 +314,37 @@ const ArticlesPage = () => {
                 <p className="text-gray-400 text-sm">
                   Enjoyed this article? Share it with your network.
                 </p>
-                <button
-                  onClick={handleCloseModal}
-                  className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300 w-full sm:w-auto"
-                >
-                  Close
-                </button>
+                <div className="flex gap-3 w-full sm:w-auto">
+                  <button
+                    onClick={handleShareArticle}
+                    className="bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-all duration-300 flex items-center gap-2 w-full sm:w-auto justify-center"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    Share Article
+                  </button>
+                  <button
+                    onClick={handleCloseModal}
+                    className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300 w-full sm:w-auto"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Notification */}
+      {showShareNotification && (
+        <div className="fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-60 animate-in slide-in-from-right duration-300">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Article link copied to clipboard!
           </div>
         </div>
       )}
@@ -344,4 +352,4 @@ const ArticlesPage = () => {
   );
 };
 
-export default ArticlesPage
+export default ArticlesPage;

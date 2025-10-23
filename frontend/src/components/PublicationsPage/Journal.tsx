@@ -266,7 +266,7 @@ const journalsPage = () => {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center mt-16">
+        {/* <div className="text-center mt-16">
           <div className="bg-black rounded-2xl p-10 border border-gray-800 relative overflow-hidden group hover:border-white/30 transition-all duration-300">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -281,7 +281,7 @@ const journalsPage = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* journal PDF Viewer Modal */}

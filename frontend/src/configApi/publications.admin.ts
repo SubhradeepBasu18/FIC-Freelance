@@ -54,6 +54,18 @@ const deleteArticle = async(id: string) => {
     }
 }
 
+const getArticleById = async(id: string) => {
+    try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/admin/publication/get-article/${id}`, {
+            withCredentials: true
+        });
+        return {status: response.status, data: response.data};
+    } catch (error) {
+        console.error("Error getting article by ID:", error);
+        return {status: error.response?.status, data: error.response?.data};
+    }
+}
+
 // Podcast APIs
 const getAllPodcasts = async() => {
     try {
@@ -265,5 +277,6 @@ export {
     getAllJournals,
     addJournal,
     updateJournal,
-    deleteJournal
+    deleteJournal,
+    getArticleById
 }

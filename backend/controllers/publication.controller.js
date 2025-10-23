@@ -134,6 +134,28 @@ const updateJournal = async(req, res) => {
     }
 }
 
+const getJournalById = async(req, res) => {
+    try {
+        const {id} = req.params
+        const journal = await journal.findById(id)
+
+        if(!journal) {
+            return res.status(404).json({
+                message: "Journal not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Journal fetched successfully",
+            journal
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
 //Article Controller
 const addArticle = async(req, res) => {
     try {
@@ -245,6 +267,28 @@ const updateArticle = async(req, res) => {
     }
 }
 
+const getArticleById = async(req, res) => {
+    try {
+        const {id} = req.params;
+        const article = await article.findById(id);
+
+        if(!article) {
+            return res.status(404).json({
+                message: "Article not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Article fetched successfully",
+            article
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
 //Podcast Controller
 const addPodcast = async(req, res) => {
     try {
@@ -348,6 +392,28 @@ const updatePodcast = async(req, res) => {
             message: "Podcast updated successfully",
             podcast: updatedPodcast
         })       
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+const getPodcastById = async(req, res) => {
+    try {
+        const {id} = req.params
+        const podcast = await podcast.findById(id)
+
+        if(!podcast) {
+            return res.status(404).json({
+                message: "Podcast not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Podcast fetched successfully",
+            podcast
+        })
     } catch (error) {
         return res.status(500).json({
             message: error.message
@@ -478,6 +544,28 @@ const updateNewsletter = async(req, res) => {
     }
 }
 
+const getNewsletterById = async(req, res) => {
+    try {
+        const {id} = req.params
+        const newsletter = await newsletter.findById(id)
+
+        if(!newsletter) {
+            return res.status(404).json({
+                message: "Newsletter not found"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Newsletter fetched successfully",
+            newsletter
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
 
 
 
@@ -496,5 +584,9 @@ export {
     updateArticle,
     updatePodcast,
     updateNewsletter,
-    updateJournal
+    updateJournal,
+    getJournalById,
+    getArticleById,
+    getPodcastById,
+    getNewsletterById
 }
