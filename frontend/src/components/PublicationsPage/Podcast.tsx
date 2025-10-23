@@ -13,6 +13,7 @@ const PodcastsPage = () => {
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPodcast, setSelectedPodcast] = useState<Podcast | null>(null);
+  const [showShareNotification, setShowShareNotification] = useState(false);
 
   useEffect(() => {
     const fetchPodcasts = async () => {
@@ -25,6 +26,9 @@ const PodcastsPage = () => {
             (podcast: Podcast) => podcast.isPublic
           );
           setPodcasts(publicPodcasts);
+          
+          // Check if there's a podcast ID in the URL
+          handleUrlPodcastId(response.data.podcasts);
         }
       } catch (error) {
         console.error('Error fetching podcasts:', error);
@@ -36,12 +40,70 @@ const PodcastsPage = () => {
     fetchPodcasts();
   }, []);
 
+  // Handle opening podcasts from shared URLs
+  const handleUrlPodcastId = (allPodcasts: Podcast[]) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const podcastId = urlParams.get('podcast');
+    
+    if (podcastId && allPodcasts.length > 0) {
+      const podcast = allPodcasts.find(p => p._id === podcastId);
+      if (podcast && podcast.isPublic) {
+        setSelectedPodcast(podcast);
+        // Clean the URL but keep the parameters for sharing
+        window.history.replaceState({}, '', `${window.location.pathname}?podcast=${podcastId}`);
+      }
+    }
+  };
+
   const handlePodcastClick = (podcast: Podcast) => {
     setSelectedPodcast(podcast);
+    // Update URL when podcast is opened
+    window.history.replaceState({}, '', `${window.location.pathname}?podcast=${podcast._id}`);
   };
 
   const handleCloseModal = () => {
     setSelectedPodcast(null);
+    // Clean URL when modal is closed
+    window.history.replaceState({}, '', window.location.pathname);
+  };
+
+  const handleSharePodcast = async () => {
+    if (!selectedPodcast) return;
+
+    try {
+      const podcastUrl = `${window.location.origin}${window.location.pathname}?podcast=${selectedPodcast._id}`;
+      
+      // Use the Clipboard API to copy the URL
+      await navigator.clipboard.writeText(podcastUrl);
+      
+      // Show success notification
+      setShowShareNotification(true);
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        setShowShareNotification(false);
+      }, 3000);
+      
+    } catch (err) {
+      console.error('Failed to copy URL: ', err);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = `${window.location.origin}${window.location.pathname}?podcast=${selectedPodcast._id}`;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      setShowShareNotification(true);
+      setTimeout(() => {
+        setShowShareNotification(false);
+      }, 3000);
+    }
+  };
+
+  const handleOpenSpotify = (e: React.MouseEvent, spotifyLink: string) => {
+    e.stopPropagation(); // Prevent event bubbling to modal
+    window.open(spotifyLink, '_blank');
   };
 
   // Podcast Card Skeleton
@@ -235,27 +297,6 @@ const PodcastsPage = () => {
             ))}
           </div>
         </div>
-
-        {/* Call to Action */}
-        {/* <div className="text-center mt-16">
-          <div className="bg-black rounded-2xl p-10 border border-gray-800 relative overflow-hidden group hover:border-white/30 transition-all duration-300">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative z-10">
-              <h3 className="text-3xl font-bold text-white mb-4">Subscribe on Spotify</h3>
-              <p className="text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Never miss an episode! Follow us on Spotify to get notified when we release new
-                conversations about finance, markets, and economics.
-              </p>
-              <button className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:scale-105 hover:shadow-lg hover:shadow-white/20 transition-all duration-300 inline-flex items-center gap-2">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.61 14.34c-.23 0-.39-.07-.56-.17-1.82-1.09-4.11-1.34-6.81-.73-.21.05-.42.08-.63.08-.58 0-1.05-.47-1.05-1.05 0-.5.35-.92.83-1.02 3.21-.72 5.94-.4 8.14.94.43.26.57.83.31 1.26-.18.3-.5.69-1.23.69zm1.47-3.45c-.27 0-.47-.09-.68-.2-2.07-1.23-5.22-1.59-7.67-.87-.29.09-.55.13-.81.13-.7 0-1.27-.57-1.27-1.27 0-.59.41-1.08.98-1.23 1.22-.36 2.48-.54 3.73-.54 2.21 0 4.34.54 6.14 1.56.52.3.69 1 .39 1.52-.21.38-.61.9-1.81.9zm1.6-3.61c-.3 0-.53-.09-.77-.23-2.39-1.42-6.38-1.85-9.45-1.02-.33.09-.65.14-.98.14-.82 0-1.49-.67-1.49-1.49 0-.69.47-1.28 1.12-1.44 1.45-.42 2.96-.63 4.48-.63 2.56 0 5.03.59 7.13 1.71.6.32.82 1.1.5 1.7-.23.44-.68 1.26-2.54 1.26z"/>
-                </svg>
-                Follow on Spotify
-              </button>
-            </div>
-          </div>
-        </div> */}
       </div>
 
       {/* Podcast Spotify Modal */}
@@ -265,7 +306,7 @@ const PodcastsPage = () => {
           onClick={handleCloseModal}
         >
           <div
-            className="bg-black border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl shadow-white/10"
+            className="bg-black border border-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl shadow-white/10"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Gradient top accent */}
@@ -314,19 +355,47 @@ const PodcastsPage = () => {
               </div>
             </div>
 
-            {/* Spotify Embed */}
-            <div className="flex-1 overflow-hidden bg-black p-6">
-              <div className="w-full h-full flex items-center justify-center">
-                <iframe
-                  src={selectedPodcast.spotifyLink.replace('/episode/', '/embed/episode/')}
-                  width="100%"
-                  height="352"
-                  frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                  className="rounded-lg"
-                  title={selectedPodcast.title}
-                />
+            {/* Spotify Content */}
+            <div className="flex-1 overflow-hidden bg-black p-8">
+              <div className="w-full h-full flex flex-col items-center justify-center space-y-8">
+                {/* Spotify Preview Card */}
+                <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-green-500/20 rounded-2xl p-8 max-w-md w-full text-center hover:border-green-500/40 transition-all duration-300">
+                  <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-green-500/20">
+                    <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.61 14.34c-.23 0-.39-.07-.56-.17-1.82-1.09-4.11-1.34-6.81-.73-.21.05-.42.08-.63.08-.58 0-1.05-.47-1.05-1.05 0-.5.35-.92.83-1.02 3.21-.72 5.94-.4 8.14.94.43.26.57.83.31 1.26-.18.3-.5.69-1.23.69zm1.47-3.45c-.27 0-.47-.09-.68-.2-2.07-1.23-5.22-1.59-7.67-.87-.29.09-.55.13-.81.13-.7 0-1.27-.57-1.27-1.27 0-.59.41-1.08.98-1.23 1.22-.36 2.48-.54 3.73-.54 2.21 0 4.34.54 6.14 1.56.52.3.69 1 .39 1.52-.21.38-.61.9-1.81.9zm1.6-3.61c-.3 0-.53-.09-.77-.23-2.39-1.42-6.38-1.85-9.45-1.02-.33.09-.65.14-.98.14-.82 0-1.49-.67-1.49-1.49 0-.69.47-1.28 1.12-1.44 1.45-.42 2.96-.63 4.48-.63 2.56 0 5.03.59 7.13 1.71.6.32.82 1.1.5 1.7-.23.44-.68 1.26-2.54 1.26z"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-3">{selectedPodcast.title}</h3>
+                  <p className="text-gray-400 text-lg mb-2">Available on</p>
+                  <div className="flex items-center justify-center gap-2 mb-6">
+                    <svg className="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.61 14.34c-.23 0-.39-.07-.56-.17-1.82-1.09-4.11-1.34-6.81-.73-.21.05-.42.08-.63.08-.58 0-1.05-.47-1.05-1.05 0-.5.35-.92.83-1.02 3.21-.72 5.94-.4 8.14.94.43.26.57.83.31 1.26-.18.3-.5.69-1.23.69zm1.47-3.45c-.27 0-.47-.09-.68-.2-2.07-1.23-5.22-1.59-7.67-.87-.29.09-.55.13-.81.13-.7 0-1.27-.57-1.27-1.27 0-.59.41-1.08.98-1.23 1.22-.36 2.48-.54 3.73-.54 2.21 0 4.34.54 6.14 1.56.52.3.69 1 .39 1.52-.21.38-.61.9-1.81.9zm1.6-3.61c-.3 0-.53-.09-.77-.23-2.39-1.42-6.38-1.85-9.45-1.02-.33.09-.65.14-.98.14-.82 0-1.49-.67-1.49-1.49 0-.69.47-1.28 1.12-1.44 1.45-.42 2.96-.63 4.48-.63 2.56 0 5.03.59 7.13 1.71.6.32.82 1.1.5 1.7-.23.44-.68 1.26-2.54 1.26z"/>
+                    </svg>
+                    <span className="text-2xl font-bold text-white">Spotify</span>
+                  </div>
+                  
+                  <button
+                    onClick={(e) => handleOpenSpotify(e, selectedPodcast.spotifyLink)}
+                    className="bg-green-600 hover:bg-green-500 text-white px-10 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/30 flex items-center justify-center gap-3 mx-auto w-full max-w-xs"
+                  >
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    Listen Now
+                  </button>
+                </div>
+
+                {/* QR Code Alternative (Optional) */}
+                <div className="text-center">
+                  <p className="text-gray-400 text-sm mb-4">
+                    Can't click the button? Copy this link:
+                  </p>
+                  <div className="bg-gray-900 rounded-lg p-3 border border-gray-700">
+                    <code className="text-green-400 text-sm break-all">
+                      {selectedPodcast.spotifyLink}
+                    </code>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -334,11 +403,20 @@ const PodcastsPage = () => {
             <div className="border-t border-gray-800 p-6 bg-black">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-gray-400 text-sm">
-                  Enjoy this episode? Follow us on Spotify for more
+                  Share this podcast with others
                 </p>
                 <div className="flex gap-3 w-full sm:w-auto">
                   <button
-                    onClick={() => window.open(selectedPodcast.spotifyLink, '_blank')}
+                    onClick={handleSharePodcast}
+                    className="flex-1 sm:flex-none bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    Share Podcast
+                  </button>
+                  <button
+                    onClick={(e) => handleOpenSpotify(e, selectedPodcast.spotifyLink)}
                     className="flex-1 sm:flex-none bg-white text-black px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300 flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -349,6 +427,18 @@ const PodcastsPage = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Notification */}
+      {showShareNotification && (
+        <div className="fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-60 animate-in slide-in-from-right duration-300">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Podcast link copied to clipboard!
           </div>
         </div>
       )}

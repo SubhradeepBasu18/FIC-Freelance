@@ -16,6 +16,7 @@ const NewslettersPage = () => {
   const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
   const [selectedNewsletter, setSelectedNewsletter] = useState<Newsletter | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showShareNotification, setShowShareNotification] = useState(false);
 
   useEffect(() => {
     const fetchNewsletters = async () => {
@@ -28,6 +29,9 @@ const NewslettersPage = () => {
             (newsletter: Newsletter) => newsletter.isPublic
           );
           setNewsletters(publicNewsletters);
+          
+          // Check if there's a newsletter ID in the URL
+          handleUrlNewsletterId(response.data.newsletters);
         }
       } catch (error) {
         console.error('Error fetching newsletters:', error);
@@ -39,12 +43,71 @@ const NewslettersPage = () => {
     fetchNewsletters();
   }, []);
 
+  // Handle opening newsletters from shared URLs
+  const handleUrlNewsletterId = (allNewsletters: Newsletter[]) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const newsletterId = urlParams.get('newsletter');
+    
+    if (newsletterId && allNewsletters.length > 0) {
+      const newsletter = allNewsletters.find(n => 
+        n.id?.toString() === newsletterId || n._id === newsletterId
+      );
+      if (newsletter && newsletter.isPublic) {
+        setSelectedNewsletter(newsletter);
+        // Clean the URL but keep the parameters for sharing
+        window.history.replaceState({}, '', `${window.location.pathname}?newsletter=${newsletterId}`);
+      }
+    }
+  };
+
   const handleNewsletterClick = (newsletter: Newsletter) => {
     setSelectedNewsletter(newsletter);
+    // Update URL when newsletter is opened
+    const newsletterId = newsletter.id || newsletter._id;
+    window.history.replaceState({}, '', `${window.location.pathname}?newsletter=${newsletterId}`);
   };
 
   const handleCloseModal = () => {
     setSelectedNewsletter(null);
+    // Clean URL when modal is closed
+    window.history.replaceState({}, '', window.location.pathname);
+  };
+
+  const handleShareNewsletter = async () => {
+    if (!selectedNewsletter) return;
+
+    try {
+      // Use query parameter instead of route parameter
+      const newsletterId = selectedNewsletter.id || selectedNewsletter._id;
+      const newsletterUrl = `${window.location.origin}${window.location.pathname}?newsletter=${newsletterId}`;
+      
+      // Use the Clipboard API to copy the URL
+      await navigator.clipboard.writeText(newsletterUrl);
+      
+      // Show success notification
+      setShowShareNotification(true);
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        setShowShareNotification(false);
+      }, 3000);
+      
+    } catch (err) {
+      console.error('Failed to copy URL: ', err);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      const newsletterId = selectedNewsletter.id || selectedNewsletter._id;
+      textArea.value = `${window.location.origin}${window.location.pathname}?newsletter=${newsletterId}`;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      setShowShareNotification(true);
+      setTimeout(() => {
+        setShowShareNotification(false);
+      }, 3000);
+    }
   };
 
   const handleDownload = (fileUrl: string, title: string) => {
@@ -144,23 +207,19 @@ const NewslettersPage = () => {
                       <div className="pt-4 border-t border-gray-800 group-hover:border-gray-700 transition-colors duration-300">
                         {/* Authors */}
                         <div className="flex items-center mb-3">
-                        <div className="flex items-center mb-3">
+                          <div className="flex items-center">
                             <div className="flex -space-x-2">
-                                <div
+                              <div
                                 className="w-7 h-7 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center text-white text-xs font-semibold border-2 border-black"
                                 title={newsletter.authors}
-                                >
-                                {newsletter.authors.charAt(0)}  {/* Display the first letter of authors */}
-                                </div>
+                              >
+                                {newsletter.authors.charAt(0)}
+                              </div>
                             </div>
                             <span className="text-xs text-gray-500 ml-3">
-                                {newsletter.authors}
+                              {newsletter.authors}
                             </span>
-                        </div>
-
-                          {/* <span className="text-xs text-gray-500 ml-3">
-                            {newsletter.authors.length} {newsletter.authors.length === 1 ? 'Author' : 'Authors'}
-                          </span> */}
+                          </div>
                         </div>
 
                         {/* Date and View Badge */}
@@ -264,24 +323,6 @@ const NewslettersPage = () => {
             ))}
           </div>
         </div>
-
-        {/* Call to Action */}
-        {/* <div className="text-center mt-16">
-          <div className="bg-black rounded-2xl p-10 border border-gray-800 relative overflow-hidden group hover:border-white/30 transition-all duration-300">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative z-10">
-              <h3 className="text-3xl font-bold text-white mb-4">Subscribe to Our Newsletter</h3>
-              <p className="text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Get the latest editions delivered directly to your inbox. Join our community of finance
-                enthusiasts and stay ahead of market trends.
-              </p>
-              <button className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:scale-105 hover:shadow-lg hover:shadow-white/20 transition-all duration-300">
-                Subscribe Now
-              </button>
-            </div>
-          </div>
-        </div> */}
       </div>
 
       {/* Newsletter PDF Viewer Modal */}
@@ -308,23 +349,22 @@ const NewslettersPage = () => {
                     {selectedNewsletter.description}
                   </p>
                   <div className="flex flex-wrap items-center gap-4 text-sm">
-                  <div className="flex items-center">
-                    <div className="flex -space-x-2 mr-2">
+                    <div className="flex items-center">
+                      <div className="flex -space-x-2 mr-2">
                         {selectedNewsletter.authors.split(' ').slice(0, 3).map((author, idx) => (
-                        <div
+                          <div
                             key={idx}
                             className="w-7 h-7 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center text-white text-xs font-semibold border-2 border-black"
                             title={author}
-                        >
+                          >
                             {author.charAt(0)}
-                        </div>
+                          </div>
                         ))}
-                    </div>
-                    <span className="text-gray-400">
+                      </div>
+                      <span className="text-gray-400">
                         {selectedNewsletter.authors}
-                    </span>
-                </div>
-
+                      </span>
+                    </div>
                     <span className="text-gray-600">•</span>
                     <span className="text-gray-400">
                       {new Date(selectedNewsletter.createdAt).toLocaleDateString('en-US', {
@@ -357,9 +397,18 @@ const NewslettersPage = () => {
             <div className="border-t border-gray-800 p-6 bg-black">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-gray-400 text-sm">
-                  Download this newsletter for offline reading
+                  Download this newsletter for offline reading or share it with others
                 </p>
                 <div className="flex gap-3 w-full sm:w-auto">
+                  <button
+                    onClick={handleShareNewsletter}
+                    className="flex-1 sm:flex-none bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    Share Newsletter
+                  </button>
                   <button
                     onClick={() => window.open(selectedNewsletter.fileUrl, '_blank')}
                     className="flex-1 sm:flex-none bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-300 flex items-center justify-center gap-2"
@@ -381,6 +430,18 @@ const NewslettersPage = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Notification */}
+      {showShareNotification && (
+        <div className="fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-60 animate-in slide-in-from-right duration-300">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Newsletter link copied to clipboard!
           </div>
         </div>
       )}

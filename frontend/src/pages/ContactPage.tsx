@@ -147,62 +147,7 @@ const ContactPage = () => {
                 </div>
 
                 {/* Contact Methods Section - Consistent with Departments Section */}
-                <div className="mb-16">
-                    <div className="text-center mb-12">
-                        <h2 className="text-4xl font-bold text-white mb-4">Contact Methods</h2>
-                        <div className="w-20 h-1 bg-cyan-400 mx-auto"></div>
-                        <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-                            Multiple ways to reach out to our dedicated teams
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {/* General Contact */}
-                        <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-cyan-400/30 transition-all duration-300">
-                            <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">💬</div>
-                            <h3 className="text-xl font-bold text-white mb-3">General Inquiries</h3>
-                            <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                                For membership, events, and general club information. Your first point of contact for all things FICMH.
-                            </p>
-                            <button
-                                onClick={() => handleEmailClick(contactInfo.general.email)}
-                                className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors duration-300"
-                            >
-                                {contactInfo.general.email}
-                            </button>
-                        </div>
-
-                        {/* Collaborations Contact */}
-                        <div className="group bg-zinc-900/50 p-6 rounded-xl border border-gray-700 hover:border-blue-400/30 transition-all duration-300">
-                            <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">🤝</div>
-                            <h3 className="text-xl font-bold text-white mb-3">Collaborations</h3>
-                            <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                                Partner with us for joint events, workshops, and innovative financial education initiatives.
-                            </p>
-                            <button
-                                onClick={() => handleEmailClick(contactInfo.collaborations.email)}
-                                className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300"
-                            >
-                                {contactInfo.collaborations.email}
-                            </button>
-                        </div>
-
-                        {/* Sponsorships Contact */}
-                        <div className="group bg-zinc-950 p-6 rounded-xl border border-gray-700 hover:border-purple-400/30 transition-all duration-300">
-                            <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">💼</div>
-                            <h3 className="text-xl font-bold text-white mb-3">Sponsorships</h3>
-                            <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                                Support our mission and reach engaged students through sponsorship opportunities and brand partnerships.
-                            </p>
-                            <button
-                                onClick={() => handleEmailClick(contactInfo.sponsorships.email)}
-                                className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors duration-300"
-                            >
-                                {contactInfo.sponsorships.email}
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                
 
                 {/* Response Stats Section - Consistent with Stats Section */}
                 <div className="bg-black rounded-2xl p-8 border border-cyan-400/20">

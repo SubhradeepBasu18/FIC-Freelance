@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllJournals } from '@/configApi/publications.admin';
 
-interface journal {
+interface Journal {
   id: number;
   _id?: string;
   title: string;
@@ -12,22 +12,26 @@ interface journal {
   createdAt: string;
 }
 
-const journalsPage = () => {
-  const [journals, setjournals] = useState<journal[]>([]);
-  const [selectedjournal, setSelectedjournal] = useState<journal | null>(null);
+const JournalsPage = () => {
+  const [journals, setJournals] = useState<Journal[]>([]);
+  const [selectedJournal, setSelectedJournal] = useState<Journal | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showShareNotification, setShowShareNotification] = useState(false);
 
   useEffect(() => {
-    const fetchjournals = async () => {
+    const fetchJournals = async () => {
       try {
         setLoading(true);
         const response = await getAllJournals();
         console.log(response.data.journals);
         if (response.status === 200) {
-          const publicjournals = response.data.journals.filter(
-            (journal: journal) => journal.isPublic
+          const publicJournals = response.data.journals.filter(
+            (journal: Journal) => journal.isPublic
           );
-          setjournals(publicjournals);
+          setJournals(publicJournals);
+          
+          // Check if there's a journal ID in the URL
+          handleUrlJournalId(response.data.journals);
         }
       } catch (error) {
         console.error('Error fetching journals:', error);
@@ -36,15 +40,74 @@ const journalsPage = () => {
       }
     };
 
-    fetchjournals();
+    fetchJournals();
   }, []);
 
-  const handlejournalClick = (journal: journal) => {
-    setSelectedjournal(journal);
+  // Handle opening journals from shared URLs
+  const handleUrlJournalId = (allJournals: Journal[]) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const journalId = urlParams.get('journal');
+    
+    if (journalId && allJournals.length > 0) {
+      const journal = allJournals.find(j => 
+        j.id?.toString() === journalId || j._id === journalId
+      );
+      if (journal && journal.isPublic) {
+        setSelectedJournal(journal);
+        // Clean the URL but keep the parameters for sharing
+        window.history.replaceState({}, '', `${window.location.pathname}?journal=${journalId}`);
+      }
+    }
+  };
+
+  const handleJournalClick = (journal: Journal) => {
+    setSelectedJournal(journal);
+    // Update URL when journal is opened
+    const journalId = journal.id || journal._id;
+    window.history.replaceState({}, '', `${window.location.pathname}?journal=${journalId}`);
   };
 
   const handleCloseModal = () => {
-    setSelectedjournal(null);
+    setSelectedJournal(null);
+    // Clean URL when modal is closed
+    window.history.replaceState({}, '', window.location.pathname);
+  };
+
+  const handleShareJournal = async () => {
+    if (!selectedJournal) return;
+
+    try {
+      // Use query parameter instead of route parameter
+      const journalId = selectedJournal.id || selectedJournal._id;
+      const journalUrl = `${window.location.origin}${window.location.pathname}?journal=${journalId}`;
+      
+      // Use the Clipboard API to copy the URL
+      await navigator.clipboard.writeText(journalUrl);
+      
+      // Show success notification
+      setShowShareNotification(true);
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        setShowShareNotification(false);
+      }, 3000);
+      
+    } catch (err) {
+      console.error('Failed to copy URL: ', err);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      const journalId = selectedJournal.id || selectedJournal._id;
+      textArea.value = `${window.location.origin}${window.location.pathname}?journal=${journalId}`;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      setShowShareNotification(true);
+      setTimeout(() => {
+        setShowShareNotification(false);
+      }, 3000);
+    }
   };
 
   const handleDownload = (fileUrl: string, title: string) => {
@@ -58,7 +121,7 @@ const journalsPage = () => {
     document.body.removeChild(link);
   };
 
-  // journal Card Skeleton
+  // Journal Card Skeleton
   const JournalCardSkeleton = () => (
     <div className="bg-black rounded-xl border border-gray-800 overflow-hidden h-full flex flex-col animate-pulse">
       <div className="h-2 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800"></div>
@@ -90,7 +153,7 @@ const journalsPage = () => {
         <div className="text-center mb-16 relative">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-white/5 rounded-full blur-3xl -z-10"></div>
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-            Our journals
+            Our Journals
           </h1>
           <div className="w-24 h-1 bg-gradient-to-r from-transparent via-white to-transparent mx-auto mb-8"></div>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
@@ -99,7 +162,7 @@ const journalsPage = () => {
           </p>
         </div>
 
-        {/* journals Grid */}
+        {/* Journals Grid */}
         <div className="mb-20">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-fr">
@@ -113,7 +176,7 @@ const journalsPage = () => {
                 <div
                   key={journal.id || journal._id}
                   className="cursor-pointer h-full transform transition-all duration-300 hover:scale-[1.02] group"
-                  onClick={() => handlejournalClick(journal)}
+                  onClick={() => handleJournalClick(journal)}
                 >
                   <div className="bg-black rounded-xl border border-gray-800 overflow-hidden h-full flex flex-col hover:border-white/40 hover:shadow-2xl hover:shadow-white/5 transition-all duration-300">
                     {/* Gradient top accent */}
@@ -144,23 +207,19 @@ const journalsPage = () => {
                       <div className="pt-4 border-t border-gray-800 group-hover:border-gray-700 transition-colors duration-300">
                         {/* Authors */}
                         <div className="flex items-center mb-3">
-                        <div className="flex items-center mb-3">
+                          <div className="flex items-center">
                             <div className="flex -space-x-2">
-                                <div
+                              <div
                                 className="w-7 h-7 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center text-white text-xs font-semibold border-2 border-black"
                                 title={journal.authors}
-                                >
-                                {journal.authors.charAt(0)}  {/* Display the first letter of authors */}
-                                </div>
+                              >
+                                {journal.authors.charAt(0)}
+                              </div>
                             </div>
                             <span className="text-xs text-gray-500 ml-3">
-                                {journal.authors}
+                              {journal.authors}
                             </span>
-                        </div>
-
-                          {/* <span className="text-xs text-gray-500 ml-3">
-                            {journal.authors.length} {journal.authors.length === 1 ? 'Author' : 'Authors'}
-                          </span> */}
+                          </div>
                         </div>
 
                         {/* Date and View Badge */}
@@ -194,7 +253,7 @@ const journalsPage = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
-                <p className="text-xl font-semibold text-white mb-2">No journals Available</p>
+                <p className="text-xl font-semibold text-white mb-2">No Journals Available</p>
                 <p className="text-gray-400">Check back later for new editions.</p>
               </div>
             </div>
@@ -264,28 +323,10 @@ const journalsPage = () => {
             ))}
           </div>
         </div>
-
-        {/* Call to Action */}
-        {/* <div className="text-center mt-16">
-          <div className="bg-black rounded-2xl p-10 border border-gray-800 relative overflow-hidden group hover:border-white/30 transition-all duration-300">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative z-10">
-              <h3 className="text-3xl font-bold text-white mb-4">Subscribe to Our journal</h3>
-              <p className="text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Get the latest editions delivered directly to your inbox. Join our community of finance
-                enthusiasts and stay ahead of market trends.
-              </p>
-              <button className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:scale-105 hover:shadow-lg hover:shadow-white/20 transition-all duration-300">
-                Subscribe Now
-              </button>
-            </div>
-          </div>
-        </div> */}
       </div>
 
-      {/* journal PDF Viewer Modal */}
-      {selectedjournal && (
+      {/* Journal PDF Viewer Modal */}
+      {selectedJournal && (
         <div
           className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={handleCloseModal}
@@ -302,32 +343,31 @@ const journalsPage = () => {
               <div className="flex items-start justify-between">
                 <div className="flex-1 pr-4">
                   <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                    {selectedjournal.title}
+                    {selectedJournal.title}
                   </h2>
                   <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                    {selectedjournal.description}
+                    {selectedJournal.description}
                   </p>
                   <div className="flex flex-wrap items-center gap-4 text-sm">
-                  <div className="flex items-center">
-                    <div className="flex -space-x-2 mr-2">
-                        {selectedjournal.authors.split(' ').slice(0, 3).map((author, idx) => (
-                        <div
+                    <div className="flex items-center">
+                      <div className="flex -space-x-2 mr-2">
+                        {selectedJournal.authors.split(' ').slice(0, 3).map((author, idx) => (
+                          <div
                             key={idx}
                             className="w-7 h-7 bg-gradient-to-br from-gray-800 to-gray-900 rounded-full flex items-center justify-center text-white text-xs font-semibold border-2 border-black"
                             title={author}
-                        >
+                          >
                             {author.charAt(0)}
-                        </div>
+                          </div>
                         ))}
+                      </div>
+                      <span className="text-gray-400">
+                        {selectedJournal.authors}
+                      </span>
                     </div>
-                    <span className="text-gray-400">
-                        {selectedjournal.authors}
-                    </span>
-                </div>
-
                     <span className="text-gray-600">•</span>
                     <span className="text-gray-400">
-                      {new Date(selectedjournal.createdAt).toLocaleDateString('en-US', {
+                      {new Date(selectedJournal.createdAt).toLocaleDateString('en-US', {
                         month: 'long',
                         day: 'numeric',
                         year: 'numeric'
@@ -347,9 +387,9 @@ const journalsPage = () => {
             {/* PDF Viewer */}
             <div className="flex-1 overflow-hidden bg-gray-950 p-4">
               <iframe
-                src={selectedjournal.fileUrl}
+                src={selectedJournal.fileUrl}
                 className="w-full h-full rounded-lg border border-gray-800"
-                title={selectedjournal.title}
+                title={selectedJournal.title}
               />
             </div>
 
@@ -357,11 +397,20 @@ const journalsPage = () => {
             <div className="border-t border-gray-800 p-6 bg-black">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-gray-400 text-sm">
-                  Download this journal for offline reading
+                  Download this journal for offline reading or share it with others
                 </p>
                 <div className="flex gap-3 w-full sm:w-auto">
                   <button
-                    onClick={() => window.open(selectedjournal.fileUrl, '_blank')}
+                    onClick={handleShareJournal}
+                    className="flex-1 sm:flex-none bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    Share Journal
+                  </button>
+                  <button
+                    onClick={() => window.open(selectedJournal.fileUrl, '_blank')}
                     className="flex-1 sm:flex-none bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-300 flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -370,7 +419,7 @@ const journalsPage = () => {
                     Open in New Tab
                   </button>
                   <button
-                    onClick={() => handleDownload(selectedjournal.fileUrl, selectedjournal.title)}
+                    onClick={() => handleDownload(selectedJournal.fileUrl, selectedJournal.title)}
                     className="flex-1 sm:flex-none bg-white text-black px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-transform duration-300 flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -384,8 +433,20 @@ const journalsPage = () => {
           </div>
         </div>
       )}
+
+      {/* Share Notification */}
+      {showShareNotification && (
+        <div className="fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-60 animate-in slide-in-from-right duration-300">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Journal link copied to clipboard!
+          </div>
+        </div>
+      )}
     </section>
   );
 };
 
-export default journalsPage;
+export default JournalsPage;
