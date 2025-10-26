@@ -185,7 +185,7 @@ const SponsorsPage = () => {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center">
+        {/* <div className="text-center">
           <div className="bg-black rounded-2xl p-8 border border-gray-800">
             <h3 className="text-2xl font-bold text-white mb-4">Interested in Partnering With Us?</h3>
             <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
@@ -201,7 +201,7 @@ const SponsorsPage = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

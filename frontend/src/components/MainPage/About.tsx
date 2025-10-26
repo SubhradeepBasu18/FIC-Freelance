@@ -15,9 +15,9 @@ const AboutSection = () => {
               <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
             </h2>
           </div>
-          <p className="text-gray-400 text-lg mt-6 max-w-3xl mx-auto">
+          {/* <p className="text-gray-400 text-lg mt-6 max-w-3xl mx-auto">
             A journey that began in 2021, transforming financial education
-          </p>
+          </p> */}
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 items-center">
