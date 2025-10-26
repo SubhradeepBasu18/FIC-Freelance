@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const ContactPage = () => {
     const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
-
+    copiedEmail && console.log(`Copied email: ${copiedEmail}`);
     const contactInfo = {
         general: {
             title: "General Inquiries",
