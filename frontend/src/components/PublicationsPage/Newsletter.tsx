@@ -305,7 +305,7 @@ const NewslettersPage = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="bg-black rounded-2xl p-8 border border-gray-800 mb-16 relative overflow-hidden">
+        {/* <div className="bg-black rounded-2xl p-8 border border-gray-800 mb-16 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
@@ -322,7 +322,7 @@ const NewslettersPage = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Newsletter PDF Viewer Modal */}
