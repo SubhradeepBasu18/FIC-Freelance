@@ -8,19 +8,16 @@ const ContactPage = () => {
             title: "General Inquiries",
             email: "finance.club@mirandahouse.ac.in",
             description: "For general questions, membership information, and club activities",
-            icon: "💬"
         },
         collaborations: {
             title: "Collaborations",
             email: "marketingficmh@gmail.com",
             description: "For partnerships, joint events, and collaborative initiatives",
-            icon: "🤝"
         },
         sponsorships: {
             title: "Sponsorships",
             email: "sponsorship.ficmirandahouse@gmail.com",
             description: "For sponsorship opportunities and brand partnerships",
-            icon: "💼"
         }
     };
 
@@ -60,7 +57,7 @@ const ContactPage = () => {
                         <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-cyan-400/20 h-full transform hover:scale-[1.02] transition-all duration-300">
                             <div className="flex items-center mb-6">
                                 <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
-                                    <span className="text-2xl">💬</span>
+                                    {/* No icon - just the container for spacing */}
                                 </div>
                                 <h2 className="text-3xl font-bold text-white">General</h2>
                             </div>
@@ -90,7 +87,7 @@ const ContactPage = () => {
                         <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-blue-400/20 h-full transform hover:scale-[1.02] transition-all duration-300">
                             <div className="flex items-center mb-6">
                                 <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
-                                    <span className="text-2xl">🤝</span>
+                                    {/* No icon - just the container for spacing */}
                                 </div>
                                 <h2 className="text-3xl font-bold text-white">Collaborations</h2>
                             </div>
@@ -120,7 +117,7 @@ const ContactPage = () => {
                         <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-purple-400/20 h-full transform hover:scale-[1.02] transition-all duration-300">
                             <div className="flex items-center mb-6">
                                 <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
-                                    <span className="text-2xl">💼</span>
+                                    {/* No icon - just the container for spacing */}
                                 </div>
                                 <h2 className="text-3xl font-bold text-white">Sponsorships</h2>
                             </div>
@@ -145,9 +142,6 @@ const ContactPage = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* Contact Methods Section - Consistent with Departments Section */}
-                
 
                 {/* Response Stats Section - Consistent with Stats Section */}
                 <div className="bg-black rounded-2xl p-8 border border-cyan-400/20">
