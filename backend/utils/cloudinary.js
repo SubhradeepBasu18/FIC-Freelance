@@ -46,4 +46,63 @@ const uploadOnCloudinary = async (localPath, folderName) => {
     }
 };
 
-export { uploadOnCloudinary };
+const getLastUploadedGroupPhoto = async () => {
+    try {
+        // Fetch the latest uploaded image from Cloudinary
+        const result = await cloudinary.api.resources_by_asset_folder(
+            'homePage',
+            {
+                max_results: 1,
+                order: 'desc'
+            }
+        )
+
+        if (result.resources.length === 0) {
+            throw new Error("No group photo found");
+        }
+
+        const latestPhoto = result.resources[0]; // Get the most recent photo
+        return latestPhoto.secure_url; // Return the secure URL
+
+    } catch (error) {
+        throw new Error(error.message); // Propagate error
+    }
+};
+
+const getAllGroupPhotos = async () => {
+    try {
+        // Fetch all images from Cloudinary
+        const result = await cloudinary.api.resources_by_asset_folder(
+            'homePage',
+            {
+                max_results: 100, // Adjust as needed
+                order: 'desc'
+            }
+        );
+
+        if (result.resources.length === 0) {
+            throw new Error("No group photos found");
+        }
+
+        return result.resources.map(photo => ({
+            public_id: photo.public_id,
+            secure_url: photo.secure_url
+        }));
+    } catch (error) {
+        throw new Error(error.message); // Propagate error
+    }
+};
+
+const deleteGroupPhoto = async (id) => {
+    try {
+        // Delete the image from Cloudinary
+        const public_id = `homePage/${id}`;
+        
+        await cloudinary.uploader.destroy(public_id);
+        return true;
+    } catch (error) {
+        throw new Error(error.message); // Propagate error
+    }
+};
+
+export { uploadOnCloudinary, getLastUploadedGroupPhoto, getAllGroupPhotos, deleteGroupPhoto };

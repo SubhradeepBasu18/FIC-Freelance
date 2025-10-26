@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import { Admin } from "../models/admin.model.js";
 import { randomBytes } from "crypto";
+import { uploadOnCloudinary, getLastUploadedGroupPhoto, getAllGroupPhotos, deleteGroupPhoto } from "../utils/cloudinary.js";
+
 
 const generateAccessandRefreshToken = async(userId)=> {
     try {
@@ -284,6 +286,63 @@ const resetPassword = async(req, res) => {
     }
 }
 
+const changeGroupPhoto = async(req, res) => {
+    try {
+        
+        const groupPhotoLocalPath = req?.file?.path;
+        const groupPhotoPath = await uploadOnCloudinary(groupPhotoLocalPath, "homePage");
+
+        return res
+            .status(200)
+            .json({
+                message: "Group photo changed successfully",
+                groupPhotoPath: groupPhotoPath.secure_url
+            })
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const getLastUploadedGroupPhotoHandler = async (req, res) => {
+    try {
+        const photoUrl = await getLastUploadedGroupPhoto();
+        return res.status(200).json({
+            message: "Last uploaded group photo fetched successfully",
+            groupPhotoUrl: photoUrl,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+const getAllGroupPhotosHandler = async (req, res) => {
+    try {
+        const photos = await getAllGroupPhotos();
+        return res.status(200).json({
+            message: "All group photos fetched successfully",
+            groupPhotos: photos,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+const deleteGroupPhotoHandler = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const isDeleted = await deleteGroupPhoto(id);
+        console.log(isDeleted);
+        
+        return res.status(200).json({
+            message: "Group photo deleted successfully",
+            isDeleted,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 export { 
   registerSuperAdmin, 
   loginAdmin, 
@@ -293,5 +352,9 @@ export {
   getAllAdmins, 
   getCurrentAdmin, 
   logoutAdmin,
-  resetPassword
+  resetPassword,
+  changeGroupPhoto,
+  getLastUploadedGroupPhotoHandler,
+  getAllGroupPhotosHandler,
+  deleteGroupPhotoHandler
 };

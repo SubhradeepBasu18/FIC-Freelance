@@ -1,13 +1,26 @@
+import { getLastUploadedGroupPhoto } from "@/configApi/homePage";
+import { useEffect, useState } from "react";
 
 const HeroSection = () => {
-  return (
+
+    const [groupPhoto, setGroupPhoto] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchGroupPhoto = async () => {
+            const response = await getLastUploadedGroupPhoto();
+            console.log(response);
+            setGroupPhoto(response.groupPhotoUrl);
+        }
+        fetchGroupPhoto();
+    }, []);
+    return (
     <section className="relative bg-black">
       {/* Background Image Section */}
       <div className="relative min-h-screen flex items-end overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
-            src="/assets/HomePageGroupPhoto/home_page_photo.jpg"
+            src={groupPhoto || '/assets/HomePageGroupPhoto/home_page_photo.jpg'}
             alt="FICMH Team Photo"
             className="w-full h-full object-cover object-top"
           />

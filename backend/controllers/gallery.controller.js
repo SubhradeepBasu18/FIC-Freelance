@@ -1,9 +1,6 @@
 import { Album } from "../models/gallery.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
-// delete media from album
-// update album
-
 const createAlbum = async(req, res) => {
     try {
         

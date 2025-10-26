@@ -5,6 +5,7 @@ import Events from "../components/Admin/Events"
 import Publications from "../components/Admin/Publications"
 import Access from "../components/Admin/Access";
 import GallerySection from '@/components/Admin/sections/GallerySection';
+import GroupPhotoSection from '@/components/Admin/sections/GroupPhotoSection';
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { getCurrentSession, logoutAdmin } from "@/configApi/admin";
 
@@ -21,7 +22,7 @@ export default function AdminDashboard() {
     { id: 'events', label: 'Events' },
     { id: 'publications', label: 'Publications' },
     { id: 'gallery', label: 'Gallery' },
-    { id: 'contact', label: 'Contact Details' },
+    { id: 'groupPhoto', label: 'Group Photo' },
     { id: 'access', label: 'Access' }
   ];
 
@@ -212,7 +213,8 @@ export default function AdminDashboard() {
           {activeTab === 'publications' && <Publications />} 
           {activeTab === 'access' && <Access />}
           {activeTab === 'gallery' && <GallerySection />}
-          {activeTab !== 'team' && activeTab !== 'events' && activeTab !== 'publications' && activeTab !== 'access' && activeTab !== 'gallery' && (
+          {activeTab === 'groupPhoto' && <GroupPhotoSection />}
+          {activeTab !== 'team' && activeTab !== 'events' && activeTab !== 'publications' && activeTab !== 'access' && activeTab !== 'gallery' && activeTab !== 'groupPhoto' && (
             <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-cyan-400/20 p-8 text-center transform hover:scale-[1.01] transition-all duration-300">
               <h3 className="text-2xl font-bold text-white mb-4">
                 {tabs.find(t => t.id === activeTab)?.label} Section
