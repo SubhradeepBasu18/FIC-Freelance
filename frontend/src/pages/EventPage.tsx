@@ -245,7 +245,7 @@ const EventPage = () => {
               {/* Description */}
               <div className="bg-black/50 backdrop-blur-sm p-4 md:p-8 rounded-2xl border border-gray-700/50 mb-6 md:mb-8">
                 <p className="text-base md:text-lg lg:text-xl text-gray-300 leading-relaxed text-center max-w-4xl mx-auto">
-                  <span className="text-white font-bold text-xl md:text-2xl">Inviesta</span> isn't just an annual fest but where ideas come alive and connect with the real world.
+                  <span className="text-white font-bold text-xl md:text-2xl">Inviesta</span> isn't just an annual fest, but where ideas come alive and connect with the real world.
                   From thought-provoking speaker sessions that deliver industry insights and career inspiration, to intellectually
                   stimulating competitions that challenge skills in finance, economics and strategy,
                   Inviesta brings together ambition, creativity, and learning under one roof. Blending Miranda

@@ -1,3 +1,4 @@
+import { getAllSponsors } from '@/configApi/sponsors.admins';
 // Import all sponsor images
 import ChaseProtein from '/assets/Collaborations/Chase Protein.png';
 import Crowwd from '/assets/Collaborations/Crowwd.png';
@@ -6,73 +7,82 @@ import GLBXTNT from '/assets/Collaborations/GLBXTNT.png';
 import HDFC from '/assets/Collaborations/HDFC.png';
 import LazerCrazer from '/assets/Collaborations/Lazer Crazer.png';
 import Unstop from '/assets/Collaborations/Unstop.png';
+import { useState, useEffect } from 'react';
 
 const SponsorsPage = () => {
-  const sponsorItems = [
-    {
-      image: ChaseProtein,
-      title: "Chase Protein",
-      subtitle: "",
-      handle: "",
-      borderColor: "#E5E7EB",
-      gradient: "linear-gradient(145deg, #E5E7EB, #000)",
-      url: "#"
-    },
-    {
-      image: Crowwd,
-      title: "Crowwd",
-      subtitle: "",
-      handle: "",
-      borderColor: "#FBBF24",
-      gradient: "linear-gradient(145deg, #FBBF24, #000)",
-      url: "#"
-    },
-    {
-      image: EvePaper,
-      title: "EvePaper",
-      subtitle: "",
-      handle: "",
-      borderColor: "#9CA3AF",
-      gradient: "linear-gradient(145deg, #9CA3AF, #000)",
-      url: "#"
-    },
-    {
-      image: GLBXTNT,
-      title: "GLBXTNT",
-      subtitle: "",
-      handle: "",
-      borderColor: "#10B981",
-      gradient: "linear-gradient(145deg, #10B981, #000)",
-      url: "#"
-    },
-    {
-      image: HDFC,
-      title: "HDFC",
-      subtitle: "",
-      handle: "",
-      borderColor: "#3B82F6",
-      gradient: "linear-gradient(145deg, #3B82F6, #000)",
-      url: "#"
-    },
-    {
-      image: LazerCrazer,
-      title: "Lazer Crazer",
-      subtitle: "",
-      handle: "",
-      borderColor: "#EC4899",
-      gradient: "linear-gradient(145deg, #EC4899, #000)",
-      url: "#"
-    },
-    {
-      image: Unstop,
-      title: "Unstop",
-      subtitle: "",
-      handle: "",
-      borderColor: "#8B5CF6",
-      gradient: "linear-gradient(145deg, #8B5CF6, #000)",
-      url: "#"
-    }
-  ];
+//   const sponsorItems = [
+//     {
+//       image: ChaseProtein,
+//       title: "Chase Protein",
+//       subtitle: "",
+//       handle: "",
+//       borderColor: "#E5E7EB",
+//       gradient: "linear-gradient(145deg, #E5E7EB, #000)",
+//       url: "#"
+//     },
+//     {
+//       image: Crowwd,
+//       title: "Crowwd",
+//       subtitle: "",
+//       handle: "",
+//       borderColor: "#FBBF24",
+//       gradient: "linear-gradient(145deg, #FBBF24, #000)",
+//       url: "#"
+//     },
+//     {
+//       image: EvePaper,
+//       title: "EvePaper",
+//       subtitle: "",
+//       handle: "",
+//       borderColor: "#9CA3AF",
+//       gradient: "linear-gradient(145deg, #9CA3AF, #000)",
+//       url: "#"
+//     },
+//     {
+//       image: GLBXTNT,
+//       title: "GLBXTNT",
+//       subtitle: "",
+//       handle: "",
+//       borderColor: "#10B981",
+//       gradient: "linear-gradient(145deg, #10B981, #000)",
+//       url: "#"
+//     },
+//     {
+//       image: HDFC,
+//       title: "HDFC",
+//       subtitle: "",
+//       handle: "",
+//       borderColor: "#3B82F6",
+//       gradient: "linear-gradient(145deg, #3B82F6, #000)",
+//       url: "#"
+//     },
+//     {
+//       image: LazerCrazer,
+//       title: "Lazer Crazer",
+//       subtitle: "",
+//       handle: "",
+//       borderColor: "#EC4899",
+//       gradient: "linear-gradient(145deg, #EC4899, #000)",
+//       url: "#"
+//     },
+//     {
+//       image: Unstop,
+//       title: "Unstop",
+//       subtitle: "",
+//       handle: "",
+//       borderColor: "#8B5CF6",
+//       gradient: "linear-gradient(145deg, #8B5CF6, #000)",
+//       url: "#"
+//     }
+//   ];
+
+  const [sponsorItems, setSponsorItems] = useState([]);
+
+  useEffect(() => {
+    getAllSponsors().then((res) => {
+      setSponsorItems(res.data.sponsor);
+    });
+  }, []);
 
   return (
     <section className="min-h-screen bg-black py-20 px-4 sm:px-6 lg:px-8">
@@ -109,12 +119,12 @@ const SponsorsPage = () => {
                 <div className="w-32 h-32 mx-auto mb-4 rounded-xl overflow-hidden bg-white/5 p-4 flex items-center justify-center group-hover:bg-white/10 transition-colors duration-300">
                   <img 
                     src={sponsor.image} 
-                    alt={sponsor.title}
+                    alt={sponsor.name}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <h4 className="text-white font-semibold text-lg mb-1">{sponsor.title}</h4>
-                <p className="text-gray-400 text-sm">{sponsor.subtitle}</p>
+                <h4 className="text-white font-semibold text-lg mb-1">{sponsor.name}</h4>
+                {/* <p className="text-gray-400 text-sm">{sponsor.description}</p> */}
               </div>
             ))}
           </div>

@@ -17,12 +17,9 @@ const AboutPage = () => {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-20">
           {/* Mission Card */}
-          <div className="lg:col-span-1">
+          {/* <div className="lg:col-span-1">
             <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-cyan-400/20 h-full transform hover:scale-[1.02] transition-all duration-300">
               <div className="flex items-center mb-6">
-                {/* <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-2xl">🎯</span>
-                </div> */}
                 <h2 className="text-3xl font-bold text-white">Mission</h2>
               </div>
               <p className="text-gray-300 leading-relaxed text-lg">
@@ -33,15 +30,12 @@ const AboutPage = () => {
                 and collaborative initiatives.
               </p>
             </div>
-          </div>
+          </div> */}
 
           {/* Vision Card */}
-          <div className="lg:col-span-1">
+          {/* <div className="lg:col-span-1">
             <div className="bg-gradient-to-br from-zinc-900 to-black p-8 rounded-2xl border border-blue-400/20 h-full transform hover:scale-[1.02] transition-all duration-300">
               <div className="flex items-center mb-6">
-                {/* <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center mr-4">
-                  <span className="text-2xl">🔭</span>
-                </div> */}
                 <h2 className="text-3xl font-bold text-white">Vision</h2>
               </div>
               <p className="text-gray-300 leading-relaxed text-lg">
@@ -52,19 +46,19 @@ const AboutPage = () => {
                 translates into meaningful change.
               </p>
             </div>
-          </div>
+          </div> */}
 
-          {/* Image Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl overflow-hidden border border-gray-700 h-full">
+          {/* Image Card - Increased size and center aligned */}
+          <div className="lg:col-span-3 flex justify-center">
+            <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl overflow-hidden border border-gray-700 w-full max-w-4xl transform hover:scale-[1.01] transition-all duration-300">
               <img 
                 src="/assets/HomePageGroupPhoto/home_page_photo.jpg"
                 alt="FICMH Team"
-                className="w-full h-48 object-cover"
+                className="w-full h-80 object-cover"
               />
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-white mb-3">Our Community</h3>
-                <p className="text-gray-300">
+              <div className="p-8 text-center">
+                <h3 className="text-3xl font-bold text-white mb-4">Our Community</h3>
+                <p className="text-gray-300 text-lg max-w-2xl mx-auto">
                   A diverse group of passionate students driving financial awareness and innovation at Miranda House.
                 </p>
               </div>

@@ -10,6 +10,7 @@ import {protectedRouter, publicRouter} from "./routes/event.route.js";
 import adminRouter from "./routes/admin.route.js";
 import {protectedPublicationRouter, publicPublicationRouter} from "./routes/publication.route.js";
 import {protectedGalleryRouter, publicGalleryRouter} from "./routes/gallery.route.js";
+import {protectedsponsorRouter, publicsponsorRouter} from "./routes/sponsor.route.js";
 
 const app = express();
 
@@ -37,10 +38,12 @@ app.use("/api/event", publicRouter);
 app.use("/api/aboutUs", publicTeamRouter);
 app.use("/api/gallery", publicGalleryRouter);
 app.use("/api/publication", publicPublicationRouter);
+app.use("/api/sponsor", publicsponsorRouter);
 
 app.use("/api/admin/aboutUs", protectedTeamRouter);
 app.use("/api/admin/event", protectedRouter);
 app.use("/api/admin/publication", protectedPublicationRouter);
+app.use("/api/admin/sponsor", protectedsponsorRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/admin/gallery", protectedGalleryRouter);
 

@@ -58,11 +58,11 @@ export const NAV_ITEMS = [
     ],
   },
   {
-    label: "COLLABORATIONS",
+    label: "COLLABORATE WITH US",
     bgColor: "#27272a", // zinc-800
     textColor: "#ffffff",
     links: [
-      { label: "Sponsors", href: "/sponsors", ariaLabel: "View sponsors" },
+      { label: "Sponsorships", href: "/sponsors", ariaLabel: "View sponsors" },
       { label: "Contact Details", href: "/contact", ariaLabel: "View contact details" },
     ],
   },

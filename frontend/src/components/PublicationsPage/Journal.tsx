@@ -261,7 +261,7 @@ const JournalsPage = () => {
         </div>
 
         {/* Feature Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
           {[
             {
               icon: (
@@ -302,7 +302,7 @@ const JournalsPage = () => {
               <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* Stats Section */}
         {/* <div className="bg-black rounded-2xl p-8 border border-gray-800 mb-16 relative overflow-hidden">
