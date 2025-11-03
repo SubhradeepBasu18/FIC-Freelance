@@ -283,13 +283,13 @@ const EventPage = () => {
           </div>
 
           {/* Enhanced Speaker Grid with Larger Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 gap-4 md:gap-8">
             {speakerItems.map((speaker, index) => (
               <div
                 key={index}
                 className="group bg-black rounded-xl p-4 md:p-6 border border-gray-800 text-center hover:border-white/50 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-white/10 flex flex-col items-center"
               >
-                <div className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-4 rounded-xl overflow-hidden bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors duration-300">
+                <div className="w-26 h-26 md:w-40 md:h-40 mx-auto mb-4 rounded-xl overflow-hidden bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors duration-300">
                   <img
                     src={speaker.image}
                     alt={speaker.title}
