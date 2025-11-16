@@ -28,11 +28,11 @@ const evenSchema = new mongoose.Schema({
     },
     registrationUrl: { // Unstop registration link
         type: String,
-        required: true,
+        // required: true,
     },
     type: {
         type: String,
-        enum: ["workshop", "conference", "seminar", "competition"],
+        enum: ["workshop", "conference", "seminar", "webinar", "social event", "panel discussion", "others"],
         required: true
     }
 }, {timestamps: true})

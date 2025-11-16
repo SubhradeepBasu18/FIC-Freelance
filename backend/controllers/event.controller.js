@@ -4,7 +4,7 @@ const addEvent = async (req, res) => {
     try {
         const { title, description, startDate, endDate, time, location, registrationUrl, type } = req.body;
 
-        if (!title || !description || !startDate || !endDate || !time || !location || !registrationUrl || !type) {
+        if (!title || !description || !startDate || !endDate || !time || !location || !type) {
             return res.status(400).json({
                 message: "All fields are required",
             });

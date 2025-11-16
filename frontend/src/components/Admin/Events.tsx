@@ -69,7 +69,7 @@ export default function Events() {
   const handleAdd = async () => {
     if (!formData.title || !formData.description || !formData.startDate || 
         !formData.endDate || !formData.time || !formData.location || 
-        !formData.type || !formData.registrationUrl) {
+        !formData.type ) {
       setError('All fields are required');
       return;
     }
@@ -317,6 +317,7 @@ export default function Events() {
                 <option value="conference">Conference</option>
                 <option value="webinar">Webinar</option>
                 <option value="social">Social Event</option>
+                <option value="panel discussion">Panel Discussion</option>
                 <option value="other">Other</option>
               </select>
             </div>
@@ -385,7 +386,7 @@ export default function Events() {
             </div>
 
             <div className="md:col-span-2 space-y-2">
-              <label className="block text-sm font-medium text-gray-300">Registration URL *</label>
+              <label className="block text-sm font-medium text-gray-300">Registration URL</label>
               <input
                 type="url"
                 name="registrationUrl"
