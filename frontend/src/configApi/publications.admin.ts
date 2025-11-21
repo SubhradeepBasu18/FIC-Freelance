@@ -4,6 +4,8 @@ import axios from "axios";
 const getAllArticles = async() => {
     try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/publication/get-all-articles`);
+        console.log(response);
+        
         return {status: response.status, data: response.data};
     } catch (error) {
         console.error("Error fetching articles:", error);
@@ -33,7 +35,10 @@ const updateArticle = async(id: string, title: string, authors: string, textCont
 const addArticle = async(article: Article) => {
     try {
         const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/admin/publication/add-article`, article, {
-            withCredentials: true
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
         });
         return {status: response.status, data: response.data};
     } catch (error) {

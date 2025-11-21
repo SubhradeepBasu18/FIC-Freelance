@@ -20,159 +20,321 @@ interface EventDetailModalProps {
 const EventDetailModal = ({ event, onClose }: EventDetailModalProps) => {
     if (!event) return null;
     console.log('event: ', event);
-    
+
+    // Function to parse date and time
+    const parseEventDateTime = () => {
+        // Assuming date is in format "YYYY-MM-DD" or "DD/MM/YYYY" and time in "HH:MM" format
+        const dateStr = event.date;
+        const timeStr = event.time;
+        
+        // Try different date formats
+        let startDate: Date;
+        
+        if (dateStr.includes('-')) {
+            // Format: YYYY-MM-DD
+            startDate = new Date(dateStr);
+        } else if (dateStr.includes('/')) {
+            // Format: DD/MM/YYYY or MM/DD/YYYY
+            const parts = dateStr.split('/');
+            if (parts[0].length === 4) {
+                // YYYY/MM/DD
+                startDate = new Date(dateStr);
+            } else {
+                // DD/MM/YYYY or MM/DD/YYYY - assume DD/MM/YYYY
+                startDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+            }
+        } else {
+            // Fallback to current date
+            startDate = new Date();
+        }
+
+        // Parse time
+        if (timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            startDate.setHours(hours, minutes, 0, 0);
+        }
+
+        // Assume event duration is 2 hours
+        const endDate = new Date(startDate);
+        endDate.setHours(endDate.getHours() + 2);
+
+        return { startDate, endDate };
+    };
+
+    // Generate Google Calendar URL
+    const generateGoogleCalendarUrl = () => {
+        const { startDate, endDate } = parseEventDateTime();
+        
+        const formatDate = (date: Date) => {
+            return date.toISOString().replace(/-|:|\.\d+/g, '');
+        };
+
+        const params = new URLSearchParams({
+            action: 'TEMPLATE',
+            text: event.title,
+            dates: `${formatDate(startDate)}/${formatDate(endDate)}`,
+            details: event.description,
+            location: event.venue,
+        });
+
+        return `https://calendar.google.com/calendar/render?${params}`;
+    };
+
+    // Generate Outlook Calendar URL
+    const generateOutlookCalendarUrl = () => {
+        const { startDate, endDate } = parseEventDateTime();
+        
+        const params = new URLSearchParams({
+            path: '/calendar/action/compose',
+            rru: 'addevent',
+            subject: event.title,
+            startdt: startDate.toISOString(),
+            enddt: endDate.toISOString(),
+            body: event.description,
+            location: event.venue,
+        });
+
+        return `https://outlook.live.com/calendar/0/deeplink/compose?${params}`;
+    };
+
+    // Generate ICS file for download (Apple Calendar, etc.)
+    const generateICSFile = () => {
+        const { startDate, endDate } = parseEventDateTime();
+        
+        const formatDate = (date: Date) => {
+            return date.toISOString().replace(/-|:|\.\d+/g, '');
+        };
+
+        const icsContent = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'BEGIN:VEVENT',
+            `SUMMARY:${event.title}`,
+            `DESCRIPTION:${event.description}`,
+            `LOCATION:${event.venue}`,
+            `DTSTART:${formatDate(startDate)}`,
+            `DTEND:${formatDate(endDate)}`,
+            'END:VEVENT',
+            'END:VCALENDAR'
+        ].join('\n');
+
+        return icsContent;
+    };
+
+    // Download ICS file
+    const downloadICSFile = () => {
+        const icsContent = generateICSFile();
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${event.title.replace(/\s+/g, '_')}.ics`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    // Handle Add to Calendar with dropdown options
+    const handleAddToCalendar = () => {
+        // Create a custom dropdown/modal for calendar options
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-[10000] flex items-center justify-center p-4';
+        modal.innerHTML = `
+            <div class="bg-zinc-900 rounded-2xl max-w-sm w-full p-6 border border-zinc-700 shadow-2xl">
+                <h3 class="text-white text-lg font-semibold mb-4">Add to Calendar</h3>
+                <div class="space-y-3">
+                    <button 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-3"
+                        onclick="window.open('${generateGoogleCalendarUrl()}', '_blank')"
+                    >
+                        <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                            <span class="text-blue-600 text-xs font-bold">G</span>
+                        </div>
+                        Google Calendar
+                    </button>
+                    <button 
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-3"
+                        onclick="window.open('${generateOutlookCalendarUrl()}', '_blank')"
+                    >
+                        <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                            <span class="text-purple-600 text-xs font-bold">O</span>
+                        </div>
+                        Outlook Calendar
+                    </button>
+                    <button 
+                        class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-3"
+                        id="downloadIcsButton"
+                    >
+                        <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                            <span class="text-gray-600 text-xs font-bold">↓</span>
+                        </div>
+                        Download ICS File
+                    </button>
+                    <button 
+                        class="w-full bg-zinc-700 hover:bg-zinc-600 text-white py-3 px-4 rounded-lg font-medium text-sm transition-colors mt-4"
+                        id="closeCalendarModal"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Add event listeners
+        const closeModal = () => document.body.removeChild(modal);
+        
+        modal.querySelector('#closeCalendarModal')?.addEventListener('click', closeModal);
+        modal.querySelector('#downloadIcsButton')?.addEventListener('click', () => {
+            downloadICSFile();
+            closeModal();
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    };
 
     return (
         <div 
-        className="fixed inset-0 bg-zinc-950/95 backdrop-blur-xl z-[9999] flex items-start justify-center p-4 pt-24 animate-in fade-in duration-300 overflow-y-auto"
-        onClick={onClose}
-        >
-        <div 
-            className="bg-zinc-900 rounded-2xl max-w-2xl w-full my-8 border border-zinc-700/50 shadow-2xl shadow-black/50 animate-in slide-in-from-bottom-8 duration-400 relative"
-            onClick={(e) => e.stopPropagation()}
-        >
-            {/* Minimal Close Button */}
-            <button
-            className="absolute -top-4 -right-4 w-9 h-9 bg-zinc-800 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 transition-all duration-200 border border-zinc-600/50 shadow-lg z-20"
+            className="fixed inset-0 bg-zinc-950/95 backdrop-blur-xl z-[9999] flex items-start justify-center p-4 pt-24 animate-in fade-in duration-300 overflow-y-auto"
             onClick={onClose}
+        >
+            <div 
+                className="bg-zinc-900 rounded-2xl max-w-2xl w-full my-8 border border-zinc-700/50 shadow-2xl shadow-black/50 animate-in slide-in-from-bottom-8 duration-400 relative"
+                onClick={(e) => e.stopPropagation()}
             >
-            <X className="w-4 h-4" />
-            </button>
-
-            {/* Clean Header */}
-            <div className="p-6 border-b border-zinc-800">
-            <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                <div className="w-2 h-8 rounded-full bg-white/20"></div>
-                <div className="flex-1">
-                    <h2 className="text-2xl font-semibold text-white leading-tight tracking-tight">
-                    {event.title}
-                    </h2>
-                </div>
-                </div>
-                
-                <div className="flex items-center gap-3">
-                <span className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-800 text-zinc-300 border border-zinc-700 backdrop-blur-sm">
-                    {event.category}
-                </span>
-                <div className="flex items-center gap-2 text-sm text-zinc-400">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                    <span>Registration Open</span>
-                </div>
-                </div>
-            </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-6 space-y-6">
-            {/* Elegant Hero */}
-            <div className="h-40 bg-gradient-to-br from-zinc-800 to-zinc-700 rounded-xl flex items-center justify-center relative overflow-hidden border border-zinc-700">
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/50 to-transparent"></div>
-                <div className="relative text-center">
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-sm border border-white/10">
-                    <Calendar className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-white font-medium text-lg block">{event.title}</span>
-                </div>
-            </div>
-
-            {/* Refined Details Grid */}
-            <div className="grid grid-cols-2 gap-4">
-                <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
-                    <Calendar className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                    <p className="text-zinc-400 text-sm font-medium mb-1">Date</p>
-                    <p className="text-white font-semibold">{event.date}</p>
-                    </div>
-                </div>
-                </div>
-
-                <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
-                    <Clock className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                    <p className="text-zinc-400 text-sm font-medium mb-1">Time</p>
-                    <p className="text-white font-semibold">{event.time}</p>
-                    </div>
-                </div>
-                </div>
-
-                <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
-                    <MapPin className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                    <p className="text-zinc-400 text-sm font-medium mb-1">Venue</p>
-                    <p className="text-white font-semibold">{event.venue}</p>
-                    </div>
-                </div>
-                </div>
-
-                <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
-                    <Tag className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                    <p className="text-zinc-400 text-sm font-medium mb-1">Category</p>
-                    <p className="text-white font-semibold">{event.category}</p>
-                    </div>
-                </div>
-                </div>
-            </div>
-
-            {/* Professional Description */}
-            <div className="bg-zinc-800/30 rounded-xl p-5 border border-zinc-700/20">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
-                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                Event Overview
-                </h3>
-                <p className="text-zinc-300 leading-relaxed text-[15px] tracking-wide">
-                {event.description}
-                </p>
-            </div>
-
-            {/* Sophisticated Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 bg-white text-zinc-900 hover:bg-zinc-100 py-3.5 px-6 rounded-xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
-                onClick={() => window.open(event.registrationUrl, '_blank')}
+                {/* Minimal Close Button */}
+                <button
+                    className="absolute -top-4 -right-4 w-9 h-9 bg-zinc-800 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-700 transition-all duration-200 border border-zinc-600/50 shadow-lg z-20"
+                    onClick={onClose}
                 >
-                <div className="w-6 h-6 bg-zinc-900 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs">✓</span>
-                </div>
-                Register Now
+                    <X className="w-4 h-4" />
                 </button>
-                <button className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white py-3.5 px-6 rounded-xl font-semibold text-sm transition-all duration-200 border border-zinc-600 hover:border-zinc-500 hover:scale-[1.02] flex items-center justify-center gap-3">
-                <Calendar className="w-5 h-5" />
-                Add to Calendar
-                </button>
-            </div>
 
-            {/* Minimal Stats */}
-            <div className="flex items-center justify-around pt-4 border-t border-zinc-800">
-                <div className="text-center">
-                <p className="text-white font-bold text-lg">24</p>
-                <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider">Seats</p>
+                {/* Clean Header */}
+                <div className="p-6 border-b border-zinc-800">
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                            <div className="w-2 h-8 rounded-full bg-white/20"></div>
+                            <div className="flex-1">
+                                <h2 className="text-2xl font-semibold text-white leading-tight tracking-tight">
+                                    {event.title}
+                                </h2>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                            <span className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-800 text-zinc-300 border border-zinc-700 backdrop-blur-sm">
+                                {event.category}
+                            </span>
+                            <div className="flex items-center gap-2 text-sm text-zinc-400">
+                                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                                <span>Registration Open</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="h-8 w-px bg-zinc-700"></div>
-                <div className="text-center">
-                <p className="text-white font-bold text-lg">98%</p>
-                <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider">Booked</p>
-                </div>
-                <div className="h-8 w-px bg-zinc-700"></div>
-                <div className="text-center">
-                <p className="text-white font-bold text-lg">4.8</p>
-                <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider">Rating</p>
+
+                {/* Content */}
+                <div className="p-6 space-y-6">
+                    {/* Elegant Hero */}
+                    <div className="h-40 bg-gradient-to-br from-zinc-800 to-zinc-700 rounded-xl flex items-center justify-center relative overflow-hidden border border-zinc-700">
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/50 to-transparent"></div>
+                        <div className="relative text-center">
+                            <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-sm border border-white/10">
+                                <Calendar className="w-6 h-6 text-white" />
+                            </div>
+                            <span className="text-white font-medium text-lg block">{event.title}</span>
+                        </div>
+                    </div>
+
+                    {/* Refined Details Grid */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
+                                    <Calendar className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <p className="text-zinc-400 text-sm font-medium mb-1">Date</p>
+                                    <p className="text-white font-semibold">{event.date}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
+                                    <Clock className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <p className="text-zinc-400 text-sm font-medium mb-1">Time</p>
+                                    <p className="text-white font-semibold">{event.time}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
+                                    <MapPin className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <p className="text-zinc-400 text-sm font-medium mb-1">Venue</p>
+                                    <p className="text-white font-semibold">{event.venue}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/30 hover:border-zinc-600 transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-zinc-700/50 rounded-lg flex items-center justify-center border border-zinc-600">
+                                    <Tag className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <p className="text-zinc-400 text-sm font-medium mb-1">Category</p>
+                                    <p className="text-white font-semibold">{event.category}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Professional Description */}
+                    <div className="bg-zinc-800/30 rounded-xl p-5 border border-zinc-700/20">
+                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
+                            <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                            Event Overview
+                        </h3>
+                        <p className="text-zinc-300 leading-relaxed text-[15px] tracking-wide">
+                            {event.description}
+                        </p>
+                    </div>
+
+                    {/* Sophisticated Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <button 
+                            className="flex-1 bg-white text-zinc-900 hover:bg-zinc-100 py-3.5 px-6 rounded-xl font-semibold text-sm transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-3 shadow-lg"
+                            onClick={() => window.open(event.registrationUrl, '_blank')}
+                        >
+                            <div className="w-6 h-6 bg-zinc-900 rounded-full flex items-center justify-center">
+                                <span className="text-white text-xs">✓</span>
+                            </div>
+                            Register Now
+                        </button>
+                        <button 
+                            className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white py-3.5 px-6 rounded-xl font-semibold text-sm transition-all duration-200 border border-zinc-600 hover:border-zinc-500 hover:scale-[1.02] flex items-center justify-center gap-3"
+                            onClick={handleAddToCalendar}
+                        >
+                            <Calendar className="w-5 h-5" />
+                            Add to Calendar
+                        </button>
+                    </div>
                 </div>
             </div>
-            </div>
-        </div>
         </div>
     );
 };

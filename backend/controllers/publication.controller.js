@@ -168,12 +168,20 @@ const addArticle = async(req, res) => {
             })
         }
 
+        const articleLocalPath = req?.file?.path
+        let articleFileURL = ""
+        if(articleLocalPath) {
+            articleFileURL = await uploadOnCloudinary(articleLocalPath)
+        }
+
         const newArticle = await article.create({
             title,
             authors,
             textContent,
-            isPublic
+            isPublic,
+            fileUrl: articleFileURL?.secure_url
         })
+
 
         if(!newArticle) {
             return res.status(400).json({

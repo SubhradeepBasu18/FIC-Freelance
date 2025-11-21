@@ -14,7 +14,8 @@ const journalSchema = new mongoose.Schema({
   const articleSchema = new mongoose.Schema({
     title: String,
     authors: String,
-    textContent: String,  // Only text for articles
+    textContent: String,
+    fileUrl: String,
     isPublic: Boolean
   }, {timestamps: true});
   

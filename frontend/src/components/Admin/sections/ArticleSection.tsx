@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, X, Check, AlertTriangle, Eye, EyeOff, FileText } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Check, AlertTriangle, Eye, EyeOff, FileText, Upload, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { getAllArticles, addArticle, updateArticle, deleteArticle } from '@/configApi/publications.admin';
 
 interface Article {
@@ -11,6 +11,7 @@ interface Article {
   journal?: string;
   createdAt: string;
   isPublic: boolean;
+  fileUrl?: string;
 }
 
 const ArticleManagement: React.FC = () => {
@@ -24,6 +25,8 @@ const ArticleManagement: React.FC = () => {
     article: null
   });
   const [showAddModal, setShowAddModal] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   const [newArticle, setNewArticle] = useState<Omit<Article, 'id' | 'createdAt'>>({
     title: '',
@@ -64,10 +67,16 @@ const ArticleManagement: React.FC = () => {
 
   const closeModal = () => {
     setSelectedArticle(null);
+    setExpandedId(null);
+  };
+
+  const toggleExpand = (id: string) => {
+    setExpandedId(expandedId === id ? null : id);
   };
 
   const handleEdit = (article: Article) => {
     setEditingArticle({ ...article });
+    setSelectedFile(null);
     setSelectedArticle(null);
   };
 
@@ -75,17 +84,24 @@ const ArticleManagement: React.FC = () => {
     if (editingArticle && editingArticle._id) {
       try {
         setIsLoading(true);
-        const result = await updateArticle(
-          editingArticle._id,
-          editingArticle.title,
-          editingArticle.authors || '',
-          editingArticle.textContent || '',
-          editingArticle.isPublic
-        );
+        
+        const formDataToSend = new FormData();
+        formDataToSend.append('title', editingArticle.title);
+        formDataToSend.append('authors', editingArticle.authors || '');
+        formDataToSend.append('textContent', editingArticle.textContent || '');
+        formDataToSend.append('journal', editingArticle.journal || '');
+        formDataToSend.append('isPublic', String(editingArticle.isPublic));
+        
+        if (selectedFile) {
+          formDataToSend.append('file', selectedFile);
+        }
+
+        const result = await updateArticle(editingArticle._id, formDataToSend);
 
         if (result.status === 200) {
           await loadArticles();
           setEditingArticle(null);
+          setSelectedFile(null);
           setError(null);
         } else {
           setError('Failed to update article');
@@ -109,6 +125,7 @@ const ArticleManagement: React.FC = () => {
 
   const handleCancelEdit = () => {
     setEditingArticle(null);
+    setSelectedFile(null);
   };
 
   const handleDeleteClick = (article: Article) => {
@@ -156,12 +173,27 @@ const ArticleManagement: React.FC = () => {
       journal: '',
       isPublic: true,
     });
+    setSelectedFile(null);
   };
 
   const handleAddArticle = async () => {
+    if (!newArticle.title.trim() || !selectedFile) {
+      setError('Please fill all required fields and select a file');
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const result = await addArticle(newArticle);
+      
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', newArticle.title);
+      formDataToSend.append('authors', newArticle.authors || '');
+      formDataToSend.append('textContent', newArticle.textContent || '');
+      formDataToSend.append('journal', newArticle.journal || '');
+      formDataToSend.append('isPublic', String(newArticle.isPublic));
+      formDataToSend.append('file', selectedFile);
+
+      const result = await addArticle(formDataToSend);
       
       if (result.status === 201 || result.status === 200) {
         await loadArticles();
@@ -173,6 +205,7 @@ const ArticleManagement: React.FC = () => {
           journal: '',
           isPublic: true,
         });
+        setSelectedFile(null);
         setError(null);
       } else {
         setError('Failed to add article');
@@ -196,12 +229,26 @@ const ArticleManagement: React.FC = () => {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  const getGoogleDrivePreviewUrl = (url: string) => {
+    if (url.includes('drive.google.com')) {
+      const fileId = url.split('/d/')[1]?.split('/')[0];
+      return `https://drive.google.com/file/d/${fileId}/preview`;
+    }
+    return url;
   };
 
   if (isLoading && articles.length === 0) {
@@ -289,6 +336,16 @@ const ArticleManagement: React.FC = () => {
       {error && (
         <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-center">
           {error}
+        </div>
+      )}
+
+      {/* Loading State */}
+      {isLoading && (
+        <div className="mb-6 p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-cyan-400 text-center">
+          <div className="flex items-center justify-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-cyan-400"></div>
+            Processing...
+          </div>
         </div>
       )}
 
@@ -384,6 +441,12 @@ const ArticleManagement: React.FC = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-6">
+              {error && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-center">
+                  {error}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-300">Title *</label>
@@ -423,6 +486,27 @@ const ArticleManagement: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">PDF File *</label>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <label className="flex-1 cursor-pointer">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                      <div className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white hover:bg-zinc-700/50 transition-all duration-300 flex items-center justify-center gap-2">
+                        <Upload size={18} />
+                        {selectedFile ? selectedFile.name : 'Choose PDF File'}
+                      </div>
+                    </label>
+                  </div>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Supported formats: PDF, DOC, DOCX
+                  </p>
+                </div>
+
+                <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-300">Visibility</label>
                   <button
                     type="button"
@@ -437,6 +521,12 @@ const ArticleManagement: React.FC = () => {
                     {newArticle.isPublic ? <Eye size={18} /> : <EyeOff size={18} />}
                     {newArticle.isPublic ? 'Public' : 'Private'}
                   </button>
+                  <p className="text-sm text-gray-400">
+                    {newArticle.isPublic 
+                      ? 'This article will be visible to all users' 
+                      : 'This article will only be visible to admins'
+                    }
+                  </p>
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
@@ -464,7 +554,7 @@ const ArticleManagement: React.FC = () => {
               </button>
               <button
                 onClick={handleAddArticle}
-                disabled={isLoading}
+                disabled={!newArticle.title.trim() || !selectedFile || isLoading}
                 className="flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-green-400 disabled:to-green-500 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
                 <Check size={18} />
@@ -475,15 +565,18 @@ const ArticleManagement: React.FC = () => {
         </div>
       )}
 
-      {/* View Modal */}
+      {/* Article Details Modal with PDF */}
       {selectedArticle && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-cyan-400/20 max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col transform scale-95 animate-in fade-in-0 zoom-in-95">
+          <div className="bg-gradient-to-br from-zinc-900 to-black rounded-2xl border border-cyan-400/20 max-w-6xl w-full max-h-[95vh] overflow-hidden flex flex-col transform scale-95 animate-in fade-in-0 zoom-in-95">
             <div className="flex justify-between items-start p-6 border-b border-gray-700">
               <div className="flex-1 pr-4">
                 <h2 className="text-2xl font-bold text-white mb-3">{selectedArticle.title}</h2>
                 {selectedArticle.authors && (
                   <p className="text-gray-300 text-lg mb-2">Authors: {selectedArticle.authors}</p>
+                )}
+                {selectedArticle.journal && (
+                  <p className="text-gray-300 text-lg mb-2">Journal: {selectedArticle.journal}</p>
                 )}
                 <div className="flex items-center gap-4">
                   <p className="text-gray-400 text-sm">
@@ -506,14 +599,78 @@ const ArticleManagement: React.FC = () => {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6">
-              {selectedArticle.textContent ? (
-                <div className="text-gray-300 text-base leading-relaxed whitespace-pre-wrap">
-                  {selectedArticle.textContent}
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+                {/* Article Content Section */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-white mb-4">Article Content</h3>
+                  {selectedArticle.textContent ? (
+                    <div className="text-gray-300 text-base leading-relaxed whitespace-pre-wrap bg-zinc-800/30 p-4 rounded-lg border border-gray-600 max-h-96 overflow-y-auto">
+                      {selectedArticle.textContent}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic text-center py-8 bg-zinc-800/30 rounded-lg border border-gray-600">
+                      No content available
+                    </p>
+                  )}
                 </div>
-              ) : (
-                <p className="text-gray-500 italic text-center py-8">No content available</p>
-              )}
+
+                {/* PDF Section */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-xl font-bold text-white">PDF Document</h3>
+                    {selectedArticle.fileUrl && (
+                      <a
+                        href={selectedArticle.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+                      >
+                        <ExternalLink size={16} />
+                        Open PDF
+                      </a>
+                    )}
+                  </div>
+                  
+                  {selectedArticle.fileUrl ? (
+                    <div className="bg-black/30 rounded-lg border border-gray-600 overflow-hidden">
+                      <div className="p-4 border-b border-gray-700 bg-zinc-800/50">
+                        <button
+                          onClick={() => toggleExpand(selectedArticle._id || selectedArticle.id || '')}
+                          className="flex items-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-semibold transition-all duration-300"
+                        >
+                          {expandedId === (selectedArticle._id || selectedArticle.id) ? (
+                            <>
+                              <ChevronUp size={16} />
+                              Hide PDF
+                            </>
+                          ) : (
+                            <>
+                              <ChevronDown size={16} />
+                              View PDF
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      
+                      {expandedId === (selectedArticle._id || selectedArticle.id) && (
+                        <div className="p-4">
+                          <iframe
+                            src={getGoogleDrivePreviewUrl(selectedArticle.fileUrl)}
+                            className="w-full h-[500px] rounded-lg border border-gray-600"
+                            title={`PDF Viewer - ${selectedArticle.title}`}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-16 bg-zinc-800/30 rounded-lg border border-gray-600">
+                      <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500 italic">No PDF file available</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-end p-6 border-t border-gray-700">
@@ -554,6 +711,12 @@ const ArticleManagement: React.FC = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-6">
+              {error && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-center">
+                  {error}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-300">Title *</label>
@@ -564,6 +727,27 @@ const ArticleManagement: React.FC = () => {
                     required
                     className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all duration-300"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">Update PDF File (Optional)</label>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <label className="flex-1 cursor-pointer">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                      <div className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white hover:bg-zinc-700/50 transition-all duration-300 flex items-center justify-center gap-2">
+                        <Upload size={18} />
+                        {selectedFile ? selectedFile.name : 'Choose New PDF File'}
+                      </div>
+                    </label>
+                  </div>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Leave empty to keep current file
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -626,7 +810,7 @@ const ArticleManagement: React.FC = () => {
               </button>
               <button
                 onClick={handleSaveEdit}
-                disabled={isLoading}
+                disabled={!editingArticle.title.trim() || isLoading}
                 className="flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-green-400 disabled:to-green-500 text-white rounded-lg font-semibold transition-all duration-300 hover:scale-105"
               >
                 <Check size={18} />

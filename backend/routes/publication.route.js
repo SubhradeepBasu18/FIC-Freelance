@@ -8,7 +8,7 @@ const publicPublicationRouter = express.Router();
 
 // protected routes
 protectedPublicationRouter.post("/add-journal", protectAdmin, upload.single("file"), addJournal);
-protectedPublicationRouter.post("/add-article", protectAdmin, addArticle);
+protectedPublicationRouter.post("/add-article", protectAdmin, upload.single("file"), addArticle);
 protectedPublicationRouter.post("/add-podcast", protectAdmin, addPodcast);
 protectedPublicationRouter.post("/add-newsletter", protectAdmin, upload.single("file"), addNewsletter);
 

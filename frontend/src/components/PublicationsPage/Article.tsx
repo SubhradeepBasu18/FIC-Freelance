@@ -9,6 +9,9 @@ interface Article {
   textContent: string;
   isPublic: boolean;
   createdAt?: string;
+  fileUrl?: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
 const ArticlesPage = () => {
@@ -16,18 +19,20 @@ const ArticlesPage = () => {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [showShareNotification, setShowShareNotification] = useState(false);
+  const [viewMode, setViewMode] = useState<'text' | 'file'>('text');
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
         setLoading(true);
         const response = await getAllArticles();
-        if (response.status === 200) {
+        if (response.status == 200) {
           // Filter only public articles
           const publicArticles = response.data.articles.filter(
             (article: Article) => article.isPublic
           );
           setArticles(publicArticles);
+          console.log(publicArticles);
           
           // Check if there's an article ID in the URL
           handleUrlArticleId(response.data.articles);
@@ -61,6 +66,7 @@ const ArticlesPage = () => {
 
   const handleArticleClick = (article: Article) => {
     setSelectedArticle(article);
+    setViewMode('text'); // Reset to text view when opening new article
     // Update URL when article is opened
     const articleId = article.id || article._id;
     window.history.replaceState({}, '', `${window.location.pathname}?article=${articleId}`);
@@ -68,6 +74,7 @@ const ArticlesPage = () => {
 
   const handleCloseModal = () => {
     setSelectedArticle(null);
+    setViewMode('text'); // Reset view mode when closing
     // Clean URL when modal is closed
     window.history.replaceState({}, '', window.location.pathname);
   };
@@ -107,6 +114,48 @@ const ArticlesPage = () => {
         setShowShareNotification(false);
       }, 3000);
     }
+  };
+
+  // Check if file is viewable in browser (PDF, images, text files)
+  const isFileViewable = (fileUrl: string) => {
+    if (!fileUrl) return false;
+    
+    const viewableExtensions = ['.txt', '.html', '.htm'];
+    const viewablePatterns = ['/image/', '/upload/', 'cloudinary'];
+    
+    return (
+      viewableExtensions.some(ext => fileUrl.toLowerCase().includes(ext)) ||
+      viewablePatterns.some(pattern => fileUrl.toLowerCase().includes(pattern))
+    );
+  };
+
+  // Get file type for display
+  const getFileType = (fileUrl: string) => {
+    if (!fileUrl) return 'Unknown';
+    
+    if (fileUrl.toLowerCase().includes('.pdf')) return 'PDF';
+    if (fileUrl.toLowerCase().includes('.html') || fileUrl.toLowerCase().includes('.htm')) return 'HTML';
+    if (fileUrl.toLowerCase().includes('.txt')) return 'Text';
+    if (fileUrl.toLowerCase().includes('/image/')) return 'Image';
+    
+    return 'File';
+  };
+
+  // Check if file is PDF
+  const isPdfFile = (fileUrl: string) => {
+    return fileUrl && fileUrl.toLowerCase().includes('.pdf');
+  };
+
+  // Get proper PDF URL for embedding
+  const getPdfEmbedUrl = (fileUrl: string) => {
+    if (!fileUrl) return '';
+    
+    // For PDFs, we can try to use Google Docs viewer as a fallback
+    if (isPdfFile(fileUrl)) {
+      return `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+    }
+    
+    return fileUrl;
   };
 
   // Get reading time estimate
@@ -218,6 +267,18 @@ const ArticlesPage = () => {
                           </div>
                         )}
                       </div>
+
+                      {/* File indicator */}
+                      {article.fileUrl && (
+                        <div className="mt-3 flex items-center justify-start">
+                          <div className="bg-blue-600/20 text-blue-400 text-xs px-2 py-1 rounded border border-blue-500/30 flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            {getFileType(article.fileUrl)} Available
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -238,10 +299,6 @@ const ArticlesPage = () => {
             </div>
           )}
         </div>
-
-        {/* Rest of your component remains the same */}
-        {/* ... Feature Cards, Stats Section, etc. */}
-
       </div>
 
       {/* Article Detail Modal */}
@@ -251,7 +308,7 @@ const ArticlesPage = () => {
           onClick={handleCloseModal}
         >
           <div
-            className="bg-black border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-white/10"
+            className="bg-black border border-gray-800 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-white/10"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Gradient top accent */}
@@ -295,17 +352,122 @@ const ArticlesPage = () => {
                   ×
                 </button>
               </div>
+
+              {/* View Mode Toggle */}
+              {(selectedArticle.fileUrl || selectedArticle.textContent) && (
+                <div className="mt-6 flex border border-gray-800 rounded-lg p-1 bg-gray-900/50 w-fit">
+                  <button
+                    onClick={() => setViewMode('text')}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                      viewMode === 'text'
+                        ? 'bg-white text-black shadow-lg'
+                        : 'text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Text View
+                    </div>
+                  </button>
+                  {selectedArticle.fileUrl && (
+                    <button
+                      onClick={() => setViewMode('file')}
+                      className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                        viewMode === 'file'
+                          ? 'bg-white text-black shadow-lg'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        {getFileType(selectedArticle.fileUrl)} View
+                      </div>
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Modal Content */}
             <div className="overflow-y-auto flex-1 p-6 md:p-8 bg-black">
-              <div className="max-w-none">
-                {selectedArticle.textContent.split('\n\n').map((paragraph, index) => (
-                  <p key={index} className="text-gray-300 leading-relaxed mb-6 text-lg">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
+              {viewMode === 'text' ? (
+                <div className="max-w-none">
+                  {selectedArticle.textContent.split('\n\n').map((paragraph, index) => (
+                    <p key={index} className="text-gray-300 leading-relaxed mb-6 text-lg">
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <div className="w-full h-full flex flex-col">
+                  {selectedArticle.fileUrl ? (
+                    <>
+                      <div className="flex items-center justify-between mb-4">
+                        <p className="text-gray-400 text-sm">
+                          {getFileType(selectedArticle.fileUrl)} Document - {selectedArticle.title}
+                        </p>
+                        <a
+                          href={selectedArticle.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          Download {getFileType(selectedArticle.fileUrl)}
+                        </a>
+                      </div>
+                      <div className="flex-1 border border-gray-800 rounded-lg overflow-hidden">
+                        {isPdfFile(selectedArticle.fileUrl) ? (
+                          // For PDFs, use Google Docs viewer as a reliable fallback
+                          <iframe
+                            src={getPdfEmbedUrl(selectedArticle.fileUrl)}
+                            className="w-full h-full min-h-[500px]"
+                            title={`PDF - ${selectedArticle.title}`}
+                            sandbox="allow-scripts allow-same-origin allow-popups"
+                          />
+                        ) : (
+                          // For other file types (HTML, text, etc.)
+                          <iframe
+                            src={selectedArticle.fileUrl}
+                            className="w-full h-full min-h-[500px]"
+                            title={`${getFileType(selectedArticle.fileUrl)} - ${selectedArticle.title}`}
+                            sandbox="allow-scripts allow-same-origin"
+                          />
+                        )}
+                      </div>
+                      {isPdfFile(selectedArticle.fileUrl) && (
+                        <div className="mt-3 p-3 bg-yellow-600/20 border border-yellow-500/30 rounded-lg">
+                          <p className="text-yellow-400 text-sm text-center">
+                            <strong>Note:</strong> PDF viewing may be limited. For best experience, download the file.
+                          </p>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-center py-16">
+                      <div className="w-20 h-20 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-800">
+                        <svg className="w-10 h-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 13h6m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                      <p className="text-xl font-semibold text-white mb-2">File Not Available</p>
+                      <p className="text-gray-400 mb-6">This article doesn't have an attached file.</p>
+                      <button
+                        onClick={() => setViewMode('text')}
+                        className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
+                      >
+                        Switch to Text View
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Modal Footer */}
