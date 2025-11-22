@@ -473,7 +473,7 @@ const ArticleManagement: React.FC = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-300">Journal</label>
                   <input
                     type="text"
@@ -483,7 +483,7 @@ const ArticleManagement: React.FC = () => {
                     className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all duration-300"
                     placeholder="Enter journal name"
                   />
-                </div>
+                </div> */}
 
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-300">PDF File *</label>
@@ -777,7 +777,7 @@ const ArticleManagement: React.FC = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-300">Journal</label>
                   <input
                     type="text"
@@ -785,7 +785,7 @@ const ArticleManagement: React.FC = () => {
                     onChange={(e) => setEditingArticle({ ...editingArticle, journal: e.target.value })}
                     className="w-full px-4 py-3 bg-zinc-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all duration-300"
                   />
-                </div>
+                </div> */}
 
                 <div className="md:col-span-2 space-y-2">
                   <label className="block text-sm font-medium text-gray-300">Content</label>

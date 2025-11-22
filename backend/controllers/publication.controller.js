@@ -160,9 +160,9 @@ const getJournalById = async(req, res) => {
 const addArticle = async(req, res) => {
     try {
 
-        const {title, authors, textContent, isPublic = true} = req.body
+        const {title, authors, textContent = "", isPublic = true} = req.body
 
-        if(!title || !authors || !textContent) {
+        if(!title || !authors ) {
             return res.status(400).json({
                 message: "All fields are required"
             })
